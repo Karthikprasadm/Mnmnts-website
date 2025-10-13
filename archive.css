@@ -846,35 +846,7 @@ html::-webkit-scrollbar, body::-webkit-scrollbar {
     }
 }
 
-#refreshGithubBtn {
-    background: none;
-    border: none;
-    color: var(--accent);
-    font-size: 1.5rem;
-    line-height: 1;
-    padding: 0 0 2px 0;
-    cursor: pointer;
-    transition: color 0.2s, transform 0.2s;
-    font-weight: 700;
-    margin-right: 12px;
-    outline: none;
-    border-radius: 50%;
-    box-shadow: none;
-    will-change: transform;
-}
-#refreshGithubBtn:hover, #refreshGithubBtn:focus {
-    color: #bfcaff;
-    background: none;
-    transform: none;
-    box-shadow: none;
-}
-.refresh-rotating {
-    animation: refreshSpinOnce 0.8s cubic-bezier(.4,0,.2,1) 1;
-}
-@keyframes refreshSpinOnce {
-    from { transform: rotate(0deg); }
-    to { transform: rotate(360deg); }
-}
+/* refresh button removed */
 
 /* Project name styling below cards */
 .project-name {

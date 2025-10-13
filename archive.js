@@ -632,15 +632,6 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     // Fetch GitHub projects on page load
     window.addEventListener('DOMContentLoaded', fetchAndDisplayGithubProjects);
-    // Refresh button
-    const refreshGithubBtn = document.getElementById('refreshGithubBtn');
-    if (refreshGithubBtn) {
-      refreshGithubBtn.addEventListener('click', function() {
-        refreshGithubBtn.classList.add('refresh-rotating');
-        fetchAndDisplayGithubProjects();
-        setTimeout(() => refreshGithubBtn.classList.remove('refresh-rotating'), 1500);
-      });
-    }
 
     // --- Add Project UI Logic ---
     const addProjectBtn = document.getElementById('addProjectBtn');
