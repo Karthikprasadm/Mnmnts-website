@@ -131,28 +131,42 @@
     <script>
     // PDF.js worker setup
     pdfjsLib.GlobalWorkerOptions.workerSrc = 'pdfjs/pdf.worker.min.js';
+    // PDF state for paging
+    let pdfDocument = null;
+    let currentPage = 1;
+    let totalPages = 0;
+
     function renderPDF(url, containerId) {
         const container = document.getElementById(containerId);
         container.innerHTML = '';
         pdfjsLib.getDocument(url).promise.then(function(pdf) {
-            for (let pageNum = 1; pageNum <= pdf.numPages; pageNum++) {
-                pdf.getPage(pageNum).then(function(page) {
-                    const scale = 1;
-                    const quality = 3;
-                    const viewport = page.getViewport({ scale });
-                    const canvas = document.createElement('canvas');
-                    canvas.className = 'pdfjs-canvas';
-                    canvas.style.scrollSnapAlign = 'start';
-                    container.appendChild(canvas);
-                    const context = canvas.getContext('2d');
-                    canvas.width = viewport.width * quality;
-                    canvas.height = viewport.height * quality;
-                    canvas.style.width = viewport.width + 'px';
-                    canvas.style.height = viewport.height + 'px';
-                    context.setTransform(quality, 0, 0, quality, 0, 0);
-                    page.render({ canvasContext: context, viewport: viewport });
-                });
-            }
+            pdfDocument = pdf;
+            totalPages = pdf.numPages;
+            currentPage = 1;
+            renderPage(currentPage, containerId);
+        });
+    }
+
+    function renderPage(pageNum, containerId) {
+        if (!pdfDocument) return;
+        const container = document.getElementById(containerId);
+        if (!container) return;
+        container.innerHTML = '';
+        pdfDocument.getPage(pageNum).then(function(page) {
+            const scale = 1;
+            const quality = 3;
+            const viewport = page.getViewport({ scale });
+            const canvas = document.createElement('canvas');
+            canvas.className = 'pdfjs-canvas';
+            canvas.style.scrollSnapAlign = 'start';
+            container.appendChild(canvas);
+            const context = canvas.getContext('2d');
+            canvas.width = viewport.width * quality;
+            canvas.height = viewport.height * quality;
+            canvas.style.width = viewport.width + 'px';
+            canvas.style.height = viewport.height + 'px';
+            context.setTransform(quality, 0, 0, quality, 0, 0);
+            page.render({ canvasContext: context, viewport: viewport });
         });
     }
     document.getElementById('yodaResumeBtn').onclick = function() {
@@ -235,7 +249,7 @@
             if (currentPage < totalPages) {
                 isScrollPaging = true;
                 currentPage++;
-                renderPage(currentPage);
+                renderPage(currentPage, 'pdfjs-viewer');
                 setTimeout(() => { pdfjsViewer.scrollTop = 0; isScrollPaging = false; }, 500);
             }
         } else if (e.deltaY < 0 && pdfjsViewer.scrollTop <= 2) {
@@ -243,7 +257,7 @@
             if (currentPage > 1) {
                 isScrollPaging = true;
                 currentPage--;
-                renderPage(currentPage);
+                renderPage(currentPage, 'pdfjs-viewer');
                 setTimeout(() => { pdfjsViewer.scrollTop = pdfjsViewer.scrollHeight; isScrollPaging = false; }, 500);
             }
         }

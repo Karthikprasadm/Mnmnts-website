@@ -134,16 +134,20 @@ html::-webkit-scrollbar, body::-webkit-scrollbar {
     height: 220px;
     object-fit: cover;
     transition: transform 0.3s ease;
+    content-visibility: auto;
+    contain-intrinsic-size: 220px 392px; /* approximate card size for faster layout */
 }
 
 /* Lazy loading styles */
 .gallery-item img.lazy {
     opacity: 0;
     transition: opacity 0.3s ease;
+    filter: blur(8px);
 }
 
 .gallery-item img:not(.lazy) {
     opacity: 1;
+    filter: none;
 }
 
 .gallery-item:hover img {

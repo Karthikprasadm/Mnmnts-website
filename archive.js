@@ -6,18 +6,33 @@ document.addEventListener('DOMContentLoaded', function() {
     document.documentElement.scrollTop = 0;
     document.body.scrollTop = 0;
     
-    // Lazy Loading Implementation
+    // Lazy Loading Implementation (earlier prefetch + decode before swap)
     const images = document.querySelectorAll('.gallery-item img[data-src]');
     const imageObserver = new IntersectionObserver((entries, observer) => {
         entries.forEach(entry => {
             if (entry.isIntersecting) {
                 const img = entry.target;
-                img.src = img.dataset.src;
-                img.classList.remove('lazy');
-                observer.unobserve(img);
+                const src = img.getAttribute('data-src');
+                if (!src) { observer.unobserve(img); return; }
+                const hi = new Image();
+                hi.decoding = 'async';
+                hi.referrerPolicy = 'no-referrer';
+                hi.src = src;
+                hi.onload = () => {
+                    // swap only after decoded for smoother paint
+                    img.src = src;
+                    img.classList.remove('lazy');
+                    observer.unobserve(img);
+                };
+                hi.onerror = () => {
+                    // fallback to immediate swap
+                    img.src = src;
+                    img.classList.remove('lazy');
+                    observer.unobserve(img);
+                };
             }
         });
-    });
+    }, { rootMargin: '200px 0px', threshold: 0.01 });
 
     images.forEach(img => imageObserver.observe(img));
 
@@ -645,7 +660,35 @@ document.addEventListener('DOMContentLoaded', function() {
     const passwordError = document.getElementById('passwordError');
     const cancelPassword = document.getElementById('cancelPassword');
 
-    const PROJECT_PASSWORD = 'Wingspawn@2728'; // Change as needed
+    // Secure-ish client-side password: store hashed password in localStorage and compare using SHA-256
+    const DEFAULT_PASSWORD_HINT = 'Set password in localStorage under key "projectPasswordHash"';
+    async function sha256(message) {
+      const msgUint8 = new TextEncoder().encode(message);
+      const hashBuffer = await crypto.subtle.digest('SHA-256', msgUint8);
+      const hashArray = Array.from(new Uint8Array(hashBuffer));
+      const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+      return hashHex;
+    }
+    async function isPasswordValid(plain) {
+      try {
+        const stored = localStorage.getItem('projectPasswordHash');
+        if (!stored) return false;
+        const inputHash = await sha256(plain);
+        return stored === inputHash;
+      } catch (e) {
+        return false;
+      }
+    }
+    function ensurePasswordHashInitialized() {
+      // If no hash set, optionally bootstrap from existing env variable via meta tag or leave unset
+      const existing = localStorage.getItem('projectPasswordHash');
+      if (!existing) {
+        // No default set for security; developers can set it from console:
+        // localStorage.setItem('projectPasswordHash', await (async p=>await sha256(p))('your-password'))
+        console.warn('[archive] No projectPasswordHash set in localStorage. ' + DEFAULT_PASSWORD_HINT);
+      }
+    }
+    ensurePasswordHashInitialized();
 
     const deleteProjectBtn = document.getElementById('deleteProjectBtn');
 
@@ -656,17 +699,17 @@ document.addEventListener('DOMContentLoaded', function() {
       passwordModal.style.display = 'flex';
       passwordInput.focus();
       // Set up password form to open ADD modal (not edit modal)
-      passwordForm.onsubmit = function(e) {
-      e.preventDefault();
-      if (passwordInput.value === PROJECT_PASSWORD) {
-        passwordModal.style.display = 'none';
+      passwordForm.onsubmit = async function(e) {
+        e.preventDefault();
+        if (await isPasswordValid(passwordInput.value)) {
+          passwordModal.style.display = 'none';
           addNewProjectModal.style.display = 'flex';
           addNewProjectForm.reset();
-      } else {
-        passwordError.style.display = 'block';
-        passwordInput.value = '';
-        passwordInput.focus();
-      }
+        } else {
+          passwordError.style.display = 'block';
+          passwordInput.value = '';
+          passwordInput.focus();
+        }
       };
     });
 
@@ -939,9 +982,9 @@ document.addEventListener('DOMContentLoaded', function() {
           passwordModal.style.display = 'flex';
           passwordInput.focus();
           // On password submit, if correct, open the add project modal for editing
-          passwordForm.onsubmit = function(e) {
+          passwordForm.onsubmit = async function(e) {
             e.preventDefault();
-            if (passwordInput.value === PROJECT_PASSWORD) {
+            if (await isPasswordValid(passwordInput.value)) {
               passwordModal.style.display = 'none';
               addProjectModal.style.display = 'flex';
               addEditProjectTitle.textContent = 'Edit Project';
@@ -1009,9 +1052,9 @@ document.addEventListener('DOMContentLoaded', function() {
       passwordError.style.display = 'none';
       passwordModal.style.display = 'flex';
       passwordInput.focus();
-      passwordForm.onsubmit = function(e) {
+      passwordForm.onsubmit = async function(e) {
         e.preventDefault();
-        if (passwordInput.value === PROJECT_PASSWORD) {
+        if (await isPasswordValid(passwordInput.value)) {
           passwordModal.style.display = 'none';
           githubTokenInput.value = localStorage.getItem('githubToken') || '';
           githubTokenError.style.display = 'none';
