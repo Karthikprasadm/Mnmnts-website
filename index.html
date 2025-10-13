@@ -112,10 +112,13 @@
     <div id="resumeModal" class="resume-modal-overlay" style="display:none;">
         <div class="stars"></div>
         <div class="resume-modal-content darksite-modal modern-modal">
-            <button class="modern-modal-action" id="downloadResumeBtn" title="Download PDF" style="position:absolute;top:12px;right:100px;z-index:30;">⬇️</button>
-            <button class="modern-modal-action" id="printResumeBtn" title="Print PDF" style="position:absolute;top:12px;right:56px;z-index:30;">🖨️</button>
-            <button class="modern-modal-action" id="fullscreenResumeBtn" title="Fullscreen" style="position:absolute;top:12px;right:148px;z-index:30;">⛶</button>
-            <button class="resume-modal-close modern-modal-close" id="closeResumeModal" aria-label="Close" style="position:absolute;top:12px;right:12px;z-index:30;">&times;</button>
+            <div class="modern-modal-actions" style="position:absolute;top:12px;right:12px;z-index:300;display:flex;gap:12px;align-items:center;">
+                <button class="modern-modal-action" id="openResumeBtn" title="Open in new tab" aria-label="Open in new tab">↗️</button>
+                <button class="modern-modal-action" id="fullscreenResumeBtn" title="Fullscreen">⛶</button>
+                <button class="modern-modal-action" id="downloadResumeBtn" title="Download PDF">⬇️</button>
+                <button class="modern-modal-action" id="printResumeBtn" title="Print PDF">🖨️</button>
+                <button class="resume-modal-close modern-modal-close" id="closeResumeModal" aria-label="Close">&times;</button>
+            </div>
             <div class="modern-modal-header">
                 <span class="modern-modal-pdficon">📄</span>
                 <span class="modern-modal-title">Resume</span>
@@ -131,42 +134,28 @@
     <script>
     // PDF.js worker setup
     pdfjsLib.GlobalWorkerOptions.workerSrc = 'pdfjs/pdf.worker.min.js';
-    // PDF state for paging
-    let pdfDocument = null;
-    let currentPage = 1;
-    let totalPages = 0;
-
     function renderPDF(url, containerId) {
         const container = document.getElementById(containerId);
         container.innerHTML = '';
         pdfjsLib.getDocument(url).promise.then(function(pdf) {
-            pdfDocument = pdf;
-            totalPages = pdf.numPages;
-            currentPage = 1;
-            renderPage(currentPage, containerId);
-        });
-    }
-
-    function renderPage(pageNum, containerId) {
-        if (!pdfDocument) return;
-        const container = document.getElementById(containerId);
-        if (!container) return;
-        container.innerHTML = '';
-        pdfDocument.getPage(pageNum).then(function(page) {
-            const scale = 1;
-            const quality = 3;
-            const viewport = page.getViewport({ scale });
-            const canvas = document.createElement('canvas');
-            canvas.className = 'pdfjs-canvas';
-            canvas.style.scrollSnapAlign = 'start';
-            container.appendChild(canvas);
-            const context = canvas.getContext('2d');
-            canvas.width = viewport.width * quality;
-            canvas.height = viewport.height * quality;
-            canvas.style.width = viewport.width + 'px';
-            canvas.style.height = viewport.height + 'px';
-            context.setTransform(quality, 0, 0, quality, 0, 0);
-            page.render({ canvasContext: context, viewport: viewport });
+            for (let pageNum = 1; pageNum <= pdf.numPages; pageNum++) {
+                pdf.getPage(pageNum).then(function(page) {
+                    const scale = 1;
+                    const quality = 3;
+                    const viewport = page.getViewport({ scale });
+                    const canvas = document.createElement('canvas');
+                    canvas.className = 'pdfjs-canvas';
+                    canvas.style.scrollSnapAlign = 'start';
+                    container.appendChild(canvas);
+                    const context = canvas.getContext('2d');
+                    canvas.width = viewport.width * quality;
+                    canvas.height = viewport.height * quality;
+                    canvas.style.width = viewport.width + 'px';
+                    canvas.style.height = viewport.height + 'px';
+                    context.setTransform(quality, 0, 0, quality, 0, 0);
+                    page.render({ canvasContext: context, viewport: viewport });
+                });
+            }
         });
     }
     document.getElementById('yodaResumeBtn').onclick = function() {
@@ -195,6 +184,10 @@
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
+    };
+    document.getElementById('openResumeBtn').onclick = function(e) {
+        e.stopPropagation();
+        window.open('my_resume/karthik_resume.pdf', '_blank', 'noopener');
     };
     document.getElementById('printResumeBtn').onclick = function(e) {
         e.stopPropagation();
@@ -239,29 +232,7 @@
             }
         }
     };
-    // Restore scroll-to-next/prev page in PDF modal
-    const pdfjsViewer = document.getElementById('pdfjs-viewer');
-    let isScrollPaging = false;
-    pdfjsViewer.addEventListener('wheel', function(e) {
-        if (isScrollPaging) return;
-        if (e.deltaY > 0 && (pdfjsViewer.scrollTop + pdfjsViewer.clientHeight >= pdfjsViewer.scrollHeight - 2)) {
-            // Scrolled to bottom
-            if (currentPage < totalPages) {
-                isScrollPaging = true;
-                currentPage++;
-                renderPage(currentPage, 'pdfjs-viewer');
-                setTimeout(() => { pdfjsViewer.scrollTop = 0; isScrollPaging = false; }, 500);
-            }
-        } else if (e.deltaY < 0 && pdfjsViewer.scrollTop <= 2) {
-            // Scrolled to top
-            if (currentPage > 1) {
-                isScrollPaging = true;
-                currentPage--;
-                renderPage(currentPage, 'pdfjs-viewer');
-                setTimeout(() => { pdfjsViewer.scrollTop = pdfjsViewer.scrollHeight; isScrollPaging = false; }, 500);
-            }
-        }
-    });
+    // Removed paging; modal now renders all pages and scrolls normally
     </script>
     <style>
     .resume-modal-overlay {
@@ -372,9 +343,9 @@
         transform: scale(1.08);
         opacity: 1;
     }
-    #downloadResumeBtn { right: 120px; }
-    #printResumeBtn { right: 68px; }
-    #closeResumeModal { right: 16px; }
+    /* Even gap and alignment are handled by the actions container; override absolute positioning inside it */
+    .modern-modal-actions .modern-modal-action,
+    .modern-modal-actions .resume-modal-close { position: static; }
     .modern-modal-paper {
         max-height: 80vh;
         overflow-y: visible;
