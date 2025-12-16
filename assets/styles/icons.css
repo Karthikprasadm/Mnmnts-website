@@ -1,0 +1,35 @@
+/* Shared icon definitions for navbar/social icons */
+
+.icon {
+    display: inline-block;
+    width: 1.75rem;
+    height: 1.75rem;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: contain;
+    filter: grayscale(40%) invert(80%);
+    transition: opacity var(--hover-speed) var(--hover-ease),
+                filter var(--hover-speed) var(--hover-ease);
+}
+
+.icon-instagram {
+    background-image: url("https://img.icons8.com/?size=48&id=DpOQ6G5p47f0&format=png");
+}
+
+.icon-linkedin {
+    background-image: url("https://img.icons8.com/?size=100&id=447&format=png");
+}
+
+.icon-pinterest {
+    background-image: url("https://img.icons8.com/?size=48&id=CeRsUJCNL4go&format=png");
+}
+
+.icon-spotify {
+    background-image: url("https://img.icons8.com/?size=100&id=6707&format=png");
+}
+
+.icon-github {
+    background-image: url("https://github.githubassets.com/assets/GitHub-Mark-ea2971cee799.png");
+}
+
+

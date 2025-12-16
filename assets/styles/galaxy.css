@@ -132,7 +132,8 @@ body, button, input, select, textarea {
     transition: opacity var(--hover-speed) var(--hover-ease);
 }
 
-.social-icons a img {
+.social-icons a img,
+.social-icons a .icon {
     width: 1.75rem;
     height: 1.75rem;
     filter: grayscale(40%) invert(80%);
@@ -146,7 +147,9 @@ body, button, input, select, textarea {
 }
 
 .social-icons a:hover img,
-.social-icons a:focus-visible img {
+.social-icons a:focus-visible img,
+.social-icons a:hover .icon,
+.social-icons a:focus-visible .icon {
     filter: grayscale(0%) invert(100%);
 }
 
