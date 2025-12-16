@@ -26,7 +26,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // Change image function
     function changeImage(thumbnail, imageUrl) {
-        if (!displayedImage) return;
+        if (!displayedImage || !thumbnail || !imageUrl) return;
         displayedImage.style.transition = "opacity 0.45s cubic-bezier(0.4,0,0.2,1), transform 0.45s cubic-bezier(0.4,0,0.2,1)";
         displayedImage.style.opacity = "0";
         displayedImage.style.transform = "scale(0.96)";
@@ -35,6 +35,12 @@ document.addEventListener("DOMContentLoaded", function () {
             displayedImage.onload = function() {
                 displayedImage.style.opacity = "1";
                 displayedImage.style.transform = "scale(1)";
+            };
+            displayedImage.onerror = function() {
+                // If image fails to load, restore visibility with fallback
+                displayedImage.style.opacity = "1";
+                displayedImage.style.transform = "scale(1)";
+                console.error('Failed to load image:', imageUrl);
             };
         }, 80);
 
@@ -52,15 +58,30 @@ document.addEventListener("DOMContentLoaded", function () {
                 stopSlideshow(); // Stop slideshow when manually changing images
             }
         });
+        // Keyboard navigation for thumbnails
+        thumbnailsContainer.addEventListener("keydown", function (e) {
+            if (e.target.classList.contains("thumb") && (e.key === "Enter" || e.key === " ")) {
+                e.preventDefault();
+                const imageUrl = e.target.getAttribute("data-src");
+                changeImage(e.target, imageUrl);
+                stopSlideshow();
+            }
+        });
     }
 
     // Slideshow functions
     function startSlideshow() {
+        if (imageList.length === 0 || thumbnails.length === 0) {
+            console.warn('Cannot start slideshow: No images available');
+            return;
+        }
         slideshowInterval = setInterval(() => {
             currentIndex = (currentIndex + 1) % imageList.length; // Cycle through images
             const nextThumbnail = thumbnails[currentIndex];
-            changeImage(nextThumbnail, imageList[currentIndex]);
-        }, 3500); // Change image every 3.5 seconds
+            if (nextThumbnail && imageList[currentIndex]) {
+                changeImage(nextThumbnail, imageList[currentIndex]);
+            }
+        }, 1500); // Change image every 1.5 seconds
     }
 
     function stopSlideshow() {
@@ -122,10 +143,16 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // Change video function
     function changeVideo(thumbnail, videoUrl) {
-        if (!displayedVideo) return;
+        if (!displayedVideo || !thumbnail || !videoUrl) return;
         displayedVideo.src = videoUrl;
         displayedVideo.load();
-        displayedVideo.play();
+        displayedVideo.play().catch(err => {
+            console.error('Failed to play video:', err);
+            // Video might need user interaction to play
+        });
+        displayedVideo.onerror = function() {
+            console.error('Failed to load video:', videoUrl);
+        };
         videoThumbnails.forEach(thumb => thumb.classList.remove("active"));
         thumbnail.classList.add("active");
     }
@@ -138,38 +165,33 @@ document.addEventListener("DOMContentLoaded", function () {
                 changeVideo(e.target, videoUrl);
             }
         });
-    }
-
-    const uploadButton = document.querySelector('.upload-form button');
-    if (uploadButton) {
-        uploadButton.addEventListener('click', function(e) {
-            e.preventDefault();
-            const fileInput = document.querySelector('input[type="file"]');
-            const progressBar = document.querySelector('.progress');
-            const file = fileInput ? fileInput.files[0] : null;
-            if (!file) return;
-        
-            const xhr = new XMLHttpRequest();
-            xhr.open('POST', '/your-upload-endpoint'); // Change this to your actual upload endpoint
-        
-            xhr.upload.addEventListener('progress', function(e) {
-                if (e.lengthComputable && progressBar) {
-                    const percent = (e.loaded / e.total) * 100;
-                    progressBar.style.width = percent + '%';
-                }
-            });
-        
-            xhr.onload = function() {
-                if (xhr.status === 200 && progressBar) {
-                    progressBar.style.width = '100%';
-                } else if (progressBar) {
-                    progressBar.style.width = '0%';
-                }
-            };
-        
-            const formData = new FormData();
-            formData.append('file', file);
-            xhr.send(formData);
+        // Keyboard navigation for video thumbnails
+        videoThumbnailsContainer.addEventListener("keydown", function (e) {
+            if (e.target.classList.contains("video-thumb") && (e.key === "Enter" || e.key === " ")) {
+                e.preventDefault();
+                const videoUrl = e.target.getAttribute("data-src");
+                changeVideo(e.target, videoUrl);
+            }
         });
     }
+
+    // Upload functionality is handled in upload.html, removed duplicate code
+
+    // Initialize custom tooltips
+    function initTooltips() {
+        const tooltipElements = document.querySelectorAll('[data-tooltip]');
+        tooltipElements.forEach(element => {
+            const tooltipText = element.getAttribute('data-tooltip');
+            if (tooltipText) {
+                const tooltip = document.createElement('span');
+                tooltip.className = 'custom-tooltip';
+                tooltip.textContent = tooltipText;
+                element.appendChild(tooltip);
+                // Remove title attribute to prevent native tooltip
+                element.removeAttribute('title');
+            }
+        });
+    }
+
+    initTooltips();
 });

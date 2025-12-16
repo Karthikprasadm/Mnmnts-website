@@ -1,8 +1,9 @@
 const ImageKit = require("imagekit");
 
-// Allow requests from GitHub Pages and Vercel preview domains
+// Allow requests only from your production domains
 const allowedOrigins = [
   "https://karthikprasadm.github.io",
+  // add more allowed origins if needed
 ];
 
 function isAllowedOrigin(origin) {
@@ -16,8 +17,6 @@ function isAllowedOrigin(origin) {
 module.exports = (req, res) => {
   try {
     const origin = req.headers.origin;
-    // Debug log to check what origin is being received
-    console.log("Request origin:", origin);
     if (isAllowedOrigin(origin)) {
       res.setHeader("Access-Control-Allow-Origin", origin);
     }
@@ -26,6 +25,14 @@ module.exports = (req, res) => {
     res.setHeader("Vary", "Origin");
     if (req.method === "OPTIONS") {
       res.status(200).end();
+      return;
+    }
+    if (req.method !== "GET") {
+      res.status(405).json({ error: "Method not allowed" });
+      return;
+    }
+    if (!isAllowedOrigin(origin)) {
+      res.status(403).json({ error: "Origin not allowed" });
       return;
     }
 

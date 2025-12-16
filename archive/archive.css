@@ -1,9 +1,17 @@
-@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=Exo+2:wght@300;400;500;600;700&family=Rajdhani:wght@300;400;500;600;700&family=VT323&family=Doto:wght@100..900&display=swap');
+:root {
+    --hover-speed: 0.18s;
+    --hover-ease: cubic-bezier(0.4, 0, 0.2, 1);
+    --modal-speed: 0.35s;
+}
+
+* {
+    font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+}
 
 body {
     background: linear-gradient(to bottom, #1a1a1a, #000000);
     color: #e0e0e0;
-    font-family: 'Montserrat', Arial, sans-serif;
+    font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
     margin: 0;
     padding: 0;
     min-height: 100vh;
@@ -36,6 +44,162 @@ html::-webkit-scrollbar, body::-webkit-scrollbar {
     z-index: -1;
 }
 
+.navbar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.85rem;
+    padding: 0.65rem 1.15rem;
+    background: rgba(30, 30, 30, 0.8);
+    backdrop-filter: blur(18px);
+    position: relative;
+    width: fit-content;
+    max-width: 420px;
+    margin: 1.25rem auto 1rem;
+    border-radius: 22px;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.18);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    z-index: 1000;
+    height: fit-content;
+    line-height: 1;
+}
+
+.navbar .logo {
+    display: none;
+}
+
+.dropdown {
+    position: relative;
+    display: inline-block;
+    z-index: 1001;
+}
+
+.menu-button-separate {
+    position: static;
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: fit-content;
+    line-height: 1;
+}
+
+.menu-button-separate .dropdown-content {
+    right: 0;
+    left: auto;
+    transform: none;
+    top: calc(100% + 2px);
+}
+
+.dropbtn {
+    background-color: rgba(30, 30, 30, 0.82);
+    backdrop-filter: blur(18px);
+    color: #e0e0e0;
+    padding: 0.55rem 1.1rem;
+    font-size: 0.9rem;
+    font-weight: 600;
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    cursor: pointer;
+    transition: background-color var(--hover-speed) var(--hover-ease), color var(--hover-speed) var(--hover-ease), box-shadow var(--hover-speed) var(--hover-ease);
+    border-radius: 20px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.16);
+    font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    letter-spacing: 0.02em;
+    height: fit-content;
+    min-height: 40px;
+}
+
+.dropbtn:hover,
+.dropbtn:focus-visible {
+    background-color: rgba(50, 50, 50, 0.95);
+    color: #ffffff;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.24);
+    outline: none;
+}
+
+.dropdown-content {
+    position: absolute;
+    background: rgba(30, 30, 30, 0.86);
+    backdrop-filter: blur(18px);
+    min-width: 126px;
+    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.24), 0 3px 10px rgba(0, 0, 0, 0.18);
+    border-radius: 18px;
+    z-index: 1002;
+    right: 0;
+    border: 1px solid rgba(255, 255, 255, 0.07);
+    overflow: hidden;
+    padding: 0.2rem 0;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(6px) scale(0.98);
+    pointer-events: none;
+    transition: opacity 0.18s var(--hover-ease), transform 0.18s var(--hover-ease), visibility 0.18s var(--hover-ease);
+}
+
+.dropdown-content a {
+    color: #e0e0e0;
+    padding: 0.42rem 0.85rem;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    font-size: 0.84rem;
+    font-weight: 600;
+    transition: background-color var(--hover-speed) var(--hover-ease), color var(--hover-speed) var(--hover-ease), transform var(--hover-speed) var(--hover-ease), box-shadow var(--hover-speed) var(--hover-ease), border-color var(--hover-speed) var(--hover-ease), opacity var(--hover-speed) var(--hover-ease);
+    letter-spacing: 0.01em;
+    margin: 0.08rem 0.3rem;
+    border-radius: 10px;
+    border: 1px solid transparent;
+    min-height: 40px;
+}
+
+.dropdown-content a:hover,
+.dropdown-content a:focus-visible {
+    background-color: rgba(60, 60, 60, 0.6);
+    color: #ffffff;
+    transform: none;
+    box-shadow: 0 6px 14px rgba(0, 0, 0, 0.16);
+    outline: none;
+    opacity: 1;
+    border-color: transparent;
+}
+
+.dropdown:hover .dropdown-content,
+.dropdown:focus-within .dropdown-content,
+.dropdown-content:hover {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+    transform: translateY(0) scale(1);
+}
+
+/* Hover bridge to prevent accidental close when moving cursor */
+.dropdown::after {
+    content: "";
+    position: absolute;
+    top: 100%;
+    right: 0;
+    width: 100%;
+    height: 10px;
+    background: transparent;
+    pointer-events: auto;
+}
+
+@media (max-width: 768px) {
+    .navbar {
+        max-width: 95%;
+        width: auto;
+        padding: 0.6rem 1rem;
+        gap: 0.7rem;
+        margin: 1rem auto;
+    }
+
+    .menu-button-separate {
+        margin-left: auto;
+    }
+}
 .container {
     max-width: 1200px;
     margin: 0 auto;
@@ -48,7 +212,7 @@ html::-webkit-scrollbar, body::-webkit-scrollbar {
     gap: 12px;
     margin-bottom: 0;
     font-size: 2.5rem;
-    font-family: 'Montserrat', Arial, sans-serif;
+    font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
     font-weight: 600;
 }
 
@@ -80,25 +244,31 @@ html::-webkit-scrollbar, body::-webkit-scrollbar {
 }
 
 .filter-btn {
-    background: #282828;
+    background: rgba(30, 30, 30, 0.85);
     color: #fff;
-    border: none;
+    border: 1px solid rgba(255, 255, 255, 0.06);
     padding: 10px 24px;
     border-radius: 20px;
     cursor: pointer;
     font-size: 1rem;
-    transition: all 0.2s ease;
+    transition: background var(--hover-speed) var(--hover-ease), color var(--hover-speed) var(--hover-ease), transform var(--hover-speed) var(--hover-ease), box-shadow var(--hover-speed) var(--hover-ease);
     outline: none;
 }
 
-.filter-btn:focus {
-    outline: none;
-}
-
-.filter-btn.active, .filter-btn:hover {
+.filter-btn.active, .filter-btn:hover,
+.filter-btn:focus-visible {
     background: var(--accent);
     color: #222;
-    box-shadow: none;
+    box-shadow: 0 6px 16px rgba(0,0,0,0.28), inset 0 0 0 1px rgba(255, 255, 255, 0.14);
+    transform: translateY(-2px);
+    outline: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .filter-btn {
+        transition: none;
+        transform: none;
+    }
 }
 
 .gallery {
@@ -107,13 +277,27 @@ html::-webkit-scrollbar, body::-webkit-scrollbar {
     gap: 24px;
 }
 
+.gallery-empty {
+    margin: 24px auto 16px;
+    text-align: center;
+    color: #cfd2d6;
+    font-size: 1rem;
+    background: rgba(30,30,30,0.8);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 22px;
+    padding: 16px 18px;
+    max-width: 480px;
+    box-shadow: 0 4px 18px rgba(0,0,0,0.18);
+}
+
 .gallery-item {
     position: relative;
     overflow: hidden;
-    border-radius: 16px;
+    border-radius: 22px;
     box-shadow: 0 4px 24px rgba(0,0,0,0.2);
+    border: 1px solid rgba(255, 255, 255, 0.06);
     cursor: pointer;
-    transition: all 0.3s ease;
+    transition: transform 0.22s var(--hover-ease), box-shadow 0.22s var(--hover-ease);
     outline: none;
     background: #181818;
 }
@@ -195,8 +379,9 @@ html::-webkit-scrollbar, body::-webkit-scrollbar {
 .lightbox-img {
     max-width: 90vw;
     max-height: 80vh;
-    border-radius: 12px;
+    border-radius: 22px;
     box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+    border: 1px solid rgba(255, 255, 255, 0.06);
     transition: transform 0.3s ease;
 }
 
@@ -284,7 +469,7 @@ html::-webkit-scrollbar, body::-webkit-scrollbar {
 
 /* Page transitions */
 @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(20px); }
+    from { opacity: 0; transform: translateY(6px); }
     to { opacity: 1; transform: translateY(0); }
 }
 
@@ -377,7 +562,7 @@ html::-webkit-scrollbar, body::-webkit-scrollbar {
     justify-content: flex-start;
     padding: 32px 16px 24px 16px;
     text-align: center;
-    transition: opacity 0.3s cubic-bezier(.4,0,.2,1), background 0.3s cubic-bezier(.4,0,.2,1);
+    transition: opacity 0.22s var(--hover-ease), background 0.22s var(--hover-ease);
     z-index: 2;
     pointer-events: none;
     max-height: 95%;
@@ -392,12 +577,12 @@ html::-webkit-scrollbar, body::-webkit-scrollbar {
 .gallery-item:hover img,
 .gallery-item:focus img {
     filter: blur(2px) brightness(0.7);
-    transition: filter 0.3s cubic-bezier(.4,0,.2,1);
+    transition: filter 0.22s var(--hover-ease);
 }
 .gallery-item:hover .caption,
 .gallery-item:focus .caption {
     opacity: 0.1;
-    transition: opacity 0.3s cubic-bezier(.4,0,.2,1);
+    transition: opacity 0.22s var(--hover-ease);
 }
 .project-overlay h3 {
     margin: 0 0 2px 0;
@@ -452,11 +637,14 @@ html::-webkit-scrollbar, body::-webkit-scrollbar {
     border-radius: 6px;
     text-decoration: none;
     font-weight: 600;
-    transition: background 0.2s;
+    transition: background var(--hover-speed) var(--hover-ease), color var(--hover-speed) var(--hover-ease), transform var(--hover-speed) var(--hover-ease);
 }
-.project-overlay .project-links a:hover {
+.project-overlay .project-links a:hover,
+.project-overlay .project-links a:focus-visible {
     background: #fff;
     color: #ffb347;
+    transform: translateY(-2px);
+    outline: none;
 }
 .project-overlay::-webkit-scrollbar {
     display: none; /* Webkit browsers */
@@ -471,14 +659,14 @@ html::-webkit-scrollbar, body::-webkit-scrollbar {
     justify-content: center;
     background: linear-gradient(to bottom, #1a1a1a, #000000 90%);
     overflow: hidden;
-    transition: opacity 0.3s cubic-bezier(.4,0,.2,1);
+    transition: opacity var(--modal-speed) var(--hover-ease);
     opacity: 0;
     pointer-events: none;
 }
 .project-modal-overlay[style*="display: flex"] {
     opacity: 1;
     pointer-events: auto;
-    animation: modalFadeIn 0.5s cubic-bezier(.4,0,.2,1);
+    animation: modalFadeIn var(--modal-speed) var(--hover-ease);
 }
 .project-modal-overlay::before {
     content: '';
@@ -493,8 +681,9 @@ html::-webkit-scrollbar, body::-webkit-scrollbar {
 .project-modal-content {
     position: relative;
     background: rgba(28, 28, 36, 0.92);
-    border-radius: 18px;
+    border-radius: 22px;
     box-shadow: 0 8px 40px 0 #000a, 0 1.5px 4px #23234a33;
+    border: 1px solid rgba(255, 255, 255, 0.06);
     max-width: 720px;
     width: 96vw;
     max-height: 90vh;
@@ -505,8 +694,8 @@ html::-webkit-scrollbar, body::-webkit-scrollbar {
     overflow-y: auto;
     backdrop-filter: blur(12px) saturate(1.1);
     -webkit-backdrop-filter: blur(12px) saturate(1.1);
-    animation: modalSlideIn 0.6s cubic-bezier(.4,0,.2,1);
-    transition: transform 0.5s cubic-bezier(.4,0,.2,1), filter 0.5s cubic-bezier(.4,0,.2,1), opacity 0.5s cubic-bezier(.4,0,.2,1);
+    animation: modalSlideIn var(--modal-speed) var(--hover-ease);
+    transition: transform var(--modal-speed) var(--hover-ease), filter var(--modal-speed) var(--hover-ease), opacity var(--modal-speed) var(--hover-ease);
     margin-top: 36px;
     margin-bottom: 36px;
     padding-top: 0;
@@ -521,7 +710,7 @@ html::-webkit-scrollbar, body::-webkit-scrollbar {
     to { opacity: 1; }
 }
 @keyframes modalSlideIn {
-    from { transform: translateY(40px) scale(0.98); opacity: 0; }
+    from { transform: translateY(6px) scale(0.985); opacity: 0; }
     to { transform: translateY(0) scale(1); opacity: 1; }
 }
 .project-modal-close {
@@ -540,15 +729,16 @@ html::-webkit-scrollbar, body::-webkit-scrollbar {
     align-items: center;
     justify-content: center;
     z-index: 10;
-    transition: background 0.18s, color 0.18s, box-shadow 0.18s, transform 0.14s;
+    transition: background var(--hover-speed) var(--hover-ease), color var(--hover-speed) var(--hover-ease), box-shadow var(--hover-speed) var(--hover-ease), transform 0.16s var(--hover-ease);
     outline: none;
     box-shadow: 0 2px 8px #23234a33;
 }
-.project-modal-close:hover, .project-modal-close:focus {
+.project-modal-close:hover, .project-modal-close:focus-visible {
     background: #ffb347;
     color: #23234a;
     box-shadow: 0 4px 16px #ffb34733;
     transform: scale(1.08);
+    outline: none;
 }
 .project-modal-img {
     display: block;
@@ -558,13 +748,16 @@ html::-webkit-scrollbar, body::-webkit-scrollbar {
     aspect-ratio: 16/9;
     height: auto;
     object-fit: cover;
-    border-radius: 20px;
+    border-radius: 22px;
     box-shadow: 0 4px 24px #0006, 0 1.5px 4px #23234a33;
-    transition: box-shadow 0.3s, transform 0.3s;
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    transition: box-shadow 0.22s var(--hover-ease), transform 0.22s var(--hover-ease);
 }
-.project-modal-img:hover {
+.project-modal-img:hover,
+.project-modal-img:focus-visible {
     box-shadow: 0 4px 24px #0008, 0 1.5px 4px #23234a33;
     transform: scale(1.02);
+    outline: none;
 }
 #modalProjectName {
     color: #ffb347;
@@ -573,7 +766,7 @@ html::-webkit-scrollbar, body::-webkit-scrollbar {
     font-size: 1.7rem;
     text-align: center;
     letter-spacing: 1px;
-    font-family: 'Montserrat', Arial, sans-serif;
+    font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
     font-weight: 700;
 }
 .project-modal-tech {
@@ -589,7 +782,7 @@ html::-webkit-scrollbar, body::-webkit-scrollbar {
     padding: 4px 10px;
     border-radius: 8px;
     font-size: 0.95rem;
-    font-family: 'Montserrat', Arial, sans-serif;
+    font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
     font-weight: 600;
     letter-spacing: 0.5px;
 }
@@ -613,27 +806,30 @@ html::-webkit-scrollbar, body::-webkit-scrollbar {
     border-radius: 8px;
     text-decoration: none;
     font-weight: 700;
-    font-family: 'Montserrat', Arial, sans-serif;
+    font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
     font-size: 1rem;
     box-shadow: 0 2px 8px #ffb34733;
-    transition: background 0.2s, color 0.2s, box-shadow 0.2s, transform 0.2s;
+    transition: background var(--hover-speed) var(--hover-ease), color var(--hover-speed) var(--hover-ease), box-shadow var(--hover-speed) var(--hover-ease), transform var(--hover-speed) var(--hover-ease);
 }
-.project-modal-links a:hover {
+.project-modal-links a:hover,
+.project-modal-links a:focus-visible {
     background: #fff;
     color: #ffb347;
     box-shadow: 0 4px 16px #ffb34733;
     transform: translateY(-2px) scale(1.04);
+    outline: none;
 }
 .project-modal-readme {
     background: rgba(30,30,30,0.85);
-    border-radius: 12px;
+    border-radius: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.06);
     padding: 16px 12px;
     margin: 24px auto 0 auto;
     width: 100%;
     max-width: 600px;
     overflow-x: auto;
     box-shadow: 0 2px 8px #23234a33;
-    font-family: 'Fira Mono', 'Consolas', 'Menlo', monospace;
+    font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
     color: #bfcaff;
     font-size: 1rem;
     transition: box-shadow 0.3s;
@@ -643,13 +839,13 @@ html::-webkit-scrollbar, body::-webkit-scrollbar {
     margin-top: 0;
     margin-bottom: 8px;
     font-size: 1.1rem;
-    font-family: 'Montserrat', Arial, sans-serif;
+    font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
     font-weight: 600;
 }
 #modalReadmeSnippet {
     color: #bfcaff;
     font-size: 0.98rem;
-    font-family: 'Fira Mono', 'Consolas', 'Menlo', monospace;
+    font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
     white-space: pre-wrap;
     margin: 0;
 }
@@ -733,9 +929,10 @@ html::-webkit-scrollbar, body::-webkit-scrollbar {
     aspect-ratio: 16/9;
     height: auto;
     object-fit: cover;
-    border-radius: 20px;
+    border-radius: 22px;
     box-shadow: 0 4px 24px #0006, 0 1.5px 4px #23234a33;
     background: #181828;
+    border: 1px solid rgba(255, 255, 255, 0.06);
     transition: box-shadow 0.3s, transform 0.3s;
 }
 .project-modal-video:hover {
@@ -773,7 +970,7 @@ html::-webkit-scrollbar, body::-webkit-scrollbar {
     -webkit-backdrop-filter: blur(10px) saturate(1.1);
     justify-content: center;
     align-items: center;
-    animation: modalFadeIn 0.4s cubic-bezier(.4,0,.2,1);
+    animation: modalFadeIn var(--modal-speed) var(--hover-ease);
 }
 #addProjectModal .project-modal-content {
     max-width: 480px;
@@ -805,7 +1002,7 @@ html::-webkit-scrollbar, body::-webkit-scrollbar {
     margin-bottom: 10px;
     width: 100%;
     font-size: 1rem;
-    font-family: 'Montserrat', Arial, sans-serif;
+    font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
     resize: none;
     box-sizing: border-box;
 }
@@ -822,10 +1019,14 @@ html::-webkit-scrollbar, body::-webkit-scrollbar {
     padding: 10px 22px;
     font-size: 1rem;
     cursor: pointer;
-    transition: background 0.2s;
+    transition: background var(--hover-speed) var(--hover-ease), color var(--hover-speed) var(--hover-ease), box-shadow var(--hover-speed) var(--hover-ease), transform var(--hover-speed) var(--hover-ease);
 }
-#addProjectModal button[type="submit"]:hover {
+#addProjectModal button[type="submit"]:hover,
+#addProjectModal button[type="submit"]:focus-visible {
     background: #bfcaff;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 14px #bfcaff33;
+    outline: none;
 }
 #addProjectModal button[type="button"] {
     background: #23234a;
@@ -835,10 +1036,14 @@ html::-webkit-scrollbar, body::-webkit-scrollbar {
     padding: 10px 22px;
     font-size: 1rem;
     cursor: pointer;
-    transition: background 0.2s;
+    transition: background var(--hover-speed) var(--hover-ease), color var(--hover-speed) var(--hover-ease), transform var(--hover-speed) var(--hover-ease), box-shadow var(--hover-speed) var(--hover-ease);
 }
-#addProjectModal button[type="button"]:hover {
+#addProjectModal button[type="button"]:hover,
+#addProjectModal button[type="button"]:focus-visible {
     background: #23234aee;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px #23234a55;
+    outline: none;
 }
 @media (max-width: 600px) {
     #addProjectModal .project-modal-content {
@@ -850,7 +1055,7 @@ html::-webkit-scrollbar, body::-webkit-scrollbar {
 
 /* Project name styling below cards */
 .project-name {
-    font-family: 'Doto', 'VT323', 'Courier New', 'Consolas', 'Monaco', monospace;
+    font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
     font-size: 0.75rem;
     color: #b0b0b0;
     text-align: left;
@@ -873,8 +1078,40 @@ html::-webkit-scrollbar, body::-webkit-scrollbar {
 }
 
 /* GitHub button in modal */
-#modalGithubBtn:hover {
+#modalGithubBtn:hover,
+#modalGithubBtn:focus-visible {
     background: #bfcaff !important;
     transform: translateY(-1px);
     box-shadow: 0 4px 12px rgba(127, 143, 255, 0.3);
+    outline: none;
 } 
+
+/* Skeleton loading cards */
+.skeleton-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+}
+.skeleton-card {
+    position: relative;
+    overflow: hidden;
+    border-radius: 22px;
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    height: 220px;
+    background: linear-gradient(120deg, rgba(60,60,60,0.3), rgba(60,60,60,0.45), rgba(60,60,60,0.3));
+    background-size: 200% 100%;
+    animation: shimmer 1.4s infinite;
+}
+.skeleton-name {
+    height: 14px;
+    width: 60%;
+    margin-top: 8px;
+    background: rgba(80,80,80,0.35);
+    border-radius: 10px;
+    align-self: flex-start;
+}
+
+@keyframes shimmer {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+}

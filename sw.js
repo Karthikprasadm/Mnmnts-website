@@ -1,24 +1,37 @@
-const CACHE_NAME = 'museum-of-moments-v1.0.0';
+const CACHE_NAME = 'museum-of-moments-v1.0.1';
 const urlsToCache = [
   '/',
-  '/index.html',
-  '/about.html',
-  '/upload.html',
-  '/archive.html',
-  '/project-detail.html',
-  '/galaxy.css',
-  '/about.css',
-  '/upload.css',
-  '/archive.css',
-  '/script.js',
-  '/about.js',
-  '/archive.js',
+  '/index.html', // redirects to /gallery/index.html
+  '/gallery/index.html',
+  '/know-me/about.html',
+  '/archive/archive.html',
+  '/image-upload/upload.html',
+  '/project-detail/project-detail.html',
+  '/assets/styles/galaxy.css',
+  '/assets/styles/styles.css',
+  '/assets/scripts/script.js',
+  '/archive/archive.js',
+  '/know-me/about.js',
   '/manifest.json',
   '/favicon.ico',
-  // Add important assets
   'https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&family=Playfair+Display:wght@400;600&display=swap',
   'https://www.transparenttextures.com/patterns/stardust.png'
 ];
+
+function isCacheableRequest(request) {
+  if (request.method !== 'GET') return false;
+  const url = new URL(request.url);
+  // Only same-origin resources (except allowed external font/texture above)
+  const sameOrigin = url.origin === self.location.origin;
+  if (!sameOrigin) {
+    // allowlisted externals already pre-cached; skip runtime cache for others
+    return false;
+  }
+  // Skip API/signature/uploads to avoid caching sensitive responses
+  if (url.pathname.startsWith('/api/') || url.pathname.startsWith('/uploads/')) return false;
+  if (url.pathname.includes('signature')) return false;
+  return true;
+}
 
 // Install event
 self.addEventListener('install', event => {
@@ -61,13 +74,7 @@ self.addEventListener('activate', event => {
 
 // Fetch event
 self.addEventListener('fetch', event => {
-  // Skip non-GET requests
-  if (event.request.method !== 'GET') {
-    return;
-  }
-
-  // Skip chrome-extension and other non-http requests
-  if (!event.request.url.startsWith('http')) {
+  if (!isCacheableRequest(event.request)) {
     return;
   }
 

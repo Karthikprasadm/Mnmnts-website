@@ -5,14 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Upload Media | mnmnts</title>
     <link rel="preconnect" href="https://wallpaperaccess.com">
-    <link rel="stylesheet" href="galaxy.css">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&family=Playfair+Display:wght@400;600&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Jersey+10&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Jockey+One&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../assets/styles/galaxy.css">
+    <link rel="stylesheet" href="../assets/fonts/fonts.css">
     <link rel="stylesheet" href="upload.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <meta name="description" content="Upload your images and videos to Karthik Prasad M's digital museum of moments. Secure, creative, and easy media uploads for your portfolio.">
@@ -27,55 +21,57 @@
     <!-- End SEO meta tags -->
     <h1 style="display:none;">Upload Media | Karthik Prasad M | Web Developer, Storyteller, Creative Portfolio</h1>
     <!-- Favicons for all platforms -->
-    <link rel="apple-touch-icon" sizes="57x57" href="favicon/apple-icon-57x57.png">
-    <link rel="apple-touch-icon" sizes="60x60" href="favicon/apple-icon-60x60.png">
-    <link rel="apple-touch-icon" sizes="72x72" href="favicon/apple-icon-72x72.png">
-    <link rel="apple-touch-icon" sizes="76x76" href="favicon/apple-icon-76x76.png">
-    <link rel="apple-touch-icon" sizes="114x114" href="favicon/apple-icon-114x114.png">
-    <link rel="apple-touch-icon" sizes="120x120" href="favicon/apple-icon-120x120.png">
-    <link rel="apple-touch-icon" sizes="144x144" href="favicon/apple-icon-144x144.png">
-    <link rel="apple-touch-icon" sizes="152x152" href="favicon/apple-icon-152x152.png">
-    <link rel="apple-touch-icon" sizes="180x180" href="favicon/apple-icon-180x180.png">
-    <link rel="icon" type="image/png" sizes="192x192"  href="favicon/android-icon-192x192.png">
-    <link rel="icon" type="image/png" sizes="32x32" href="favicon/favicon-32x32.png">
-    <link rel="icon" type="image/png" sizes="96x96" href="favicon/favicon-96x96.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="favicon/favicon-16x16.png">
-    <link rel="manifest" href="favicon/manifest.json">
+    <link rel="apple-touch-icon" sizes="57x57" href="../favicon/apple-icon-57x57.png">
+    <link rel="apple-touch-icon" sizes="60x60" href="../favicon/apple-icon-60x60.png">
+    <link rel="apple-touch-icon" sizes="72x72" href="../favicon/apple-icon-72x72.png">
+    <link rel="apple-touch-icon" sizes="76x76" href="../favicon/apple-icon-76x76.png">
+    <link rel="apple-touch-icon" sizes="114x114" href="../favicon/apple-icon-114x114.png">
+    <link rel="apple-touch-icon" sizes="120x120" href="../favicon/apple-icon-120x120.png">
+    <link rel="apple-touch-icon" sizes="144x144" href="../favicon/apple-icon-144x144.png">
+    <link rel="apple-touch-icon" sizes="152x152" href="../favicon/apple-icon-152x152.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="../favicon/apple-icon-180x180.png">
+    <link rel="icon" type="image/png" sizes="192x192"  href="../favicon/android-icon-192x192.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="../favicon/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="96x96" href="../favicon/favicon-96x96.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="../favicon/favicon-16x16.png">
+    <link rel="manifest" href="../favicon/manifest.json">
     <meta name="msapplication-TileColor" content="#22223b">
-    <meta name="msapplication-TileImage" content="favicon/ms-icon-144x144.png">
+    <meta name="msapplication-TileImage" content="../favicon/ms-icon-144x144.png">
     <meta name="theme-color" content="#22223b">
     <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
     <link rel="icon" href="/favicon.ico" type="image/x-icon">
-    <link rel="manifest" href="manifest.json">
+    <link rel="manifest" href="../manifest.json">
     <meta name="theme-color" content="#ffb347">
 </head>
 <body class="upload-page">
     <div class="stars"></div>
+    <div class="toast-container" id="toastContainer" aria-live="polite"></div>
     <nav class="navbar" role="navigation" aria-label="Main navigation">
         <div class="social-icons" aria-label="Social links">
-            <a href="https://www.instagram.com/kkarthhikk" target="_blank" aria-label="Instagram">
+            <a href="https://www.instagram.com/kkarthhikk" target="_blank" aria-label="Instagram" data-tooltip="Instagram">
                 <img src="https://img.icons8.com/?size=48&id=DpOQ6G5p47f0&format=png" alt="Instagram icon" loading="lazy">
             </a>
-            <a href="https://www.linkedin.com/in/karthik-prasad-m-7673b5356/" target="_blank" aria-label="LinkedIn">
+            <a href="https://www.linkedin.com/in/karthik-prasad-m-7673b5356/" target="_blank" aria-label="LinkedIn" data-tooltip="LinkedIn">
                 <img src="https://img.icons8.com/?size=100&id=447&format=png" alt="LinkedIn icon" loading="lazy">
             </a>
-            <a href="https://pin.it/70AOzYsfW" target="_blank" aria-label="Pinterest">
+            <a href="https://pin.it/70AOzYsfW" target="_blank" aria-label="Pinterest" data-tooltip="Pinterest">
                 <img src="https://img.icons8.com/?size=48&id=CeRsUJCNL4go&format=png" alt="Pinterest icon" loading="lazy">
             </a>
-            <a href="https://open.spotify.com/user/31g54rthdkjwc7tk2yzwlkptbbqi" target="_blank" aria-label="Spotify">
+            <a href="https://open.spotify.com/user/31g54rthdkjwc7tk2yzwlkptbbqi" target="_blank" aria-label="Spotify" data-tooltip="Spotify">
                 <img src="https://img.icons8.com/?size=100&id=6707&format=png" alt="Spotify icon" loading="lazy">
             </a>
-            <a href="https://github.com/Karthikprasadm" target="_blank" aria-label="GitHub">
+            <a href="https://github.com/Karthikprasadm" target="_blank" aria-label="GitHub" data-tooltip="GitHub">
                 <img src="https://github.githubassets.com/assets/GitHub-Mark-ea2971cee799.png" alt="GitHub icon" loading="lazy">
             </a>
         </div>
         <h2 class="logo" aria-label="Site logo"></h2>
-        <div class="dropdown">
+        <div class="dropdown menu-button-separate">
             <button class="dropbtn" aria-label="Open menu" tabindex="0">Menu</button>
             <div class="dropdown-content" role="menu">
-                <a href="index.html" role="menuitem">Back to Gallery</a>
-                <a href="about.html" role="menuitem">Know me <3</a>
-                <a href="archive.html" role="menuitem">Archive</a>
+                <a href="../gallery/index.html" role="menuitem">Open gallery</a>
+                <a href="../know-me/about.html" role="menuitem">Know me</a>
+                <a href="../archive/archive.html" role="menuitem">View archive</a>
+                <a href="./upload.html" role="menuitem" aria-current="page">Open upload</a>
             </div>
         </div>
     </nav>
@@ -106,7 +102,7 @@
 
     <div class="yoda-favicon" id="yodaResumeBtn" style="cursor:pointer;" aria-label="Open resume modal">
         <div class="yoda-modern-box"> my resume!!</div>
-        <img src="icons8-baby-yoda-color-favicons/web/icons8-baby-yoda-color-48.png" alt="Baby Yoda favicon" loading="lazy" />
+        <img src="../icons8-baby-yoda-color-favicons/web/icons8-baby-yoda-color-48.png" alt="Baby Yoda favicon" loading="lazy" />
     </div>
     <div id="resumeModal" class="resume-modal-overlay" style="display:none;">
         <div class="stars"></div>
@@ -128,16 +124,23 @@
             </div>
         </div>
     </div>
-    <link rel="stylesheet" href="pdfjs/pdf_viewer.min.css">
-    <script src="pdfjs/pdf.min.js"></script>
+    <link rel="stylesheet" href="../assets/pdfjs/pdf_viewer.min.css">
+    <script src="../assets/pdfjs/pdf.min.js"></script>
     <script>
     // PDF.js worker setup
-    pdfjsLib.GlobalWorkerOptions.workerSrc = 'pdfjs/pdf.worker.min.js';
+    pdfjsLib.GlobalWorkerOptions.workerSrc = '../assets/pdfjs/pdf.worker.min.js';
     function renderPDF(url, containerId) {
         const container = document.getElementById(containerId);
-        container.innerHTML = '';
+        if (!container) {
+            console.error('PDF container not found');
+            return;
+        }
+        container.innerHTML = '<p style="color: #bfcaff; text-align: center; padding: 2rem;">Loading PDF...</p>';
         pdfjsLib.getDocument(url).promise.then(function(pdf) {
+        container.innerHTML = '';
+            const renderPromises = [];
             for (let pageNum = 1; pageNum <= pdf.numPages; pageNum++) {
+                renderPromises.push(
                 pdf.getPage(pageNum).then(function(page) {
                     const scale = 1;
                     const quality = 3;
@@ -152,16 +155,30 @@
                     canvas.style.width = viewport.width + 'px';
                     canvas.style.height = viewport.height + 'px';
                     context.setTransform(quality, 0, 0, quality, 0, 0);
-                    page.render({ canvasContext: context, viewport: viewport });
-                });
+                        return page.render({ canvasContext: context, viewport: viewport }).promise;
+                    }).catch(function(err) {
+                        console.error('Error rendering PDF page:', err);
+                        const errorDiv = document.createElement('div');
+                        errorDiv.style.cssText = 'color: #ff6b6b; padding: 1rem; text-align: center;';
+                        errorDiv.textContent = 'Error loading page ' + pageNum;
+                        container.appendChild(errorDiv);
+                    })
+                );
             }
+            Promise.all(renderPromises).catch(function(err) {
+                console.error('Error rendering PDF:', err);
+                container.innerHTML = '<p style="color: #ff6b6b; text-align: center; padding: 2rem;">Failed to load PDF. Please try again.</p>';
+            });
+        }).catch(function(err) {
+            console.error('Error loading PDF:', err);
+            container.innerHTML = '<p style="color: #ff6b6b; text-align: center; padding: 2rem;">Failed to load PDF. Please check if the file exists.</p>';
         });
     }
     document.getElementById('yodaResumeBtn').onclick = function() {
         var modal = document.getElementById('resumeModal');
         modal.style.display = 'flex';
         setTimeout(function(){modal.classList.add('show');}, 10);
-        renderPDF('my_resume/karthik_resume.pdf', 'pdfjs-viewer');
+        renderPDF('../assets/resume/karthik_resume.pdf', 'pdfjs-viewer');
     };
     document.getElementById('closeResumeModal').onclick = function(e) {
         var modal = document.getElementById('resumeModal');
@@ -178,7 +195,7 @@
     document.getElementById('downloadResumeBtn').onclick = function(e) {
         e.stopPropagation();
         const link = document.createElement('a');
-        link.href = 'my_resume/karthik_resume.pdf';
+        link.href = '../assets/resume/karthik_resume.pdf';
         link.download = 'Karthik_Resume.pdf';
         document.body.appendChild(link);
         link.click();
@@ -186,7 +203,7 @@
     };
     document.getElementById('openResumeBtn').onclick = function(e) {
         e.stopPropagation();
-        window.open('my_resume/karthik_resume.pdf', '_blank', 'noopener');
+        window.open('../assets/resume/karthik_resume.pdf', '_blank', 'noopener');
     };
     document.getElementById('printResumeBtn').onclick = function(e) {
         e.stopPropagation();
@@ -195,7 +212,7 @@
             printFrame = document.createElement('iframe');
             printFrame.id = 'resumePrintFrame';
             printFrame.style.display = 'none';
-            printFrame.src = 'my_resume/karthik_resume.pdf';
+            printFrame.src = '../assets/resume/karthik_resume.pdf';
             document.body.appendChild(printFrame);
             printFrame.onload = function() {
                 printFrame.contentWindow.focus();
@@ -244,6 +261,15 @@
         const ikProgressBar = document.getElementById("progress");
         const ikPreview = document.getElementById("preview");
         const ikErrorMessage = document.getElementById("errorMessage");
+        const toastContainer = document.getElementById("toastContainer");
+        function showToast(message, type = "success") {
+            if (!toastContainer) return;
+            const toast = document.createElement("div");
+            toast.className = `toast ${type}`;
+            toast.textContent = message;
+            toastContainer.appendChild(toast);
+            setTimeout(() => toast.remove(), 3200);
+        }
         const imagekit = new ImageKit({
             publicKey: "public_QadH3cW1AFwIaqSz6iRkSiGl6PM=",
             urlEndpoint: "https://ik.imagekit.io/ijv7nmfqx" 
@@ -256,6 +282,7 @@
             const files = ikMediaUpload.files;
             if (files.length === 0) {
                 ikPreview.innerHTML = `<p>Please select a file before uploading.</p>`;
+                showToast("Select a file to upload.", "error");
                 return;
             }
             ikErrorMessage.textContent = "";
@@ -270,13 +297,20 @@
             } catch (err) {
                 ikErrorMessage.textContent = "Failed to get upload signature. Please try again later.";
                 ikPreview.innerHTML = "";
+                showToast("Could not get upload signature.", "error");
                 return;
             }
             let completedUploads = 0;
             let failedUploads = 0;
             let failedFiles = [];
             let failedReasons = [];
-            Array.from(files).forEach(async (file, index) => {
+            let totalProgress = 0;
+            const totalFiles = files.length;
+            
+            // Process files sequentially to better track progress
+            async function processFiles() {
+                for (let index = 0; index < files.length; index++) {
+                    const file = files[index];
                 // Validate file type and size before upload
                 const allowedTypes = ["image/jpeg", "image/png", "video/mp4"];
                 const maxSize = 10 * 1024 * 1024; // 10MB
@@ -284,11 +318,18 @@
                     failedUploads++;
                     failedFiles.push(file.name);
                     failedReasons.push(`${file.name}: Invalid file type (${file.type})`);
+                        updateProgress();
+                        showToast(`${file.name}: invalid type`, "error");
+                        continue;
                 } else if (file.size > maxSize) {
                     failedUploads++;
                     failedFiles.push(file.name);
                     failedReasons.push(`${file.name}: File size exceeds 10MB`);
-                } else {
+                        updateProgress();
+                        showToast(`${file.name}: too large (>10MB)`, "error");
+                        continue;
+                    }
+                    
                     let sigDataPerFile;
                     try {
                         sigDataPerFile = await getSignature();
@@ -299,12 +340,13 @@
                         failedUploads++;
                         failedFiles.push(file.name);
                         failedReasons.push(`${file.name}: Failed to get upload signature.`);
-                        if (completedUploads + failedUploads === files.length) {
-                            ikPreview.innerHTML = `<p>Completed: ${completedUploads} files uploaded, ${failedUploads} failed.<br>Failed: ${failedFiles.join(", ")}<br>${failedReasons.length ? "<br>Reasons:<br>" + failedReasons.join("<br>") : ""}</p>`;
-                            ikErrorMessage.textContent = "Some files failed to upload. Please check file type, size, or see details below.";
+                        updateProgress();
+                        showToast(`${file.name}: signature failed`, "error");
+                        continue;
                         }
-                        return;
-                    }
+                    
+                    // Upload file with progress tracking
+                    await new Promise((resolve) => {
                     imagekit.upload({
                         file: file,
                         fileName: file.name,
@@ -313,8 +355,11 @@
                         token: sigDataPerFile.token,
                         useUniqueFileName: true,
                         onProgress: function(progress) {
-                            const percentage = progress.loaded / progress.total * 100;
-                            ikProgressBar.style.width = `${percentage}%`;
+                                // Calculate overall progress across all files
+                                const fileProgress = (progress.loaded / progress.total) * 100;
+                                const fileWeight = 100 / totalFiles;
+                                totalProgress = (index * fileWeight) + (fileProgress * fileWeight / 100);
+                                ikProgressBar.style.width = `${totalProgress}%`;
                         }
                     }, function(err, result) {
                         if (err) {
@@ -326,24 +371,30 @@
                         } else {
                             completedUploads++;
                         }
-                        if (completedUploads + failedUploads === files.length) {
+                            updateProgress();
+                            resolve();
+                        });
+                    });
+                }
+            }
+            
+            function updateProgress() {
+                if (completedUploads + failedUploads === totalFiles) {
+                    ikProgressBar.style.width = "100%";
                             if (failedUploads > 0) {
                                 ikPreview.innerHTML = `<p>Completed: ${completedUploads} files uploaded, ${failedUploads} failed.<br>Failed: ${failedFiles.join(", ")}<br>${failedReasons.length ? "<br>Reasons:<br>" + failedReasons.join("<br>") : ""}</p>`;
                                 ikErrorMessage.textContent = "Some files failed to upload. Please check file type, size, or see details below.";
+                                showToast("Some files failed to upload.", "error");
                             } else {
                                 ikPreview.innerHTML = `<p>Success! All ${completedUploads} file(s) uploaded.</p>`;
                                 ikErrorMessage.textContent = "";
                                 displayUploadedMedia(files);
+                                showToast("Upload complete!", "success");
                             }
                         }
-                    });
-                }
-                // If all files are invalid, show immediately
-                if (completedUploads + failedUploads === files.length && failedUploads > 0 && completedUploads === 0) {
-                    ikPreview.innerHTML = `<p>Completed: 0 files uploaded, ${failedUploads} failed.<br>Failed: ${failedFiles.join(", ")}<br>${failedReasons.length ? "<br>Reasons:<br>" + failedReasons.join("<br>") : ""}</p>`;
-                    ikErrorMessage.textContent = "Some files failed to upload. Please check file type, size, or see details below.";
-                }
-            });
+            }
+            
+            processFiles();
         });
     </script>
 
@@ -396,8 +447,10 @@
                 errorMessage.textContent = "Invalid file type or size (max 10MB).";
                 this.value = "";
                 preview.innerHTML = "";
+                showToast("Invalid file type or size (max 10MB).", "error");
             } else {
                 preview.innerHTML = `<p>${files.length} file(s) selected.</p>`;
+                showToast(`${files.length} file(s) ready to upload.`, "success");
             }
         });
 
@@ -510,7 +563,7 @@
         min-height: 32px;
     }
     .modern-modal-title {
-        font-family: 'Montserrat', Arial, sans-serif;
+        font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
         font-weight: 700;
         font-size: 1.2rem;
         color: #f3f3f3;
@@ -621,5 +674,6 @@
         #closeResumeModal { right: 8px; }
     }
     </style>
+    <script src="../assets/scripts/tooltips.js"></script>
 </body>
 </html>

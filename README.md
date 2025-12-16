@@ -24,15 +24,44 @@ A minimalist, interactive web experience designed as a digital museum of persona
 - **Backend (for uploads):** Vercel serverless function for secure signature generation
 - **Hosting:** GitHub Pages + Vercel
 
+## 🏗️ Local Development
+1) Clone and install:
+```
+npm install
+```
+2) Run dev server:
+```
+npm run dev
+```
+3) Build / preview static output if needed:
+```
+npm run build
+```
+Note: stop existing dev servers before starting another to avoid port conflicts.
+
 ## 📝 Project Structure
-- `index.html` – Main landing/gallery page
-- `upload.html` – Media upload page (with progress and feedback)
+- `gallery/index.html` – Main gallery page
+- `know-me/about.html` – “Know me” page
+- `archive/archive.html` – Archive page
+- `image-upload/upload.html` – Upload page
+- `project-detail/` – Project detail HTML/CSS/JS
+- `assets/styles/` – Shared styles (galaxy.css, styles.css)
+- `assets/fonts/` – Self-hosted fonts + fonts.css
+- `assets/scripts/` – Shared scripts (script.js)
+- `assets/pdfjs/` – PDF.js assets
+- `assets/resume/` – Resume PDF
+- `favicon/` – Icons/manifests
 - `api/signature.js` – Vercel serverless function for ImageKit upload signature
-- `styles.css`, `galaxy.css` – Stylesheets for theme and layout
 
 ## 🔒 Security
 - Uploads use a backend signature endpoint to keep ImageKit keys safe
 - CORS configured to allow only trusted origins
+
+## 🎨 Design System (current direction)
+- **Glass & material:** background `rgba(30,30,30,0.8)`, border `1px solid rgba(255,255,255,0.06)`, `backdrop-filter: blur(16–20px)`, radius `20–24px`, no heavy glow.
+- **Navigation:** Navbar + menu button on one row; dropdown items compact with slight translate/opacity hover and 40px min hit targets.
+- **Motion:** Micro-interactions 150–220ms ease-out; modals 300–400ms; avoid translateY > 6px; focus-visible mirrors hover.
+- **Accessibility:** Meaningful `aria-label`s, visible focus (`:focus-visible`), sufficient contrast.
 
 ## ✨ Customization Ideas
 - Add more gallery layouts or a timeline mode
@@ -52,6 +81,10 @@ A minimalist, interactive web experience designed as a digital museum of persona
 - **Performance**: Lazy loading for images, smooth scrolling
 - **Responsive**: Works on all devices and screen sizes
 - **Modern favicon setup**: All platforms and PWA supported
+
+## 🔧 Known Issues / Backlog
+- `archive.js`: Artwork/photo modal should reuse the existing image instead of blanking `img.src` and calling non-existent edit hooks.
+- `archive.js`: User-added project thumbnails should either be registered with the lazy loader or set `img.src` immediately to avoid blank cards until reload.
 
 ## 📄 License
 All Rights Reserved.

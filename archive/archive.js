@@ -55,6 +55,15 @@ document.addEventListener('DOMContentLoaded', function() {
     // Filtering
     const filterBtns = document.querySelectorAll('.filter-btn');
     const galleryItems = document.querySelectorAll('.gallery-item');
+    const galleryEmpty = document.getElementById('gallery-empty');
+
+    function updateEmptyState() {
+        const items = Array.from(document.querySelectorAll('.gallery-item'));
+        const hasVisible = items.some(item => item.style.display !== 'none');
+        if (galleryEmpty) {
+            galleryEmpty.hidden = hasVisible;
+        }
+    }
     
     filterBtns.forEach(btn => {
         btn.addEventListener('click', () => {
@@ -73,6 +82,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     item.setAttribute('aria-hidden', 'true');
                 }
             });
+            updateEmptyState();
             
             // Announce filter change to screen readers
             announceToScreenReader(`Showing ${filter === 'all' ? 'all items' : filter + ' items'}`);
@@ -187,6 +197,8 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     });
+
+    updateEmptyState();
 
     // Lightbox close button
     lightboxClose.addEventListener('click', closeLightbox);
@@ -402,7 +414,10 @@ document.addEventListener('DOMContentLoaded', function() {
         setTimeout(() => { projectModal.style.opacity = 1; }, 10);
         document.body.style.overflow = 'hidden';
         // --- Modal: first tech tag acts as edit button ---
-        enableModalTechEdit(data, idx, false, true);
+        // Only enable edit for manual projects (not GitHub repos)
+        if (idx !== undefined && projectData[idx]) {
+          enableModalTechEdit(projectData[idx], idx, false, true);
+        }
       });
     });
 
@@ -433,12 +448,12 @@ document.addEventListener('DOMContentLoaded', function() {
         // Prevent lightbox if clicking overlay
         if (e.target.tagName === 'IMG') e.preventDefault();
         const img = card.querySelector('img');
-        img.setAttribute('loading', 'lazy');
-        img.setAttribute('data-src', img.src);
-        img.classList.add('lazy');
-        img.src = '';
-        modalProjectImg.src = img.src;
-        modalProjectImg.alt = img.alt;
+        const fullSrc = img.getAttribute('data-src') || img.src;
+        modalProjectImg.style.display = '';
+        modalProjectVideo.style.display = 'none';
+        modalProjectVideoSource.src = '';
+        modalProjectImg.src = fullSrc;
+        modalProjectImg.alt = img.alt || 'Artwork';
         modalProjectName.textContent = img.alt;
         modalProjectDesc.textContent = card.getAttribute('data-category') === 'artwork' ? 'Artwork' : 'Photography';
         // Hide tech stack, links, and README
@@ -454,8 +469,6 @@ document.addEventListener('DOMContentLoaded', function() {
         projectModal.style.display = 'flex';
         setTimeout(() => { projectModal.style.opacity = 1; }, 10);
         document.body.style.overflow = 'hidden';
-        // --- Modal: first tech tag acts as edit button ---
-        enableModalTechEdit(data, idx, false, true);
       });
     });
 
@@ -489,12 +502,14 @@ document.addEventListener('DOMContentLoaded', function() {
 
     function fetchAndDisplayGithubProjects() {
       const gallery = document.getElementById('gallery');
+      addSkeletons();
       Array.from(gallery.querySelectorAll('.gallery-item[data-github]')).forEach(card => card.remove());
       const token = localStorage.getItem('githubToken');
       const headers = token ? { Authorization: `token ${token}` } : {};
       fetch(githubApiUrl, { headers })
         .then(res => res.json())
         .then(repos => {
+          removeSkeletons();
           if (!Array.isArray(repos)) return;
           const userProjects = JSON.parse(localStorage.getItem('userProjects') || '[]');
           const manualNames = new Set([
@@ -624,11 +639,13 @@ document.addEventListener('DOMContentLoaded', function() {
               projectModal.style.display = 'flex';
               setTimeout(() => { projectModal.style.opacity = 1; }, 10);
               document.body.style.overflow = 'hidden';
-              enableModalTechEdit(repo);
+              // GitHub repos are read-only, no edit functionality
             });
           });
+          updateEmptyState();
         })
-        .catch(err => console.error('GitHub fetch error:', err));
+        .catch(err => { console.error('GitHub fetch error:', err); removeSkeletons(); })
+        .finally(updateEmptyState);
     }
     // Fetch GitHub projects on page load
     window.addEventListener('DOMContentLoaded', fetchAndDisplayGithubProjects);
@@ -753,10 +770,11 @@ document.addEventListener('DOMContentLoaded', function() {
       card.setAttribute('role', 'gridcell');
       // Card image (thumbnail)
       const img = document.createElement('img');
+      const thumbSrc = data.thumbnail || data.img || 'https://via.placeholder.com/600x400?text=Project';
       img.setAttribute('loading', 'lazy');
-      img.setAttribute('data-src', data.thumbnail);
+      img.setAttribute('data-src', thumbSrc);
       img.classList.add('lazy');
-      img.src = '';
+      img.src = thumbSrc; // ensure visible immediately
       img.alt = data.name + ' Thumbnail';
       card.appendChild(img);
       // Overlay
@@ -869,24 +887,57 @@ document.addEventListener('DOMContentLoaded', function() {
         card.appendChild(btnWrap);
       }
       gallery.appendChild(wrapper);
+      // Ensure lazy observer picks up new images
+      if (typeof imageObserver !== 'undefined' && img.classList.contains('lazy')) {
+        imageObserver.observe(img);
+      }
     }
     // Render all user projects (clear and re-add)
     function renderUserProjects() {
       // Remove all user project cards (those with .gallery-item[data-user])
       const gallery = document.getElementById('gallery');
-      // Remove only user-added cards (those with .edit-btn)
+      if (!gallery) return;
+      // Remove only user-added cards (those with .edit-btn) - need to find parent wrapper
       Array.from(gallery.querySelectorAll('.gallery-item .edit-btn')).forEach(btn => {
-        btn.closest('.gallery-item').remove();
+        const wrapper = btn.closest('div[style*="flex-direction: column"]') || btn.closest('.gallery-item').parentElement;
+        if (wrapper) {
+          wrapper.remove();
+        } else {
+          btn.closest('.gallery-item')?.remove();
+        }
       });
       let userProjects = JSON.parse(localStorage.getItem('userProjects') || '[]');
       userProjects.forEach((proj, idx) => addProjectToGallery(proj, idx));
+      updateEmptyState();
     }
     // Save default add handler for restore after edit
     const defaultAddProjectSubmit = addProjectForm.onsubmit;
-    // On page load, load user projects from localStorage
-    window.addEventListener('DOMContentLoaded', () => {
+
+    // Skeleton helpers for loading states
+    function addSkeletons(count = 4) {
+      const gallery = document.getElementById('gallery');
+      if (!gallery) return;
+      for (let i = 0; i < count; i++) {
+        const wrapper = document.createElement('div');
+        wrapper.className = 'skeleton-wrapper';
+        const card = document.createElement('div');
+        card.className = 'skeleton-card';
+        const name = document.createElement('div');
+        name.className = 'skeleton-name';
+        wrapper.appendChild(card);
+        wrapper.appendChild(name);
+        gallery.appendChild(wrapper);
+      }
+    }
+    function removeSkeletons() {
+      document.querySelectorAll('.skeleton-wrapper').forEach(node => node.remove());
+    }
+    // On page load, load user projects from localStorage (already in DOMContentLoaded, but ensure it runs)
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', renderUserProjects);
+    } else {
       renderUserProjects();
-    });
+    }
     // Helper: show modal for new projects
     function showProjectModal(data) {
       const modal = document.getElementById('projectModal');
@@ -956,7 +1007,8 @@ document.addEventListener('DOMContentLoaded', function() {
       }
       modal.style.display = 'flex';
       // --- Modal: first tech tag acts as edit button ---
-      enableModalTechEdit(data);
+      // Only enable if it's a user project (has idx)
+      // This is called from showProjectModal which is used for user-added projects
     }
     // --- Modal: first tech tag acts as edit button ---
     function enableModalTechEdit(currentProjectData, projectIdx = null, isUserProject = false, isManualProject = false) {
@@ -1071,27 +1123,27 @@ document.addEventListener('DOMContentLoaded', function() {
       fetchAndDisplayGithubProjects();
     });
 
-    // --- BRUTE FORCE: Password Modal Close Handler ---
-    setInterval(function() {
-      const passwordModal = document.getElementById('passwordModal');
-      const closeBtn = document.getElementById('closePasswordModal');
-      
-      if (passwordModal && closeBtn) {
-        // Force attach click handler every 100ms
-        closeBtn.onclick = function() {
-          passwordModal.style.display = 'none';
+    // --- Password Modal Close Handler (optimized) ---
+    // Attach handlers once instead of using setInterval
+    const passwordModalEl = document.getElementById('passwordModal');
+    const closePasswordModalBtn = document.getElementById('closePasswordModal');
+    
+    if (closePasswordModalBtn) {
+      closePasswordModalBtn.addEventListener('click', function() {
+        if (passwordModalEl) {
+          passwordModalEl.style.display = 'none';
           document.body.style.overflow = '';
-        };
-        
-        // Also check if modal is visible and ESC is pressed
-        document.onkeydown = function(e) {
-          if (e.key === 'Escape' && passwordModal.style.display === 'flex') {
-            passwordModal.style.display = 'none';
-            document.body.style.overflow = '';
-          }
-        };
+        }
+      });
+    }
+    
+    // ESC key handler for password modal
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape' && passwordModalEl && passwordModalEl.style.display === 'flex') {
+        passwordModalEl.style.display = 'none';
+        document.body.style.overflow = '';
       }
-    }, 100);
+    });
 
     // --- Password Modal Universal Close Logic ---
     document.addEventListener('click', function(e) {
