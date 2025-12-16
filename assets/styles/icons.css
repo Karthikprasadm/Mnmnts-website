@@ -29,7 +29,8 @@
 }
 
 .icon-github {
-    background-image: url("https://github.githubassets.com/assets/GitHub-Mark-ea2971cee799.png");
+    /* Local GitHub icon relative to this CSS file */
+    background-image: url("../../Images_for_icon/github-svgrepo-com.png");
 }
 
 

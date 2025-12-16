@@ -75,21 +75,12 @@ html::-webkit-scrollbar, body::-webkit-scrollbar {
     z-index: 1001;
 }
 
-.menu-button-separate {
-    position: static;
-    margin-left: auto;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    height: fit-content;
-    line-height: 1;
-}
-
+/* Separate Menu Button – inherits fixed positioning from galaxy.css */
 .menu-button-separate .dropdown-content {
     right: 0;
     left: auto;
     transform: none;
-    top: calc(100% + 2px);
+    top: calc(100% + 6px);
 }
 
 .dropbtn {

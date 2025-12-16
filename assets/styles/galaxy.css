@@ -359,27 +359,53 @@ h2, .h2 {
     z-index: 1001;
 }
 
-/* Separate Menu Button */
+/* Global detached menu bubble (used on non-home pages) */
 .menu-button-separate {
-    position: static;
-    margin-left: auto;
+    position: fixed;
+    right: 2.4rem;
+    top: var(--menu-detach-top, 2.4rem);
     display: flex;
     align-items: center;
     justify-content: center;
     height: fit-content;
     line-height: 1;
+    z-index: 1100;
 }
 
 .menu-button-separate .dropdown-content {
     right: 0;
     left: auto;
     transform: none;
-    top: calc(100% + 2px);
+    top: calc(100% + 6px);
 }
 
-@media (max-width: 768px) {
-    .menu-button-separate {
-        margin-left: auto;
+/* Home page: start attached to navbar, then detach with animation */
+.home-page .menu-button-separate {
+    position: static;
+    margin-left: auto;
+    z-index: 1001;
+}
+
+.home-page.menu-detach-active .menu-button-separate {
+    position: fixed;
+    right: 2.4rem;
+    top: var(--menu-detach-top, 2.4rem);
+    margin-left: 0;
+    animation: menu-bubble-detach 0.7s cubic-bezier(0.33, 1, 0.68, 1) forwards;
+}
+
+@keyframes menu-bubble-detach {
+    0% {
+        transform: scale(1) translateX(0);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.18);
+    }
+    40% {
+        transform: scale(0.9) translateX(10px);
+        box-shadow: 0 10px 26px rgba(0, 0, 0, 0.28);
+    }
+    100% {
+        transform: scale(1) translateX(0);
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.22);
     }
 }
 
