@@ -177,31 +177,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // Upload functionality is handled in upload.html, removed duplicate code
 
-    // Home page menu bubble detach animation
-    const body = document.body;
-    if (body.classList.contains("home-page")) {
-        const nav = document.querySelector(".navbar");
-        const menuBubble = document.querySelector(".menu-button-separate");
-        if (nav && menuBubble) {
-            const updateMenuPosition = () => {
-                const navRect = nav.getBoundingClientRect();
-                const menuRect = menuBubble.getBoundingClientRect();
-                const targetTop = navRect.top + navRect.height / 2 - menuRect.height / 2 + window.scrollY;
-                document.documentElement.style.setProperty("--menu-detach-top", `${targetTop}px`);
-            };
-
-            // Initial position calculation
-            updateMenuPosition();
-            window.addEventListener("resize", updateMenuPosition);
-            window.addEventListener("scroll", updateMenuPosition);
-
-            // Trigger detach animation after initial render
-            setTimeout(() => {
-                body.classList.add("menu-detach-active");
-            }, 800);
-        }
-    }
-
     // Initialize custom tooltips
     function initTooltips() {
         const tooltipElements = document.querySelectorAll('[data-tooltip]');

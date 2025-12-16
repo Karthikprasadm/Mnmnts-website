@@ -267,12 +267,27 @@ main {
     z-index: 1001;
 }
 
-/* Separate Menu Button – inherits fixed positioning from galaxy.css */
+/* Separate Menu Button */
+.menu-button-separate {
+    position: static;
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: fit-content;
+    line-height: 1;
+}
+
 .menu-button-separate .dropdown-content {
     right: 0;
     left: auto;
     transform: none;
-    top: calc(100% + 6px);
+    top: calc(100% + 2px);
+}
+
+/* Invisible bridge to maintain hover between button and dropdown */
+.menu-button-separate::after {
+    content: none;
 }
 
 @media (max-width: 768px) {
