@@ -1,0 +1,11 @@
+{
+  "videos": [
+    {
+      "id": 1,
+      "video": "https://ik.imagekit.io/ijv7nmfqx/Website_showcase/beautiful.mp4?updatedAt=1747500960916",
+      "thumbnail": "https://ik.imagekit.io/ijv7nmfqx/Website_showcase/cow1.jpg?updatedAt=1747507686444",
+      "alt": "Gallery video 1"
+    }
+  ]
+}
+

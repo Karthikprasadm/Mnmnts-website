@@ -321,3 +321,32 @@ html, body {
 html::-webkit-scrollbar, body::-webkit-scrollbar {
     display: none; /* Chrome, Safari, Opera */
 }
+
+/* Print styles for about page */
+@media print {
+    .about-container {
+        background: white !important;
+        color: black !important;
+        box-shadow: none !important;
+        border: 1px solid #ccc !important;
+    }
+
+    .about-bio h1,
+    .about-extra h2 {
+        color: black !important;
+    }
+
+    .about-bio p,
+    .about-extra p,
+    .about-list li {
+        color: black !important;
+    }
+
+    .about-list li::before {
+        color: black !important;
+    }
+
+    .about-corner-odd-wandering {
+        display: none !important;
+    }
+}

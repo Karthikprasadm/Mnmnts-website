@@ -49,7 +49,19 @@
 <body class="upload-page">
     <div class="stars"></div>
     <div class="toast-container" id="toastContainer" aria-live="polite"></div>
+    <!-- Unified Navbar -->
     <nav class="navbar" role="navigation" aria-label="Main navigation">
+        <!-- Menu Button (Left) -->
+        <div class="dropdown">
+            <button class="dropbtn" aria-label="Open menu" tabindex="0">Menu</button>
+            <div class="dropdown-content" role="menu">
+                <a href="../gallery/index.html" role="menuitem">Open gallery</a>
+                <a href="../know-me/about.html" role="menuitem">Know me</a>
+                <a href="../archive/archive.html" role="menuitem">View archive</a>
+                <a href="./upload.html" role="menuitem" aria-current="page">Open upload</a>
+            </div>
+        </div>
+        <!-- Social Icons (Left-Center) -->
         <div class="social-icons" aria-label="Social links">
             <a href="https://www.instagram.com/kkarthhikk" target="_blank" aria-label="Instagram" data-tooltip="Instagram">
                 <span class="icon icon-instagram" aria-hidden="true"></span>
@@ -67,16 +79,8 @@
                 <span class="icon icon-github" aria-hidden="true"></span>
             </a>
         </div>
+        <!-- Logo (Center) -->
         <h2 class="logo" aria-label="Site logo"></h2>
-        <div class="dropdown menu-button-separate">
-            <button class="dropbtn" aria-label="Open menu" tabindex="0">Menu</button>
-            <div class="dropdown-content" role="menu">
-                <a href="../gallery/index.html" role="menuitem">Open gallery</a>
-                <a href="../know-me/about.html" role="menuitem">Know me</a>
-                <a href="../archive/archive.html" role="menuitem">View archive</a>
-                <a href="./upload.html" role="menuitem" aria-current="page">Open upload</a>
-            </div>
-        </div>
     </nav>
 
     <div class="upload-container">
@@ -677,6 +681,7 @@
         #closeResumeModal { right: 8px; }
     }
     </style>
+    <script src="../assets/scripts/navbar-fix.js"></script>
     <script src="../assets/scripts/tooltips.js"></script>
 </body>
 </html>

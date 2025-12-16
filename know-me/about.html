@@ -19,6 +19,54 @@
     <meta property="og:url" content="https://karthikprasadm.github.io/about.html">
     <meta property="og:image" content="https://ik.imagekit.io/ijv7nmfqx/Website_showcase/875320.jpg?updatedAt=1748107186320&v=2">
     <!-- End SEO meta tags -->
+    <!-- JSON-LD Structured Data - Person -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Person",
+      "name": "Karthik Prasad M",
+      "url": "https://karthikprasadm.github.io/",
+      "description": "Student and web developer passionate about building accessible, pixel-perfect user interfaces where design meets engineering.",
+      "jobTitle": "Web Developer",
+      "knowsAbout": [
+        "Web Development",
+        "Frontend Development",
+        "User Interface Design",
+        "Accessibility",
+        "JavaScript",
+        "HTML",
+        "CSS"
+      ],
+      "sameAs": [
+        "https://www.instagram.com/kkarthhikk",
+        "https://www.linkedin.com/in/karthik-prasad-m-7673b5356/",
+        "https://github.com/Karthikprasadm",
+        "https://pin.it/70AOzYsfW",
+        "https://open.spotify.com/user/31g54rthdkjwc7tk2yzwlkptbbqi"
+      ],
+      "image": "https://ik.imagekit.io/ijv7nmfqx/Website_showcase/875320.jpg?updatedAt=1748107186320&v=2"
+    }
+    </script>
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "Home",
+          "item": "https://karthikprasadm.github.io/"
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": "Know Me",
+          "item": "https://karthikprasadm.github.io/know-me/about.html"
+        }
+      ]
+    }
+    </script>
     <!-- Favicons for all platforms -->
     <link rel="apple-touch-icon" sizes="57x57" href="../favicon/apple-icon-57x57.png">
     <link rel="apple-touch-icon" sizes="60x60" href="../favicon/apple-icon-60x60.png">
@@ -45,7 +93,19 @@
 </head>
 <body class="about-page">
     <div class="stars"></div>
+    <!-- Unified Navbar -->
     <nav class="navbar" role="navigation" aria-label="Main navigation">
+        <!-- Menu Button (Left) -->
+        <div class="dropdown">
+            <button class="dropbtn" aria-label="Open menu" tabindex="0">Menu</button>
+            <div class="dropdown-content" role="menu">
+                <a href="../gallery/index.html" role="menuitem">Open gallery</a>
+                <a href="../archive/archive.html" role="menuitem">View archive</a>
+                <a href="../image-upload/upload.html" role="menuitem">Open upload</a>
+                <a href="./about.html" role="menuitem" aria-current="page">Know me</a>
+            </div>
+        </div>
+        <!-- Social Icons (Left-Center) -->
         <div class="social-icons" aria-label="Social links">
             <a href="https://www.instagram.com/kkarthhikk" target="_blank" aria-label="Instagram" data-tooltip="Instagram">
                 <span class="icon icon-instagram" aria-hidden="true"></span>
@@ -63,16 +123,8 @@
                 <span class="icon icon-github" aria-hidden="true"></span>
             </a>
         </div>
+        <!-- Logo (Center) -->
         <h2 class="logo" aria-label="Site logo"></h2>
-        <div class="dropdown menu-button-separate">
-            <button class="dropbtn" aria-label="Open menu" tabindex="0">Menu</button>
-            <div class="dropdown-content" role="menu">
-                <a href="../gallery/index.html" role="menuitem">Open gallery</a>
-                <a href="../archive/archive.html" role="menuitem">View archive</a>
-                <a href="../image-upload/upload.html" role="menuitem">Open upload</a>
-                <a href="./about.html" role="menuitem" aria-current="page">Know me</a>
-            </div>
-        </div>
     </nav>
     <main class="about-container">
         <section class="about-bio">
@@ -444,6 +496,7 @@
         user-select: none;
     }
     </style>
+    <script src="../assets/scripts/navbar-fix.js"></script>
     <script src="../assets/scripts/tooltips.js"></script>
 </body>
 </html>

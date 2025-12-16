@@ -2,35 +2,41 @@
 
 .icon {
     display: inline-block;
-    width: 1.75rem;
-    height: 1.75rem;
+    width: 2rem;
+    height: 2rem;
     background-position: center;
     background-repeat: no-repeat;
     background-size: contain;
     filter: grayscale(40%) invert(80%);
     transition: opacity var(--hover-speed) var(--hover-ease),
-                filter var(--hover-speed) var(--hover-ease);
+                filter var(--hover-speed) var(--hover-ease),
+                transform var(--hover-speed) var(--hover-ease);
+}
+
+.icon:hover,
+.icon:focus-visible {
+    transform: scale(1.12);
 }
 
 .icon-instagram {
-    background-image: url("https://img.icons8.com/?size=48&id=DpOQ6G5p47f0&format=png");
+    background-image: url("../../Images_for_icon/instagram.png");
 }
 
 .icon-linkedin {
-    background-image: url("https://img.icons8.com/?size=100&id=447&format=png");
+    background-image: url("../../Images_for_icon/linkedin.png");
 }
 
 .icon-pinterest {
-    background-image: url("https://img.icons8.com/?size=48&id=CeRsUJCNL4go&format=png");
+    background-image: url("../../Images_for_icon/pinterest.png");
 }
 
 .icon-spotify {
-    background-image: url("https://img.icons8.com/?size=100&id=6707&format=png");
+    background-image: url("../../Images_for_icon/spotify.png");
 }
 
 .icon-github {
     /* Local GitHub icon relative to this CSS file */
-    background-image: url("../../Images_for_icon/github-svgrepo-com.png");
+    background-image: url("../../Images_for_icon/github.png");
 }
 
 

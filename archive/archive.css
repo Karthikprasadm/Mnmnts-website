@@ -1115,3 +1115,42 @@ html::-webkit-scrollbar, body::-webkit-scrollbar {
     0% { background-position: 200% 0; }
     100% { background-position: -200% 0; }
 }
+
+/* Print styles for archive page */
+@media print {
+    .lightbox,
+    .project-modal-overlay,
+    .addNewProjectModal,
+    .addProjectModal,
+    .passwordModal,
+    .filter-btn,
+    #addProjectBtn,
+    .skeleton-wrapper,
+    .skeleton-card {
+        display: none !important;
+    }
+
+    .gallery-item {
+        page-break-inside: avoid;
+        border: 1px solid #ccc !important;
+        margin-bottom: 1em;
+    }
+
+    .project-overlay {
+        position: static !important;
+        background: white !important;
+        color: black !important;
+        opacity: 1 !important;
+    }
+
+    .project-name {
+        color: black !important;
+        font-weight: bold;
+    }
+
+    .tech-stack span {
+        border: 1px solid #ccc !important;
+        background: white !important;
+        color: black !important;
+    }
+}

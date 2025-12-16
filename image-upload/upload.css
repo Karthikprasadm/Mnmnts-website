@@ -420,3 +420,24 @@ footer {
     padding: 10px;
     background: #1a1a1a;
 }
+
+/* Print styles for upload page */
+@media print {
+    .upload-form,
+    .upload-container button,
+    .ik-upload-button,
+    .toast-container,
+    .back-button {
+        display: none !important;
+    }
+
+    .upload-container {
+        background: white !important;
+        color: black !important;
+    }
+
+    .upload-preview img {
+        max-width: 100% !important;
+        border: 1px solid #ccc !important;
+    }
+}

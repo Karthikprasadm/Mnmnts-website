@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="../assets/styles/galaxy.css">
     <link rel="stylesheet" href="../assets/styles/icons.css">
     <link rel="stylesheet" href="../assets/fonts/fonts.css">
+    <script src="../assets/scripts/navbar-fix.js"></script>
     <meta name="description" content="Karthik Prasad M's digital museum of moments – a creative portfolio and artistic playground for exploring time, memory, and storytelling through web, images, and videos.">
     <meta name="keywords" content="Karthik Prasad, Portfolio, Web Developer, Creative, Gallery, Digital Museum, Storytelling, Images, Videos, Moments, Memory, Art, Tech, Frontend, JavaScript, HTML, CSS">
     <meta name="author" content="Karthik Prasad M">
@@ -19,6 +20,89 @@
     <meta property="og:image" content="https://ik.imagekit.io/ijv7nmfqx/Website_showcase/875320.jpg?updatedAt=1748107186320&v=2">
     <!-- End SEO meta tags -->
     <h1 style="display:none;">Karthik Prasad M | Web Developer, Storyteller, Creative Portfolio</h1>
+    <!-- JSON-LD Structured Data -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      "name": "Museum of Moments",
+      "alternateName": "mnmnts",
+      "url": "https://karthikprasadm.github.io/",
+      "description": "Karthik Prasad M's digital museum of moments – a creative portfolio and artistic playground for exploring time, memory, and storytelling through web, images, and videos.",
+      "author": {
+        "@type": "Person",
+        "name": "Karthik Prasad M",
+        "url": "https://karthikprasadm.github.io/",
+        "sameAs": [
+          "https://www.instagram.com/kkarthhikk",
+          "https://www.linkedin.com/in/karthik-prasad-m-7673b5356/",
+          "https://github.com/Karthikprasadm",
+          "https://pin.it/70AOzYsfW",
+          "https://open.spotify.com/user/31g54rthdkjwc7tk2yzwlkptbbqi"
+        ]
+      },
+      "potentialAction": {
+        "@type": "SearchAction",
+        "target": {
+          "@type": "EntryPoint",
+          "urlTemplate": "https://karthikprasadm.github.io/archive/archive.html?q={search_term_string}"
+        },
+        "query-input": "required name=search_term_string"
+      },
+      "inLanguage": "en-US"
+    }
+    </script>
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "ImageGallery",
+      "name": "Gallery of Moments",
+      "description": "A curated collection of images and videos showcasing moments in time",
+      "url": "https://karthikprasadm.github.io/gallery/index.html",
+      "author": {
+        "@type": "Person",
+        "name": "Karthik Prasad M"
+      }
+    }
+    </script>
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "Home",
+          "item": "https://karthikprasadm.github.io/"
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": "Gallery",
+          "item": "https://karthikprasadm.github.io/gallery/index.html"
+        }
+      ]
+    }
+    </script>
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "CreativeWork",
+      "@id": "https://karthikprasadm.github.io/#creativework",
+      "name": "Museum of Moments",
+      "alternateName": "mnmnts",
+      "description": "A minimalist, interactive web experience designed as a digital museum of personal or imagined moments in time. This project combines storytelling, aesthetic visuals, and smooth transitions to showcase moments as if they were constellations in a galaxy.",
+      "creator": {
+        "@type": "Person",
+        "name": "Karthik Prasad M",
+        "url": "https://karthikprasadm.github.io/"
+      },
+      "url": "https://karthikprasadm.github.io/",
+      "inLanguage": "en-US",
+      "keywords": "portfolio, web development, digital art, storytelling, gallery, creative, moments, memory"
+    }
+    </script>
     <!-- Favicons for all platforms -->
     <link rel="apple-touch-icon" sizes="57x57" href="../favicon/apple-icon-57x57.png">
     <link rel="apple-touch-icon" sizes="60x60" href="../favicon/apple-icon-60x60.png">
@@ -45,7 +129,19 @@
 <body>
 
     <div class="stars"></div>
+    <!-- Unified Navbar -->
     <nav class="navbar" role="navigation" aria-label="Main navigation">
+        <!-- Menu Button (Left) -->
+        <div class="dropdown">
+            <button class="dropbtn" aria-label="Open menu" tabindex="0">Menu</button>
+            <div class="dropdown-content" role="menu">
+                <a href="../know-me/about.html" role="menuitem">Know me</a>
+                <a href="../archive/archive.html" role="menuitem">View archive</a>
+                <a href="../image-upload/upload.html" role="menuitem">Open upload</a>
+                <a href="./index.html" role="menuitem" aria-current="page">Open gallery</a>
+            </div>
+        </div>
+        <!-- Social Icons (Left-Center) -->
         <div class="social-icons" aria-label="Social links">
             <a href="https://www.instagram.com/kkarthhikk" target="_blank" aria-label="Instagram" data-tooltip="Instagram">
                 <span class="icon icon-instagram" aria-hidden="true"></span>
@@ -63,43 +159,33 @@
                 <span class="icon icon-github" aria-hidden="true"></span>
             </a>
         </div>
+        <!-- Logo (Center) -->
         <h2 class="logo" aria-label="Site logo"></h2>
+        <!-- Moon Button (Right) -->
         <div class="navbar-center">
             <button id="slideshowToggle" class="moon-button" aria-label="Toggle slideshow mode" data-tooltip="Slideshow">🌙</button>
-        </div>
-        <div class="dropdown menu-button-separate">
-            <button class="dropbtn" aria-label="Open menu" tabindex="0">Menu</button>
-            <div class="dropdown-content" role="menu">
-                <a href="../know-me/about.html" role="menuitem">Know me</a>
-                <a href="../archive/archive.html" role="menuitem">View archive</a>
-                <a href="../image-upload/upload.html" role="menuitem">Open upload</a>
-                <a href="./index.html" role="menuitem" aria-current="page">Open gallery</a>
-            </div>
         </div>
     </nav>
 
     <div class="container">
         <div class="main-image">
-            <img id="displayedImage" src="https://ik.imagekit.io/ijv7nmfqx/Website_showcase/875320.jpg?updatedAt=1748107186320&v=2" alt="Main gallery image" loading="lazy" fetchpriority="high">
+            <img id="displayedImage" src="" alt="Main gallery image" loading="lazy" fetchpriority="high">
         </div>
 
-        <div class="thumbnails">
-            <img class="thumb active" src="https://ik.imagekit.io/ijv7nmfqx/Website_showcase/640842.jpg?updatedAt=1748100170774" data-src="https://ik.imagekit.io/ijv7nmfqx/Website_showcase/640842.jpg?updatedAt=1748100170774" alt="Gallery thumbnail 1" tabindex="0" loading="lazy" role="button" aria-label="View image 1">
-            <img class="thumb" src="https://ik.imagekit.io/ijv7nmfqx/Website_showcase/223952.jpg?updatedAt=1748100170758" data-src="https://ik.imagekit.io/ijv7nmfqx/Website_showcase/223952.jpg?updatedAt=1748100170758" alt="Gallery thumbnail 2" tabindex="0" loading="lazy" role="button" aria-label="View image 2">
-            <img class="thumb" src="https://ik.imagekit.io/ijv7nmfqx/Website_showcase/515254.jpg?updatedAt=1748100541322" data-src="https://ik.imagekit.io/ijv7nmfqx/Website_showcase/515254.jpg?updatedAt=1748100541322" alt="Gallery thumbnail 3" tabindex="0" loading="lazy" role="button" aria-label="View image 3">
-            <img class="thumb" src="https://ik.imagekit.io/ijv7nmfqx/Website_showcase/1588.jpg?updatedAt=1748100170098" data-src="https://ik.imagekit.io/ijv7nmfqx/Website_showcase/1588.jpg?updatedAt=1748100170098" alt="Gallery thumbnail 4" tabindex="0" loading="lazy" role="button" aria-label="View image 4">
+        <div class="thumbnails" id="thumbnailsContainer">
+            <!-- Thumbnails will be dynamically loaded from gallery-data.json -->
         </div>
 
         <!-- Video Section -->
         <div class="video-container"> 
             <video id="displayedVideo" controls aria-label="Main gallery video" preload="none" poster="">
-                <source data-src="https://ik.imagekit.io/ijv7nmfqx/Website_showcase/beautiful.mp4?updatedAt=1747500960916" type="video/mp4">
+                <!-- Video source will be dynamically loaded from gallery-data.json -->
                 Your browser does not support the video tag.
             </video>
         </div>
 
-        <div class="video-thumbnails">
-            <img class="video-thumb active" src="https://ik.imagekit.io/ijv7nmfqx/Website_showcase/cow1.jpg?updatedAt=1747507686444" data-src="https://ik.imagekit.io/ijv7nmfqx/Website_showcase/beautiful.mp4?updatedAt=1747500960916" alt="Video thumbnail 1" tabindex="0" loading="lazy" role="button" aria-label="Play video 1">
+        <div class="video-thumbnails" id="videoThumbnailsContainer">
+            <!-- Video thumbnails will be dynamically loaded from gallery-data.json -->
         </div>
     </div>
 
