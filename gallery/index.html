@@ -4,11 +4,30 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>mnmnts</title>
+    
+    <!-- Preconnect to external domains -->
     <link rel="preconnect" href="https://wallpaperaccess.com">
+    <link rel="preconnect" href="https://cdn.socket.io" crossorigin>
+    <link rel="preconnect" href="https://ik.imagekit.io" crossorigin>
+    
+    <!-- Preload critical resources -->
+    <link rel="preload" href="../assets/styles/galaxy.css" as="style">
+    <link rel="preload" href="../assets/styles/icons.css" as="style">
+    <link rel="preload" href="../assets/fonts/montserrat-400-latin.woff2" as="font" type="font/woff2" crossorigin>
+    <link rel="preload" href="../assets/fonts/montserrat-600-latin.woff2" as="font" type="font/woff2" crossorigin>
+    <link rel="preload" href="../assets/fonts/playfair-400-latin.woff2" as="font" type="font/woff2" crossorigin>
+    <link rel="preload" href="../assets/fonts/playfair-600-latin.woff2" as="font" type="font/woff2" crossorigin>
+    <link rel="preload" href="../assets/scripts/logger.js" as="script">
+    <link rel="preload" href="../assets/scripts/error-handler.js" as="script">
+    <link rel="preload" href="../assets/scripts/global-error-handler.js" as="script">
+    <link rel="preload" href="../assets/scripts/sw-utils.js" as="script">
+    <link rel="preload" href="../assets/scripts/script.js" as="script">
+    <link rel="preload" href="../assets/images/gallery-data.json" as="fetch" crossorigin>
+    
+    <!-- Stylesheets -->
     <link rel="stylesheet" href="../assets/styles/galaxy.css">
     <link rel="stylesheet" href="../assets/styles/icons.css">
     <link rel="stylesheet" href="../assets/fonts/fonts.css">
-    <script src="../assets/scripts/navbar-fix.js"></script>
     <meta name="description" content="Karthik Prasad M's digital museum of moments – a creative portfolio and artistic playground for exploring time, memory, and storytelling through web, images, and videos.">
     <meta name="keywords" content="Karthik Prasad, Portfolio, Web Developer, Creative, Gallery, Digital Museum, Storytelling, Images, Videos, Moments, Memory, Art, Tech, Frontend, JavaScript, HTML, CSS">
     <meta name="author" content="Karthik Prasad M">
@@ -169,7 +188,8 @@
 
     <div class="container">
         <div class="main-image">
-            <img id="displayedImage" src="" alt="Main gallery image" loading="lazy" fetchpriority="high">
+            <div id="mainImageSkeleton" class="skeleton skeleton-main-image" aria-hidden="true"></div>
+            <img id="displayedImage" src="" alt="Main gallery image" loading="lazy" fetchpriority="high" class="loading">
         </div>
 
         <div class="thumbnails" id="thumbnailsContainer">
@@ -178,7 +198,8 @@
 
         <!-- Video Section -->
         <div class="video-container"> 
-            <video id="displayedVideo" controls aria-label="Main gallery video" preload="none" poster="">
+            <div id="videoSkeleton" class="skeleton skeleton-video" aria-hidden="true" style="display: none;"></div>
+            <video id="displayedVideo" controls aria-label="Main gallery video" preload="none" poster="" style="opacity: 0; pointer-events: none;">
                 <!-- Video source will be dynamically loaded from gallery-data.json -->
                 Your browser does not support the video tag.
             </video>
@@ -187,7 +208,13 @@
         <div class="video-thumbnails" id="videoThumbnailsContainer">
             <!-- Video thumbnails will be dynamically loaded from gallery-data.json -->
         </div>
+        
+        <!-- ElasticGridScroll Section - Hidden, accessible only via "view more" button -->
+        <div class="elastic-grid-section" style="display: none;">
+            <iframe src="../ElasticGridScroll/index.html" style="width: 100%; height: 100%; border: none; display: block;"></iframe>
+        </div>
     </div>
+
 
     <div class="yoda-favicon" id="yodaResumeBtn" style="cursor:pointer;" aria-label="Open resume modal">
         <div class="yoda-modern-box"> my resume!!</div>
@@ -352,7 +379,7 @@
         transition: opacity 0.3s cubic-bezier(.4,0,.2,1);
         animation: fadeInModalBg 0.4s cubic-bezier(.4,0,.2,1);
         overflow-y: visible;
-        background: linear-gradient(to bottom, #1a1a1a, #000000);
+        background: #0a0a0a;
         box-shadow: none;
         backdrop-filter: blur(5px) saturate(1.1);
         -webkit-backdrop-filter: blur(5px) saturate(1.1);
@@ -541,6 +568,16 @@
     }
     </style>
 
+    <!-- Service Worker Registration -->
+    <script src="../assets/scripts/sw-utils.js"></script>
+    <!-- Service worker is automatically registered by sw-utils.js -->
+    
+    <!-- Logger Utility (load first for standardized logging) -->
+    <script src="../assets/scripts/logger.js"></script>
+    <!-- Error Handler (load early for error handling) -->
+    <script src="../assets/scripts/error-handler.js"></script>
+    <!-- Global Error Handler (catches unhandled errors and promise rejections) -->
+    <script src="../assets/scripts/global-error-handler.js"></script>
     <script src="../assets/scripts/script.js" defer></script>
     <script>
     // Lazy load video source

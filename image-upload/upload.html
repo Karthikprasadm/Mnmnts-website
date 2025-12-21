@@ -5,6 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Upload Media | mnmnts</title>
     <link rel="preconnect" href="https://wallpaperaccess.com">
+    <!-- Preload critical resources -->
+    <link rel="preload" href="../assets/styles/galaxy.css" as="style">
+    <link rel="preload" href="../assets/fonts/montserrat-400-latin.woff2" as="font" type="font/woff2" crossorigin>
+    <link rel="preload" href="../assets/fonts/montserrat-600-latin.woff2" as="font" type="font/woff2" crossorigin>
+    <link rel="preload" href="../assets/scripts/logger.js" as="script">
+    <link rel="preload" href="../assets/scripts/error-handler.js" as="script">
+    <link rel="preload" href="../assets/scripts/global-error-handler.js" as="script">
+    <link rel="preload" href="../assets/scripts/sw-utils.js" as="script">
     <link rel="stylesheet" href="../assets/styles/galaxy.css">
     <link rel="stylesheet" href="../assets/fonts/fonts.css">
     <link rel="stylesheet" href="upload.css">
@@ -20,6 +28,38 @@
     <meta property="og:image" content="https://ik.imagekit.io/ijv7nmfqx/Website_showcase/875320.jpg?updatedAt=1748107186320&v=2">
     <!-- End SEO meta tags -->
     <h1 style="display:none;">Upload Media | Karthik Prasad M | Web Developer, Storyteller, Creative Portfolio</h1>
+    <!-- JSON-LD Structured Data -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebPage",
+      "name": "Upload Media",
+      "description": "Upload your images and videos to Karthik Prasad M's digital museum of moments. Secure, creative, and easy media uploads for your portfolio.",
+      "url": "https://karthikprasadm.github.io/image-upload/upload.html",
+      "author": {
+        "@type": "Person",
+        "name": "Karthik Prasad M",
+        "url": "https://karthikprasadm.github.io/"
+      },
+      "breadcrumb": {
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+          {
+            "@type": "ListItem",
+            "position": 1,
+            "name": "Home",
+            "item": "https://karthikprasadm.github.io/"
+          },
+          {
+            "@type": "ListItem",
+            "position": 2,
+            "name": "Upload Media",
+            "item": "https://karthikprasadm.github.io/image-upload/upload.html"
+          }
+        ]
+      }
+    }
+    </script>
     <!-- Favicons for all platforms -->
     <link rel="apple-touch-icon" sizes="57x57" href="../favicon/apple-icon-57x57.png">
     <link rel="apple-touch-icon" sizes="60x60" href="../favicon/apple-icon-60x60.png">
@@ -260,9 +300,9 @@
     <script src="https://unpkg.com/imagekit-javascript/dist/imagekit.min.js"></script>
     <script>
         // ImageKit direct upload logic
-        const SIGNATURE_ENDPOINT = window.location.hostname === "localhost"
+        const SIGNATURE_ENDPOINT = window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1"
             ? "http://localhost:3000/api/signature"
-            : "https://karthikprasadm-github-io-jdbj.vercel.app/api/signature";
+            : `${window.location.protocol}//${window.location.hostname}/api/signature`;
         const ikUploadButton = document.getElementById("uploadButton");
         const ikMediaUpload = document.getElementById("mediaUpload");
         const ikProgressBar = document.getElementById("progress");
@@ -282,8 +322,15 @@
             urlEndpoint: "https://ik.imagekit.io/ijv7nmfqx" 
         });
         async function getSignature() {
-            const res = await fetch(SIGNATURE_ENDPOINT);
-            return await res.json();
+            try {
+                const res = await fetch(SIGNATURE_ENDPOINT);
+                if (!res.ok) {
+                    throw new Error(`Signature request failed: ${res.status}`);
+                }
+                return await res.json();
+            } catch (error) {
+                throw error;
+            }
         }
         ikUploadButton.addEventListener("click", async function () {
             const files = ikMediaUpload.files;
@@ -516,7 +563,7 @@
         transition: opacity 0.3s cubic-bezier(.4,0,.2,1);
         animation: fadeInModalBg 0.4s cubic-bezier(.4,0,.2,1);
         overflow-y: visible;
-        background: linear-gradient(to bottom, #1a1a1a, #000000);
+        background: #0a0a0a;
         box-shadow: none;
         backdrop-filter: blur(5px) saturate(1.1);
         -webkit-backdrop-filter: blur(5px) saturate(1.1);
@@ -681,7 +728,15 @@
         #closeResumeModal { right: 8px; }
     }
     </style>
-    <script src="../assets/scripts/navbar-fix.js"></script>
+    <!-- Service Worker Registration -->
+    <script src="../assets/scripts/sw-utils.js"></script>
+    <!-- Logger Utility (load first for standardized logging) -->
+    <script src="../assets/scripts/logger.js"></script>
+    <!-- Error Handler (load early for error handling) -->
+    <script src="../assets/scripts/error-handler.js"></script>
+    <!-- Global Error Handler (catches unhandled errors and promise rejections) -->
+    <script src="../assets/scripts/global-error-handler.js"></script>
+    <!-- Tooltips Initialization (auto-initializes on load) -->
     <script src="../assets/scripts/tooltips.js"></script>
 </body>
 </html>

@@ -1,0 +1,33 @@
+---
+import type { CollectionEntry } from "astro:content";
+
+type Props = {
+  artist: CollectionEntry<"artists">;
+};
+
+const { artist } = Astro.props;
+const baseUrl = import.meta.env.BASE_URL;
+// Prefix image path with baseUrl if it starts with /
+const imageSrc = artist.data.image.src.startsWith('/') 
+  ? `${baseUrl}${artist.data.image.src.slice(1)}` 
+  : artist.data.image.src;
+---
+
+<a
+  href={`${baseUrl}${artist.id}`}
+  class="artist"
+  style={`--image: url('${imageSrc}');`}
+  data-stagename={artist.data.stage_name}
+  data-name={artist.data.name}
+  data-genre={artist.data.genre}
+  data-astro-prefetch
+  aria-label={artist.data.name}></a>
+
+<style>
+  a {
+    background-image: var(--image);
+    background-size: cover;
+    background-position: 50% 0%;
+    aspect-ratio: 0.8;
+  }
+</style>

@@ -5,6 +5,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Know Me | mnmnts</title>
     <link rel="preconnect" href="https://wallpaperaccess.com">
+    <!-- Preload critical resources -->
+    <link rel="preload" href="../assets/styles/galaxy.css" as="style">
+    <link rel="preload" href="../assets/styles/icons.css" as="style">
+    <link rel="preload" href="../assets/fonts/montserrat-400-latin.woff2" as="font" type="font/woff2" crossorigin>
+    <link rel="preload" href="../assets/fonts/montserrat-600-latin.woff2" as="font" type="font/woff2" crossorigin>
+    <link rel="preload" href="../assets/scripts/logger.js" as="script">
+    <link rel="preload" href="../assets/scripts/error-handler.js" as="script">
+    <link rel="preload" href="../assets/scripts/global-error-handler.js" as="script">
+    <link rel="preload" href="../assets/scripts/sw-utils.js" as="script">
     <link rel="stylesheet" href="../assets/styles/galaxy.css">
     <link rel="stylesheet" href="../assets/styles/icons.css">
     <link rel="stylesheet" href="../assets/fonts/fonts.css">
@@ -310,7 +319,7 @@
         transition: opacity 0.3s cubic-bezier(.4,0,.2,1);
         animation: fadeInModalBg 0.4s cubic-bezier(.4,0,.2,1);
         overflow-y: visible;
-        background: linear-gradient(to bottom, #1a1a1a, #000000);
+        background: #0a0a0a;
         box-shadow: none;
         backdrop-filter: blur(5px) saturate(1.1);
         -webkit-backdrop-filter: blur(5px) saturate(1.1);
@@ -496,7 +505,16 @@
         user-select: none;
     }
     </style>
-    <script src="../assets/scripts/navbar-fix.js"></script>
+    <!-- Service Worker Registration -->
+    <script src="../assets/scripts/sw-utils.js"></script>
+    <!-- Logger Utility (load first for standardized logging) -->
+    <script src="../assets/scripts/logger.js"></script>
+    <!-- Error Handler (load early for error handling) -->
+    <script src="../assets/scripts/error-handler.js"></script>
+    <!-- Global Error Handler (catches unhandled errors and promise rejections) -->
+    <script src="../assets/scripts/global-error-handler.js"></script>
+    <!-- API Client -->
+    <!-- Tooltips Initialization (auto-initializes on load) -->
     <script src="../assets/scripts/tooltips.js"></script>
 </body>
 </html>

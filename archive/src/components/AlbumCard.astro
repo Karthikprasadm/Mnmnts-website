@@ -1,0 +1,53 @@
+---
+import type { CollectionEntry } from "astro:content";
+
+type Props = {
+  album: CollectionEntry<"albums">;
+};
+
+const { album } = Astro.props;
+const baseUrl = import.meta.env.BASE_URL;
+// Prefix image path with baseUrl if it starts with /
+const imageSrc = album.data.image.src.startsWith('/') 
+  ? `${baseUrl}${album.data.image.src.slice(1)}` 
+  : album.data.image.src;
+---
+
+<a class="album-card" href={`${baseUrl}${album.data.artist.id}/albums/${album.id}`}>
+  <div>
+    <img
+      class="fade-in"
+      loading="lazy"
+      src={imageSrc}
+      alt={album.data.image.alt}
+    />
+  </div>
+  <h3>{album.data.name}</h3>
+  <p>{new Date(album.data.publishDate).getFullYear()}</p>
+</a>
+
+<style>
+  .album-card {
+    display: flex;
+    gap: 0.5rem;
+    flex-direction: column;
+    align-content: start;
+    max-width: 300px;
+  }
+  div {
+    aspect-ratio: 1;
+    grid-area: img;
+    background: var(--color-placeholder);
+  }
+  h3,
+  p {
+    margin: 0;
+  }
+  h3 {
+    grid-area: title;
+  }
+  p {
+    justify-self: end;
+    grid-area: meta;
+  }
+</style>

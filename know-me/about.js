@@ -1,7 +1,8 @@
-// about.js - basic script for about.html
+// about.js - Enhanced script for about.html
 
 document.addEventListener('DOMContentLoaded', function() {
     console.log('about.js loaded successfully!');
+    
     // Example: Add a simple effect to the about page
     const aboutHeader = document.querySelector('h1, h2, h3');
     if (aboutHeader) {
