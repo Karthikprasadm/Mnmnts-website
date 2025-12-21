@@ -28,7 +28,7 @@ const pathname = Astro.url.pathname.replace(/\/$/, "");
 const pathParts = pathname.split("/").filter(p => p);
 const lastPart = pathParts[pathParts.length - 1] || "";
 // If we're at the base path, index, or archive.html, it's the home page
-const currentPage = 
+const currentPage =
   pathname === baseUrl.replace(/\/$/, "") || 
   lastPart === "" || 
   lastPart === "index" || 
