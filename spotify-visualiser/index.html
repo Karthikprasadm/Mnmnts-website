@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <!-- Favicons -->
+    <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+    <link rel="icon" type="image/png" sizes="96x96" href="/favicon-96x96.png" />
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Interactive Spotify visualizer with music player" />
+    <meta name="theme-color" content="#0a0a0a" />
+    <title>Spotify Visualiser | mnmnts</title>
+  </head>
+  <body>
+    <div class="stars"></div>
+    <!-- Unified Navbar -->
+    <nav class="navbar" role="navigation" aria-label="Main navigation">
+      <!-- Menu Button (Left) -->
+      <div class="dropdown">
+        <button class="dropbtn" aria-label="Open menu" tabindex="0">Menu</button>
+        <div class="dropdown-content" role="menu">
+          <a href="../../gallery/index.html" role="menuitem">Open gallery</a>
+          <a href="../../know-me/about.html" role="menuitem">Know me</a>
+          <a href="../../archive/archive.html" role="menuitem">View archive</a>
+          <a href="../../image-upload/upload.html" role="menuitem">Open upload</a>
+        </div>
+      </div>
+      <!-- Social Icons (Left-Center) -->
+      <div class="social-icons" aria-label="Social links">
+        <a href="https://www.instagram.com/kkarthhikk" target="_blank" rel="noopener noreferrer" aria-label="Instagram" data-tooltip="Instagram">
+          <span class="icon icon-instagram" aria-hidden="true"></span>
+        </a>
+        <a href="https://www.linkedin.com/in/karthik-prasad-m-7673b5356/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" data-tooltip="LinkedIn">
+          <span class="icon icon-linkedin" aria-hidden="true"></span>
+        </a>
+        <a href="https://pin.it/70AOzYsfW" target="_blank" rel="noopener noreferrer" aria-label="Pinterest" data-tooltip="Pinterest">
+          <span class="icon icon-pinterest" aria-hidden="true"></span>
+        </a>
+        <a href="https://open.spotify.com/user/31g54rthdkjwc7tk2yzwlkptbbqi" target="_blank" rel="noopener noreferrer" aria-label="Spotify" data-tooltip="Spotify">
+          <span class="icon icon-spotify" aria-hidden="true"></span>
+        </a>
+        <a href="https://github.com/Karthikprasadm" target="_blank" rel="noopener noreferrer" aria-label="GitHub" data-tooltip="GitHub">
+          <span class="icon icon-github" aria-hidden="true"></span>
+        </a>
+      </div>
+    </nav>
+    <div class="audio-hint" aria-live="polite">
+      Drop your audio files into <code>public/audio/</code> to see the player in action.
+    </div>
+    <div id="app" class="h-dvh"></div>
+    <canvas id="webgl"></canvas>
+    <!-- Music Player Overlay -->
+    <div id="music-player-overlay" class="music-player-overlay"></div>
+    <script type="module" src="/src/main.ts"></script>
+    <script type="module" src="/src/MusicPlayerApp.tsx"></script>
+  </body>
+</html>

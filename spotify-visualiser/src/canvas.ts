@@ -1,0 +1,168 @@
+import * as THREE from "three"
+import { Dimensions, Size } from "./types/types"
+import { OrbitControls } from "three/addons/controls/OrbitControls.js"
+import GUI from "lil-gui"
+
+export default class Canvas {
+  element: HTMLCanvasElement
+  scene: THREE.Scene
+  camera: THREE.PerspectiveCamera
+  renderer: THREE.WebGLRenderer
+  sizes: Size
+  dimensions: Dimensions
+  time: number
+  clock: THREE.Clock
+  raycaster: THREE.Raycaster
+  mouse: THREE.Vector2 = new THREE.Vector2()
+  orbitControls: OrbitControls
+  debug: GUI
+  planes: any // Lazy loaded Planes class
+  material: THREE.ShaderMaterial
+
+  constructor() {
+    this.element = document.getElementById("webgl") as HTMLCanvasElement
+    this.time = 0
+    this.createClock()
+    this.createScene()
+    this.createCamera()
+    this.createRenderer()
+    this.setSizes()
+    this.addEventListeners()
+    this.createDebug()
+    // Lazy load planes for better initial load performance
+    this.createPlanes()
+
+    this.debug.hide()
+
+    this.render()
+  }
+
+  createScene() {
+    this.scene = new THREE.Scene()
+  }
+
+  createCamera() {
+    this.camera = new THREE.PerspectiveCamera(
+      75,
+      window.innerWidth / window.innerHeight,
+      0.1,
+      100
+    )
+    this.scene.add(this.camera)
+    this.camera.position.z = 10
+  }
+
+  createHelpers() {
+    const axesHelper = new THREE.AxesHelper(5)
+    this.scene.add(axesHelper)
+  }
+
+  createOrbitControls() {
+    this.orbitControls = new OrbitControls(
+      this.camera,
+      this.renderer.domElement
+    )
+  }
+
+  async createPlanes() {
+    // Lazy load Planes module for code splitting
+    const { default: Planes } = await import("./planes")
+    this.planes = new Planes({ scene: this.scene, sizes: this.sizes })
+    // Bind drag interactions to the renderer's canvas
+    this.planes.bindDrag(this.renderer.domElement)
+  }
+
+  createRenderer() {
+    this.dimensions = {
+      width: window.innerWidth,
+      height: window.innerHeight,
+      pixelRatio: Math.min(2, window.devicePixelRatio),
+    }
+
+    this.renderer = new THREE.WebGLRenderer({
+      canvas: this.element,
+      alpha: true,
+      powerPreference: "high-performance", // Prefer GPU
+      antialias: false, // Disable antialiasing for better performance
+    })
+    this.renderer.setSize(this.dimensions.width, this.dimensions.height)
+    this.renderer.render(this.scene, this.camera)
+
+    this.renderer.setPixelRatio(this.dimensions.pixelRatio)
+  }
+
+  createDebug() {
+    this.debug = new GUI()
+  }
+
+  setSizes() {
+    let fov = this.camera.fov * (Math.PI / 180)
+    let height = this.camera.position.z * Math.tan(fov / 2) * 2
+    let width = height * this.camera.aspect
+
+    this.sizes = {
+      width: width,
+      height: height,
+    }
+  }
+
+  createClock() {
+    this.clock = new THREE.Clock()
+  }
+
+  private lastMouseUpdate = 0
+  private mouseUpdateThrottle = 16 // ~60fps
+
+  onMouseMove(event: MouseEvent) {
+    const now = performance.now()
+    if (now - this.lastMouseUpdate < this.mouseUpdateThrottle) return
+    this.lastMouseUpdate = now
+    
+    this.mouse.x = (event.clientX / window.innerWidth) * 2 - 1
+    this.mouse.y = -(event.clientY / window.innerHeight) * 2 + 1
+  }
+
+  private resizeTimeout: number | null = null
+
+  addEventListeners() {
+    window.addEventListener("mousemove", this.onMouseMove.bind(this), { passive: true })
+    window.addEventListener("resize", this.onResize.bind(this), { passive: true })
+  }
+
+  onResize() {
+    // Debounce resize to avoid excessive updates
+    if (this.resizeTimeout) {
+      cancelAnimationFrame(this.resizeTimeout)
+    }
+    
+    this.resizeTimeout = requestAnimationFrame(() => {
+    this.dimensions = {
+      width: window.innerWidth,
+      height: window.innerHeight,
+      pixelRatio: Math.min(2, window.devicePixelRatio),
+    }
+
+    this.camera.aspect = window.innerWidth / window.innerHeight
+    this.camera.updateProjectionMatrix()
+    this.setSizes()
+
+    this.renderer.setPixelRatio(this.dimensions.pixelRatio)
+    this.renderer.setSize(this.dimensions.width, this.dimensions.height)
+      this.resizeTimeout = null
+    })
+  }
+
+  render() {
+    const now = this.clock.getElapsedTime()
+    const delta = now - this.time
+    this.time = now
+
+    const normalizedDelta = delta / (1 / 60)
+
+    // Only render if planes are ready
+    if (this.planes) {
+      this.planes.render(normalizedDelta)
+    this.renderer.render(this.scene, this.camera)
+    }
+  }
+}
