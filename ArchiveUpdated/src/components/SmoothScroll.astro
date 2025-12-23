@@ -1,0 +1,16 @@
+<script>
+  import { initSmoothScrolling, cleanupSmoothScrolling } from "../scripts/smoothscroll";
+  
+  // Initialize on page load
+  initSmoothScrolling();
+  
+  // Cleanup on page unload/transition
+  document.addEventListener('astro:before-swap', () => {
+    cleanupSmoothScrolling();
+  });
+  
+  // Re-initialize on new page load
+  document.addEventListener('astro:page-load', () => {
+  initSmoothScrolling();
+  });
+</script>

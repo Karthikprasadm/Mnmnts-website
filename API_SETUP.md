@@ -1,19 +1,37 @@
 # API Setup Guide
 
-## ⚠️ Note
+## Current API Endpoints
 
-**API functionality has been temporarily removed from this project.** This file is kept for future reference when API features are re-implemented.
+The project currently has one active API endpoint:
 
-## Future Implementation
+### `/api/signature` (ImageKit Signature)
+- **Purpose**: Secure ImageKit authentication for direct uploads
+- **Used by**: `image-upload/upload.html`
+- **Method**: GET
+- **Security**: CORS restricted, security headers applied
 
-When API features are re-implemented, they will provide:
-- Centralized data access for portfolio content
-- RESTful endpoints for gallery images, videos, projects, etc.
-- Read-only access with proper security measures
+## Configuration
+
+To use the ImageKit signature endpoint, set these environment variables:
+
+```env
+IMAGEKIT_PUBLIC_KEY=your_public_key
+IMAGEKIT_PRIVATE_KEY=your_private_key
+IMAGEKIT_URL_ENDPOINT=your_url_endpoint
+```
+
+See `.env.example` for a template.
+
+## Removed API Features
+
+The following API features have been removed:
+- Portfolio API endpoints (gallery, about, portfolio, projects, social) - Data now loaded from JSON files
+- Spotify API proxy - Visualiser now uses local audio files
+- WebSocket server - Functionality completely removed
 
 ## Current Data Loading
 
-Currently, the website loads data directly from JSON files:
+The website loads data directly from JSON files:
 - `assets/images/gallery-data.json` - Gallery images
 - `assets/videos/videos-data.json` - Gallery videos
 

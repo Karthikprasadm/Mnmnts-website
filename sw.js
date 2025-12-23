@@ -57,6 +57,12 @@ function isImageRequest(request) {
 }
 
 
+function broadcastMessage(data) {
+  self.clients.matchAll({ includeUncontrolled: true }).then(clients => {
+    clients.forEach(client => client.postMessage(data));
+  });
+}
+
 // Install event - Cache critical resources
 self.addEventListener('install', event => {
   console.log('Service Worker: Installing...', CACHE_VERSION);
@@ -89,6 +95,8 @@ self.addEventListener('install', event => {
       })
     ]).then(() => {
       console.log('Service Worker: Installed successfully');
+      // Let clients know offline cache is ready
+      broadcastMessage({ type: 'OFFLINE_READY', version: CACHE_VERSION });
       return self.skipWaiting();
     }).catch(err => {
       console.error('Service Worker: Installation failed', err);
@@ -117,7 +125,9 @@ self.addEventListener('activate', event => {
     }).then(() => {
       console.log('Service Worker: Activated successfully');
       // Take control of all clients immediately
-      return self.clients.claim();
+      return self.clients.claim().then(() => {
+        broadcastMessage({ type: 'SW_ACTIVATED', version: CACHE_VERSION });
+      });
     })
   );
 });
@@ -184,12 +194,23 @@ async function handlePageRequest(request) {
   const cache = await caches.open(CACHE_NAME);
   
   try {
+    // Ignore non-HTTP(S) schemes (e.g. chrome-extension://) which Cache API can't handle
+    const url = new URL(request.url);
+    const isHttp = url.protocol === 'http:' || url.protocol === 'https:';
+
     // Try network first
     const response = await fetch(request);
     
     if (response.ok) {
-      // Cache successful responses
-      cache.put(request, response.clone());
+      // Cache successful responses for HTTP(S) only
+      if (isHttp && request.method === 'GET') {
+        try {
+          await cache.put(request, response.clone());
+        } catch (cacheError) {
+          // Silently ignore cache write failures so they don't break page load
+          console.warn('Service Worker: cache.put failed for', request.url, cacheError);
+        }
+      }
       return response;
     }
     

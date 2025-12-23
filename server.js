@@ -54,8 +54,56 @@ const fileFilter = (req, file, cb) => {
 
 const upload = multer({ storage, fileFilter, limits: { fileSize: 150 * 1024 * 1024 } }); // 150MB limit
 
+// Enable JSON parsing for API endpoints
+app.use(express.json());
+
+// Serve built Spotify Visualizer files FIRST (before general static files)
+// This ensures the built files take precedence over source files
+const spotifyVisualizerDist = path.join(__dirname, 'spotify-visualiser', 'dist');
+if (fs.existsSync(spotifyVisualizerDist)) {
+  // Explicitly handle index.html routes FIRST (these MUST come before express.static)
+  app.get('/spotify-visualiser/', (req, res) => {
+    const builtIndex = path.join(spotifyVisualizerDist, 'index.html');
+    console.log('✅ Serving built index.html from:', builtIndex);
+    res.sendFile(builtIndex);
+  });
+  app.get('/spotify-visualiser/index.html', (req, res) => {
+    const builtIndex = path.join(spotifyVisualizerDist, 'index.html');
+    console.log('✅ Serving built index.html from:', builtIndex);
+    res.sendFile(builtIndex);
+  });
+  
+  // Then serve all other built files from dist folder
+  app.use('/spotify-visualiser', express.static(spotifyVisualizerDist));
+  console.log('✅ Serving built Spotify Visualizer from dist/');
+} else {
+  console.warn('⚠️  Spotify Visualizer dist/ not found. Run: cd spotify-visualiser && npm run build');
+}
+
 // Serve static files (e.g., HTML, CSS, JS) from the project root
-app.use(express.static(__dirname));
+// BUT exclude spotify-visualiser source directory to prevent conflicts
+const staticMiddleware = express.static(__dirname);
+app.use((req, res, next) => {
+  // Block access to source files in spotify-visualiser
+  if (req.path.startsWith('/spotify-visualiser/src')) {
+    console.log('🚫 Blocked source file request:', req.path);
+    return res.status(404).send('Source files not available. Please use the built version.');
+  }
+  
+  // Skip serving other spotify-visualiser source files (but allow dist/ via the route above)
+  if (req.path.startsWith('/spotify-visualiser/') && 
+      !req.path.startsWith('/spotify-visualiser/assets/') &&
+      !req.path.startsWith('/spotify-visualiser/manifest') &&
+      !req.path.startsWith('/spotify-visualiser/registerSW') &&
+      !req.path.startsWith('/spotify-visualiser/sw') &&
+      req.path !== '/spotify-visualiser/' &&
+      req.path !== '/spotify-visualiser/index.html') {
+    // Let the Spotify Visualizer routes handle this - don't serve source files
+    return next();
+  }
+  // Serve other static files normally
+  staticMiddleware(req, res, next);
+});
 
 // Serve index.html on root request
 app.get('/', (req, res) => {

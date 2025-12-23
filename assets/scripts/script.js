@@ -162,8 +162,8 @@ document.addEventListener("DOMContentLoaded", function () {
             // Add "view more" link after all thumbnails
             const viewMoreLink = document.createElement('a');
             viewMoreLink.href = '../ElasticGridScroll/index.html';
-            viewMoreLink.textContent = 'view more';
-            viewMoreLink.style.cssText = 'color: #e0e0e0; text-decoration: none; margin-left: 0.5rem; align-self: center;';
+            viewMoreLink.textContent = '◯';
+            viewMoreLink.className = 'portal-circle';
             thumbnailsContainer.appendChild(viewMoreLink);
         }
 
