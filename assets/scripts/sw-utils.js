@@ -32,10 +32,29 @@ class ServiceWorkerUtils {
         
         // Listen for background sync messages (scoped to this instance)
         this.messageHandler = (event) => {
-          if (event.data && event.data.type === 'SYNC_SUCCESS') {
+          if (!event.data || !event.data.type) return;
+
+          if (event.data.type === 'SYNC_SUCCESS') {
             this.showSyncNotification(event.data.message || 'Data synced successfully', 'success');
-          } else if (event.data && event.data.type === 'SYNC_ERROR') {
+          } else if (event.data.type === 'SYNC_ERROR') {
             this.showSyncNotification(event.data.message || 'Sync failed', 'error');
+          } else if (event.data.type === 'OFFLINE_READY') {
+            this.showNotice({
+              icon: '☑',
+              title: 'Offline ready',
+              message: 'Cache is ready. You can use the site offline.',
+              primary: { label: 'Got it', action: 'dismiss' },
+              tone: 'info'
+            });
+          } else if (event.data.type === 'SW_ACTIVATED') {
+            this.showNotice({
+              icon: '⟳',
+              title: 'Update ready',
+              message: 'New version available. Reload to use it.',
+              primary: { label: 'Update', action: 'update' },
+              secondary: { label: 'Later', action: 'dismiss' },
+              tone: 'update'
+            });
           }
         };
         navigator.serviceWorker.addEventListener('message', this.messageHandler);
@@ -80,25 +99,187 @@ class ServiceWorkerUtils {
     }, 3000);
   }
 
-  showUpdateNotification() {
+  showNotice(opts = {}) {
+    const {
+      icon = '⟳',
+      title = 'Update ready',
+      message = 'New version available!',
+      primary = { label: 'Update', action: 'update' },
+      secondary,
+      tone = 'update'
+    } = opts;
+
+    const existing = document.querySelector('.sw-update-notification');
+    if (existing) existing.remove();
+
     const notification = document.createElement('div');
     notification.className = 'sw-update-notification';
     notification.innerHTML = `
       <div class="sw-update-content">
-        <span>New version available!</span>
-        <button onclick="serviceWorkerUtils.updateServiceWorker()">Update</button>
-        <button onclick="this.parentElement.parentElement.remove()">Later</button>
+        <div class="sw-update-left">
+          <div class="sw-update-icon">${icon}</div>
+          <div class="sw-update-text">
+            <div class="sw-update-title">${title}</div>
+            <div class="sw-update-message">${message}</div>
+          </div>
+        </div>
+        <div class="sw-update-actions">
+          <button class="sw-update-btn primary" data-action="${primary.action || 'dismiss'}">${primary.label || 'OK'}</button>
+          ${secondary ? `<button class="sw-update-btn secondary" data-action="${secondary.action || 'dismiss'}">${secondary.label}</button>` : ''}
+        </div>
       </div>
     `;
+
+    // Inline styles (self-contained)
+    notification.style.cssText = `
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      padding: 0.9rem 1.1rem;
+      background: linear-gradient(135deg, rgba(32,32,40,0.95), rgba(18,18,26,0.95));
+      color: #e9edf5;
+      border: 1px solid ${tone === 'update' ? 'rgba(255, 193, 82, 0.28)' : 'rgba(120, 200, 255, 0.28)'};
+      border-radius: 16px;
+      box-shadow: 0 12px 36px rgba(0,0,0,0.35);
+      z-index: 10050;
+      max-width: 420px;
+      font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+      animation: swFadeIn 0.25s ease-out;
+    `;
+
+    const content = notification.querySelector('.sw-update-content');
+    content.style.cssText = `
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 0.8rem;
+      align-items: center;
+    `;
+
+    const left = notification.querySelector('.sw-update-left');
+    left.style.cssText = `
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+      min-width: 0;
+    `;
+
+    const icon = notification.querySelector('.sw-update-icon');
+    icon.style.cssText = `
+      width: 38px;
+      height: 38px;
+      border-radius: 12px;
+      display: grid;
+      place-items: center;
+      background: ${tone === 'update' ? 'rgba(255, 193, 82, 0.18)' : 'rgba(120, 200, 255, 0.18)'};
+      color: ${tone === 'update' ? '#ffc152' : '#9fd6ff'};
+      font-weight: 800;
+      font-size: 1.1rem;
+      box-shadow: inset 0 0 0 1px rgba(255,193,82,0.28);
+    `;
+
+    const text = notification.querySelector('.sw-update-text');
+    text.style.cssText = `
+      display: grid;
+      gap: 0.15rem;
+      min-width: 0;
+    `;
+
+    const title = notification.querySelector('.sw-update-title');
+    title.style.cssText = `
+      font-size: 0.98rem;
+      font-weight: 700;
+      color: #f7f9ff;
+      letter-spacing: 0.01em;
+    `;
+
+    const msg = notification.querySelector('.sw-update-message');
+    msg.style.cssText = `
+      font-size: 0.9rem;
+      line-height: 1.4;
+      color: #cdd6e6;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      max-width: 260px;
+    `;
+
+    const actions = notification.querySelector('.sw-update-actions');
+    actions.style.cssText = `
+      display: flex;
+      gap: 0.5rem;
+      justify-content: flex-end;
+      flex-wrap: nowrap;
+    `;
+
+    notification.querySelectorAll('.sw-update-btn').forEach((btn) => {
+      btn.style.cssText = `
+        padding: 0.55rem 1rem;
+        border-radius: 10px;
+        border: 1px solid rgba(255,255,255,0.12);
+        background: rgba(255,255,255,0.08);
+        color: #f5f5f5;
+        cursor: pointer;
+        font-weight: 700;
+        font-size: 0.9rem;
+        transition: background 0.18s ease, transform 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease;
+        min-width: 86px;
+      `;
+      if (btn.classList.contains('primary')) {
+        if (tone === 'update') {
+          btn.style.background = 'linear-gradient(135deg, #f6c344, #e89b2b)';
+          btn.style.color = '#1c1c24';
+          btn.style.borderColor = 'rgba(255,193,82,0.7)';
+        } else {
+          btn.style.background = 'linear-gradient(135deg, #6fb7ff, #3e8adf)';
+          btn.style.color = '#0f1522';
+          btn.style.borderColor = 'rgba(120,200,255,0.7)';
+        }
+      } else {
+        btn.style.background = 'rgba(255,255,255,0.06)';
+      }
+      btn.addEventListener('mouseover', () => {
+        btn.style.transform = 'translateY(-1px)';
+        btn.style.boxShadow = '0 6px 18px rgba(0,0,0,0.25)';
+        if (!btn.classList.contains('primary')) {
+          btn.style.background = 'rgba(255,255,255,0.12)';
+        }
+      });
+      btn.addEventListener('mouseout', () => {
+        btn.style.transform = 'translateY(0)';
+        btn.style.boxShadow = 'none';
+        if (!btn.classList.contains('primary')) {
+          btn.style.background = 'rgba(255,255,255,0.06)';
+        }
+      });
+    });
+
+    notification.querySelectorAll('.sw-update-btn').forEach((btn) => {
+      btn.onclick = () => {
+        const action = btn.dataset.action;
+        notification.remove();
+        if (action === 'update') {
+          this.updateServiceWorker();
+        }
+      };
+    });
+
     document.body.appendChild(notification);
   }
 
   // Update service worker
   async updateServiceWorker() {
+    // If we have a waiting worker, tell it to activate immediately
     if (this.registration && this.registration.waiting) {
       this.registration.waiting.postMessage({ type: 'SKIP_WAITING' });
-      window.location.reload();
+      // Give it a tick to activate, then reload to take control
+      setTimeout(() => window.location.reload(), 150);
+      return;
     }
+    // Fallback: if no waiting worker is present (e.g., offline-ready notice),
+    // just reload to ensure latest assets are in use.
+    window.location.reload();
   }
 
   // Add URLs to cache

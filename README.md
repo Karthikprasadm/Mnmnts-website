@@ -15,7 +15,7 @@ A minimalist, interactive web experience designed as a digital museum of persona
 - **Resume viewer** with PDF.js integration
 
 ### Advanced Features
-- **Service Worker** - Offline support, background sync, and caching
+- **Service Worker** - Offline support, background sync, and caching (optional; site runs fine online without it)
 - **Loading Skeletons** - Beautiful loading states for images
 - **Preloading** - Critical resources preloaded for faster performance
 - **Print Stylesheet** - Optimized printing experience
@@ -47,15 +47,19 @@ A minimalist, interactive web experience designed as a digital museum of persona
 ## 🏗️ Project Structure
 
 ```
-├── api/                          # Serverless functions (ImageKit signature only)
+├── api/                          # Serverless functions (Vercel)
 │   └── signature.js              # ImageKit signature endpoint
+├── ArchiveUpdated/               # Archive project source (Astro-based, active)
+│   └── dist/                     # Build output (copied to archive/)
+├── archive/                      # Archive build output directory
+│   └── archive.html              # Generated archive page (from ArchiveUpdated/)
 ├── assets/
 │   ├── images/                   # Gallery image data (JSON)
 │   │   └── gallery-data.json
 │   ├── videos/                   # Gallery video data (JSON)
 │   │   └── videos-data.json
 │   ├── scripts/                  # JavaScript files
-│   │   ├── script.js            # Main gallery script
+│   │   ├── script.js            # Main gallery script (includes "view more" link)
 │   │   ├── sw-utils.js          # Service worker utilities
 │   │   ├── error-handler.js     # Error handling utilities
 │   │   ├── logger.js            # Logging utilities
@@ -67,12 +71,15 @@ A minimalist, interactive web experience designed as a digital museum of persona
 │   ├── fonts/                    # Self-hosted fonts
 │   ├── pdfjs/                    # PDF.js library
 │   └── resume/                   # Resume PDF
-├── gallery/                       # Main gallery page
-├── know-me/                       # About page
-├── archive/                       # Archive/projects page
+├── ElasticGridScroll/            # Extended gallery view (linked from gallery)
+├── gallery/                       # Main gallery page (homepage)
 ├── image-upload/                  # Upload page
-├── project-detail/                # Project detail pages
-├── Images_for_icon/               # Local icon images
+├── know-me/                       # About page
+├── spotify-visualiser/            # Audio visualiser project (uses local audio files)
+├── favicon/                       # Favicon files
+├── 404_error/                     # Error page assets
+├── Images_for_icon/               # Social media icons
+├── icons8-baby-yoda-color-favicons/ # Resume button icons
 ├── sw.js                          # Service worker
 ├── manifest.json                  # PWA manifest
 └── offline.html                   # Offline fallback page
@@ -107,16 +114,16 @@ Border Radius: 20-24px
 ```
 
 
-## ⚡ Service Worker & Performance
+## ⚡ Service Worker & Performance (optional)
 
 ### Offline Support
-- Caches all critical resources
-- Works fully offline after first visit
+- Caches critical resources (optional)
+- Works offline after first visit (optional)
 - Custom offline fallback page
 - Automatic cache updates when online
 
 ### Background Sync
-- Queues form submissions when offline
+- Queues form submissions when offline (when enabled)
 - Persistent storage in IndexedDB
 - Syncs when connection restored
 
@@ -236,7 +243,13 @@ All icons are centralized in `assets/styles/icons.css` and stored in `Images_for
 - **[Security Documentation](./SECURITY.md)** - Security measures and best practices
 - **[Security Quick Reference](./README_SECURITY.md)** - Quick security overview
 
-**Note**: API and WebSocket features have been removed and will be implemented in the future.
+**Note**: 
+- **Portfolio API endpoints removed**: Gallery, about, portfolio, projects, and social API endpoints have been removed. The website loads data directly from JSON files.
+- **WebSocket removed**: WebSocket server and all related functionality have been completely removed.
+- **Spotify API removed**: The Spotify API proxy has been removed. The visualiser now uses only local audio files.
+- **Active API endpoints**: Only utility endpoints remain:
+  - `/api/signature` - ImageKit upload signature (used by image-upload page)
+- **Archive**: `ArchiveUpdated/` is the active version for archive development. Use `npm run build:archive` in ArchiveUpdated/ to build and deploy.
 
 ## 🔧 Configuration
 
@@ -246,6 +259,9 @@ All icons are centralized in `assets/styles/icons.css` and stored in `Images_for
 - `IMAGEKIT_PUBLIC_KEY` - ImageKit public key
 - `IMAGEKIT_PRIVATE_KEY` - ImageKit private key
 - `IMAGEKIT_URL_ENDPOINT` - ImageKit URL endpoint
+
+#### Vercel (Spotify API Proxy - Legacy – No Longer Used)
+- These variables are no longer required. The visualiser uses only local audio files and does not connect to Spotify.
 
 ## 🚀 Deployment
 
@@ -287,7 +303,6 @@ All icons are centralized in `assets/styles/icons.css` and stored in `Images_for
 - [x] Preloading critical resources
 - [x] Loading skeletons
 - [ ] RESTful API (planned for future)
-- [ ] WebSocket real-time features (planned for future)
 - [ ] Dark/Light theme toggle
 - [ ] Search functionality
 - [ ] Advanced filtering

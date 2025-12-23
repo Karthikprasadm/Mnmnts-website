@@ -4,18 +4,39 @@
 
 This portfolio website is **READ-ONLY**. Only the website owner can make changes to content. All content is served from static JSON files.
 
-**Note**: API and WebSocket features have been temporarily removed and will be re-implemented in the future.
+**Note**: Portfolio API features have been removed. The website loads data directly from JSON files. WebSocket functionality has been removed.
+
+## Active Project Folders
+
+The following folders are actively used and should be kept:
+- `api/` - Backend API endpoints (ImageKit signature)
+- `ArchiveUpdated/` - Active archive project source (Astro-based, generates `archive.html` to `archive/` directory)
+- `archive/` - Archive build output directory (contains generated `archive.html` and assets)
+- `assets/` - Main website assets (fonts, styles, scripts, images, videos)
+- `ElasticGridScroll/` - Extended gallery view (linked from gallery "view more" button)
+- `gallery/` - Main gallery page (homepage)
+- `image-upload/` - Image upload page
+- `know-me/` - About page
+- `spotify-visualiser/` - Spotify Visualizer project
+- `favicon/`, `404_error/`, `Images_for_icon/`, `icons8-baby-yoda-color-favicons/` - Required assets
 
 ## API Security
 
-**Note**: API functionality has been temporarily removed. This section is kept for future reference.
+**Current State**: Portfolio API endpoints have been removed. Only utility endpoints remain.
 
-When API features are re-implemented, they will include:
-- Read-only enforcement (GET requests only)
-- CORS configuration
-- Security headers on all responses
+### Active API Endpoints
 
-## Service Worker Security
+1. **`/api/signature`** (ImageKit Signature)
+   - Used by: `image-upload/upload.html`
+   - Method: GET
+   - Security: CORS restricted, security headers applied
+   - Purpose: Secure ImageKit authentication for direct uploads
+
+### Removed Endpoints
+
+Portfolio API endpoints (gallery, about, portfolio, projects, social) have been removed. The website loads data directly from JSON files.
+
+## Service Worker Security (optional)
 
 ### Background Sync Restrictions
 
@@ -29,15 +50,6 @@ When API features are re-implemented, they will include:
   - Upload endpoints
   - Signature endpoints
   - Any endpoint with sensitive data
-
-## WebSocket Security
-
-**Note**: WebSocket functionality has been temporarily removed. This section is kept for future reference.
-
-When WebSocket features are re-implemented, they will include:
-- Admin token authentication for write operations
-- Secure connection handling
-- Activity logging and monitoring
 
 ## Client-Side Security
 
@@ -79,7 +91,7 @@ When WebSocket features are re-implemented, they will include:
 
 ## Environment Variables
 
-### Required for ImageKit Signature
+### Required Environment Variables
 
 ```bash
 # Vercel (ImageKit Signature Endpoint)
@@ -87,6 +99,15 @@ IMAGEKIT_PUBLIC_KEY=your-public-key
 IMAGEKIT_PRIVATE_KEY=your-private-key
 IMAGEKIT_URL_ENDPOINT=your-url-endpoint
 ```
+
+### Legacy Environment Variables (No Longer Used)
+
+The following environment variables were previously used for the Spotify API proxy but are **no longer required**:
+
+- `SPOTIFY_CLIENT_ID` - Removed (Spotify API proxy has been removed)
+- `SPOTIFY_CLIENT_SECRET` - Removed (Spotify API proxy has been removed)
+
+The visualiser now uses only local audio files and does not connect to Spotify.
 
 ### Never Commit
 
@@ -107,7 +128,6 @@ IMAGEKIT_URL_ENDPOINT=your-url-endpoint
 ### Logging
 
 - All unauthorized write attempts are logged
-- WebSocket connection attempts logged
 - API method violations logged
 
 ## Incident Response

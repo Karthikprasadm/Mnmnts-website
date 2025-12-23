@@ -1,5 +1,0 @@
-
-User-agent: *
-Allow: /
-
-Sitemap: https://playersclub.crnacura.workers.dev/sitemap-index.xml

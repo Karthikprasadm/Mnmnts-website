@@ -18,25 +18,12 @@ The following global variables are created in this order:
    - **Used by**: `global-error-handler.js`, `script.js`, `archive.js`, `about.js`
    - **Availability**: `window.errorHandler`
 
-3. **`portfolioAPI`** (`assets/scripts/api-client.js`)
-   - **Created**: Immediately on script load
-   - **Dependencies**: None (but uses Logger and serviceWorkerUtils if available)
-   - **Used by**: `script.js`, `archive.js`, `about.js`
-   - **Availability**: `window.portfolioAPI`
-
-4. **`serviceWorkerUtils`** (`assets/scripts/sw-utils.js`)
+3. **`serviceWorkerUtils`** (`assets/scripts/sw-utils.js`)
    - **Created**: Immediately on script load (constructor calls async `init()`)
    - **Dependencies**: None (but uses Logger if available)
-   - **Used by**: `api-client.js` (for background sync)
+   - **Used by**: Background sync for ImageKit signature endpoint
    - **Availability**: `window.serviceWorkerUtils`
    - **Note**: Initialization is async, but instance is available immediately
-
-5. **`portfolioWebSocket`** (`assets/scripts/websocket-client.js`)
-   - **Created**: On `DOMContentLoaded` event
-   - **Dependencies**: None
-   - **Used by**: Gallery page only
-   - **Availability**: `window.portfolioWebSocket`
-   - **Note**: Only initialized on gallery page
 
 ## Script Loading Order in HTML
 
@@ -52,16 +39,10 @@ To ensure proper initialization, scripts should be loaded in this order:
 <!-- 3. Global Error Handler (depends on errorHandler) -->
 <script src="../assets/scripts/global-error-handler.js"></script>
 
-<!-- 4. Service Worker Utils (for background sync) -->
+<!-- 3. Service Worker Utils (optional; only if offline/PWA enabled) -->
 <script src="../assets/scripts/sw-utils.js"></script>
 
-<!-- 5. API Client (may use serviceWorkerUtils for background sync) -->
-<script src="../assets/scripts/api-client.js"></script>
-
-<!-- 6. WebSocket Client (gallery page only) -->
-<script src="../assets/scripts/websocket-client.js"></script>
-
-<!-- 7. Page-specific scripts -->
+<!-- 4. Page-specific scripts -->
 <script src="../assets/scripts/script.js"></script>
 ```
 
@@ -71,20 +52,13 @@ To ensure proper initialization, scripts should be loaded in this order:
 Logger
   ├── errorHandler (optional)
   ├── global-error-handler (optional)
-  ├── api-client (optional)
   └── sw-utils (optional)
 
 errorHandler
   └── global-error-handler (required)
 
 serviceWorkerUtils
-  └── api-client (optional, for background sync)
-
-portfolioAPI
-  └── script.js, archive.js, about.js (required)
-
-portfolioWebSocket
-  └── gallery/index.html only (optional)
+  └── (used for background sync with ImageKit signature endpoint)
 ```
 
 ## Safe Usage Patterns
@@ -112,15 +86,15 @@ errorHandler.showError('Error message'); // May fail if not loaded
 
 ### Initialization Timing
 
-- **Synchronous**: `Logger`, `errorHandler`, `portfolioAPI`, `serviceWorkerUtils` (instance)
-- **Asynchronous**: `serviceWorkerUtils.init()`, `portfolioWebSocket` (on DOMContentLoaded)
+- **Synchronous**: `Logger`, `errorHandler`, `serviceWorkerUtils` (instance)
+- **Asynchronous**: `serviceWorkerUtils.init()`
 
 ### Best Practices
 
 1. **Always check availability** before using global variables
 2. **Use Logger** for consistent logging (with console fallback)
 3. **Load scripts in order** as specified above
-4. **Handle async initialization** for service worker and WebSocket
+4. **Handle async initialization** for service worker
 5. **Use fallbacks** when dependencies may not be available
 
 ## Notes
@@ -129,5 +103,4 @@ errorHandler.showError('Error message'); // May fail if not loaded
 - Scripts are designed to work independently if dependencies are missing
 - Logger is optional but recommended for consistent logging
 - Service Worker initialization is async but instance is available immediately
-- WebSocket is only initialized on the gallery page
 

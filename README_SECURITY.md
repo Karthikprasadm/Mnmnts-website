@@ -4,11 +4,11 @@
 
 This portfolio website is **READ-ONLY**. Only the website owner can make changes. All content is served from static JSON files.
 
-**Note**: API and WebSocket features have been temporarily removed and will be re-implemented in the future.
+**Note**: Portfolio API features have been removed. The website loads data directly from JSON files. WebSocket functionality has been removed.
 
 ## ✅ What's Secured
 
-### 1. Service Worker
+### 1. Service Worker (optional)
 - ✅ **Background sync secured** - Only allows authorized endpoints (ImageKit signature)
 - ✅ **Unauthorized endpoints blocked** - Automatically removed from queue
 
@@ -61,7 +61,7 @@ Check service worker logs for security violations.
 
 ## Summary
 
-✅ **Service Worker**: Secured sync (ImageKit signature only)  
+✅ **Service Worker**: Secured sync (ImageKit signature only). Optional; site works online without it.  
 ✅ **Client-Side**: No server writes  
 ✅ **Files**: Only you can modify via GitHub  
 ✅ **Content**: All content served from static JSON files  

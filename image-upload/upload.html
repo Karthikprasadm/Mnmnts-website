@@ -98,6 +98,7 @@
                 <a href="../gallery/index.html" role="menuitem">Open gallery</a>
                 <a href="../know-me/about.html" role="menuitem">Know me</a>
                 <a href="../archive/archive.html" role="menuitem">View archive</a>
+                <a href="../spotify-visualiser/index.html" role="menuitem">Spotify Visualizer</a>
                 <a href="./upload.html" role="menuitem" aria-current="page">Open upload</a>
             </div>
         </div>
@@ -127,6 +128,7 @@
         <h1>Upload Your Media</h1>
         <form id="uploadForm" class="upload-form">
             <label for="mediaUpload" class="custom-file-upload">Choose Photos/Videos</label>
+            <div class="upload-help">Accepted: JPG/PNG/MP4 • Max size: 10MB per file</div>
             <input type="file" id="mediaUpload" name="media" accept="image/*, video/*" multiple>
 
             <button type="button" id="uploadButton" aria-label="Upload Media">Upload</button>
@@ -135,6 +137,7 @@
                 <div id="progress" class="progress"></div>
             </div>
 
+            <div id="uploadStatus" class="upload-status" aria-live="polite"></div>
             <div id="errorMessage" class="error-message"></div>
         </form>
 
@@ -308,6 +311,7 @@
         const ikProgressBar = document.getElementById("progress");
         const ikPreview = document.getElementById("preview");
         const ikErrorMessage = document.getElementById("errorMessage");
+        const ikStatusBox = document.getElementById("uploadStatus");
         const toastContainer = document.getElementById("toastContainer");
         function showToast(message, type = "success") {
             if (!toastContainer) return;
@@ -316,6 +320,22 @@
             toast.textContent = message;
             toastContainer.appendChild(toast);
             setTimeout(() => toast.remove(), 3200);
+        }
+        function addStatusRow(fileName) {
+            if (!ikStatusBox) return null;
+            const row = document.createElement("div");
+            row.className = "upload-status-item status-pending";
+            row.dataset.fileName = fileName;
+            row.innerHTML = `<span class="status-dot"></span><span class="status-text">${fileName} – pending</span>`;
+            ikStatusBox.appendChild(row);
+            return row;
+        }
+        function setStatus(fileName, state, message) {
+            if (!ikStatusBox) return;
+            const row = [...ikStatusBox.querySelectorAll(".upload-status-item")].find(r => r.dataset.fileName === fileName) || addStatusRow(fileName);
+            row.className = `upload-status-item status-${state}`;
+            const text = row.querySelector(".status-text");
+            if (text) text.textContent = `${fileName} – ${message}`;
         }
         const imagekit = new ImageKit({
             publicKey: "public_QadH3cW1AFwIaqSz6iRkSiGl6PM=",
@@ -342,6 +362,7 @@
             ikErrorMessage.textContent = "";
             ikPreview.innerHTML = `<p>Uploading ${files.length} file(s)...</p>`;
             ikProgressBar.style.width = "0%";
+            if (ikStatusBox) ikStatusBox.innerHTML = "";
             let sigData;
             try {
                 sigData = await getSignature();
@@ -360,11 +381,13 @@
             let failedReasons = [];
             let totalProgress = 0;
             const totalFiles = files.length;
+            const maxRetries = 2;
             
             // Process files sequentially to better track progress
             async function processFiles() {
                 for (let index = 0; index < files.length; index++) {
                     const file = files[index];
+                    setStatus(file.name, "pending", "Queued");
                 // Validate file type and size before upload
                 const allowedTypes = ["image/jpeg", "image/png", "video/mp4"];
                 const maxSize = 10 * 1024 * 1024; // 10MB
@@ -374,6 +397,7 @@
                     failedReasons.push(`${file.name}: Invalid file type (${file.type})`);
                         updateProgress();
                         showToast(`${file.name}: invalid type`, "error");
+                        setStatus(file.name, "error", "Invalid type");
                         continue;
                 } else if (file.size > maxSize) {
                     failedUploads++;
@@ -381,6 +405,7 @@
                     failedReasons.push(`${file.name}: File size exceeds 10MB`);
                         updateProgress();
                         showToast(`${file.name}: too large (>10MB)`, "error");
+                        setStatus(file.name, "error", "Too large (>10MB)");
                         continue;
                     }
                     
@@ -396,39 +421,54 @@
                         failedReasons.push(`${file.name}: Failed to get upload signature.`);
                         updateProgress();
                         showToast(`${file.name}: signature failed`, "error");
+                        setStatus(file.name, "error", "Signature failed");
                         continue;
                         }
                     
-                    // Upload file with progress tracking
-                    await new Promise((resolve) => {
-                    imagekit.upload({
-                        file: file,
-                        fileName: file.name,
-                        signature: sigDataPerFile.signature,
-                        expire: sigDataPerFile.expire,
-                        token: sigDataPerFile.token,
-                        useUniqueFileName: true,
-                        onProgress: function(progress) {
-                                // Calculate overall progress across all files
-                                const fileProgress = (progress.loaded / progress.total) * 100;
-                                const fileWeight = 100 / totalFiles;
-                                totalProgress = (index * fileWeight) + (fileProgress * fileWeight / 100);
-                                ikProgressBar.style.width = `${totalProgress}%`;
-                        }
-                    }, function(err, result) {
-                        if (err) {
-                            failedUploads++;
-                            failedFiles.push(file.name);
-                            let reason = err && err.message ? err.message : "Unknown error";
-                            failedReasons.push(`${file.name}: ${reason}`);
-                            console.error(`Error uploading ${file.name}:`, err);
-                        } else {
-                            completedUploads++;
-                        }
-                            updateProgress();
-                            resolve();
+                    // Upload file with progress tracking + retries
+                    async function uploadWithRetry(attempt = 0) {
+                        setStatus(file.name, attempt === 0 ? "uploading" : "retry", attempt === 0 ? "Uploading..." : `Retrying (${attempt}/${maxRetries})...`);
+                        return new Promise((resolve) => {
+                            imagekit.upload({
+                                file: file,
+                                fileName: file.name,
+                                signature: sigDataPerFile.signature,
+                                expire: sigDataPerFile.expire,
+                                token: sigDataPerFile.token,
+                                useUniqueFileName: true,
+                                onProgress: function(progress) {
+                                        const fileProgress = (progress.loaded / progress.total) * 100;
+                                        const fileWeight = 100 / totalFiles;
+                                        totalProgress = (index * fileWeight) + (fileProgress * fileWeight / 100);
+                                        ikProgressBar.style.width = `${totalProgress}%`;
+                                }
+                            }, async function(err, result) {
+                                if (err) {
+                                    if (attempt < maxRetries) {
+                                        const backoff = 600 * Math.pow(2, attempt);
+                                        setStatus(file.name, "retry", `Retrying in ${Math.round(backoff)}ms...`);
+                                        setTimeout(() => resolve(uploadWithRetry(attempt + 1)), backoff);
+                                    } else {
+                                        failedUploads++;
+                                        failedFiles.push(file.name);
+                                        let reason = err && err.message ? err.message : "Unknown error";
+                                        failedReasons.push(`${file.name}: ${reason}`);
+                                        console.error(`Error uploading ${file.name}:`, err);
+                                        setStatus(file.name, "error", `Failed: ${reason}`);
+                                        updateProgress();
+                                        resolve();
+                                    }
+                                } else {
+                                    completedUploads++;
+                                    setStatus(file.name, "success", "Uploaded");
+                                    updateProgress();
+                                    resolve();
+                                }
+                            });
                         });
-                    });
+                    }
+
+                    await uploadWithRetry();
                 }
             }
             

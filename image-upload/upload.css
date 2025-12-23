@@ -102,6 +102,13 @@ main {
     color: #e0e0e0;
 }
 
+.upload-help {
+    color: #b9d7ff;
+    font-size: 0.9rem;
+    margin-top: 0.35rem;
+    opacity: 0.9;
+}
+
 .upload-form input[type="file"] {
     display: none;
 }
@@ -129,6 +136,45 @@ main {
     transform: translateY(-2px);
     box-shadow: 0 8px 20px rgba(0,0,0,0.28), inset 0 0 0 1px rgba(255, 255, 255, 0.12);
     outline: none;
+}
+
+/* Upload button: subtle pulse / glow on hover */
+.upload-form .custom-file-upload {
+    position: relative;
+    overflow: hidden;
+}
+
+.upload-form .custom-file-upload::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    opacity: 0;
+    transform: scale(1.05);
+    transition:
+        opacity var(--hover-speed) var(--hover-ease),
+        transform var(--hover-speed) var(--hover-ease);
+    pointer-events: none;
+}
+
+.upload-form .custom-file-upload:hover::before,
+.upload-form .custom-file-upload:focus-visible::before {
+    opacity: 1;
+    transform: scale(1.08);
+    animation: uploadGlow 1.4s ease-out infinite;
+}
+
+@keyframes uploadGlow {
+    0% {
+        box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.12);
+    }
+    60% {
+        box-shadow: 0 0 0 10px rgba(255, 255, 255, 0);
+    }
+    100% {
+        box-shadow: 0 0 0 14px rgba(255, 255, 255, 0);
+    }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -175,6 +221,45 @@ main {
     color: #ff6b6b;
     margin-top: 1rem;
     font-size: 0.9rem;
+}
+
+.upload-status {
+    margin-top: 0.75rem;
+    background: rgba(20, 20, 20, 0.65);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 12px;
+    padding: 0.8rem 1rem;
+    color: #e0e0e0;
+    font-size: 0.92rem;
+    line-height: 1.5;
+    max-height: 220px;
+    overflow-y: auto;
+}
+
+.upload-status-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.25rem 0;
+}
+
+.upload-status-item .status-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: #888;
+    flex-shrink: 0;
+}
+
+.upload-status-item.status-pending .status-dot { background: #888; }
+.upload-status-item.status-uploading .status-dot { background: #4dabf7; }
+.upload-status-item.status-success .status-dot { background: #6dd96d; }
+.upload-status-item.status-error .status-dot { background: #ff6b6b; }
+.upload-status-item.status-retry .status-dot { background: #f6c344; }
+
+.upload-status-item .status-text {
+    flex: 1;
+    word-break: break-word;
 }
 
 #preview,

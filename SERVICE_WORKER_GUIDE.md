@@ -2,11 +2,11 @@
 
 ## Overview
 
-Enhanced service worker with comprehensive offline support, background sync, and preloading for critical resources.
+Enhanced service worker with comprehensive offline support, background sync, and preloading for critical resources. This is optional; the site works online without enabling the service worker/PWA.
 
 ## Features
 
-### 1. Offline Support
+### 1. Offline Support (optional)
 - **Cached Resources**: All critical pages, styles, scripts, and fonts
 - **Offline Page**: Custom offline fallback page
 - **Cache Strategies**:
@@ -15,7 +15,7 @@ Enhanced service worker with comprehensive offline support, background sync, and
   - **API**: Network first, cache fallback
 - **Automatic Cache Updates**: Background updates when online
 
-### 2. Background Sync
+### 2. Background Sync (optional)
 - **Form Submissions**: Queue form data when offline, sync when online
 - **API Requests**: Retry failed API calls automatically
 - **IndexedDB Storage**: Persistent queue storage
