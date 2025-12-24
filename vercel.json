@@ -17,6 +17,10 @@
     {
       "source": "/repo/:path*",
       "destination": "/Repository/dist/:path*"
+    },
+    {
+      "source": "/(.*)",
+      "destination": "/$1"
     }
   ]
 }
