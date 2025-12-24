@@ -62,10 +62,6 @@
     {
       "source": "/repo/",
       "destination": "/Repository/dist/index.html"
-    },
-    {
-      "source": "/repo/:path((?!images).)*",
-      "destination": "/Repository/dist/:path"
     }
   ],
   "headers": [
