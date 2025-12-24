@@ -93,9 +93,9 @@ main {
     display: inline-block;
     margin-top: 2rem;
     box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5);
-    min-width: 330px;
-    max-width: 330px;
-    width: 90%;
+    min-width: 300px;
+    max-width: 300px;
+    width: 80%;
 }
 
 .upload-form label {
@@ -106,7 +106,7 @@ main {
 }
 
 .upload-help {
-    color: #fece5c;
+    color: #ffb347;
     font-size: 0.9rem;
     margin-top: 0.35rem;
     opacity: 0.9;
