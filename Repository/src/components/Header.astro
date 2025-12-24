@@ -1,0 +1,346 @@
+---
+// Get the current pathname
+const currentPath = Astro.url.pathname;
+---
+
+<nav class="navbar" role="navigation" aria-label="Main navigation">
+  <!-- Menu Button (Left) -->
+  <div class="dropdown">
+    <button class="dropbtn" aria-label="Open menu" tabindex="0">Menu</button>
+    <div class="dropdown-content" role="menu">
+      <a href="http://localhost:3000/gallery/index.html" role="menuitem">Back to gallery</a>
+      <a href="http://localhost:3000/know-me/about.html" role="menuitem">Know me</a>
+      <a href="http://localhost:3000/image-upload/upload.html" role="menuitem">Image upload</a>
+      <a href="http://localhost:3000/spotify-visualiser/index.html" role="menuitem">Spotify visualizer</a>
+    </div>
+  </div>
+  <!-- Social Icons (Left-Center) -->
+  <div class="social-icons" aria-label="Social links">
+    <a href="https://www.instagram.com/kkarthhikk" target="_blank" aria-label="Instagram" data-tooltip="Instagram">
+      <span class="icon icon-instagram" aria-hidden="true"></span>
+    </a>
+    <a href="https://www.linkedin.com/in/karthik-prasad-m-7673b5356/" target="_blank" aria-label="LinkedIn" data-tooltip="LinkedIn">
+      <span class="icon icon-linkedin" aria-hidden="true"></span>
+    </a>
+    <a href="https://pin.it/70AOzYsfW" target="_blank" aria-label="Pinterest" data-tooltip="Pinterest">
+      <span class="icon icon-pinterest" aria-hidden="true"></span>
+    </a>
+    <a href="https://open.spotify.com/user/31g54rthdkjwc7tk2yzwlkptbbqi" target="_blank" aria-label="Spotify" data-tooltip="Spotify">
+      <span class="icon icon-spotify" aria-hidden="true"></span>
+    </a>
+    <a href="https://github.com/Karthikprasadm" target="_blank" aria-label="GitHub" data-tooltip="GitHub">
+      <span class="icon icon-github" aria-hidden="true"></span>
+    </a>
+  </div>
+</nav>
+
+<style>
+  /* Unified Navbar */
+  .navbar {
+    position: fixed;
+    top: 1.25rem;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.6rem;
+    padding: 0.5rem 0.9rem;
+    background: rgba(30, 30, 30, 0.8);
+    backdrop-filter: blur(18px);
+    width: 340px;
+    max-width: calc(100% - 2rem);
+    border-radius: 20px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.16);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    font-family: 'Instrument Sans Variable', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    z-index: 1000;
+    height: fit-content;
+    line-height: 1;
+  }
+
+  /* Social Icons */
+  .social-icons {
+    display: flex;
+    gap: 0.6rem;
+    align-items: center;
+    flex: 0 0 auto;
+  }
+
+  .social-icons a {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.25rem;
+    transition: opacity 0.18s cubic-bezier(0.4, 0, 0.2, 1);
+    text-indent: -9999px;
+    overflow: hidden;
+    font-size: 0;
+    line-height: 0;
+  }
+
+  .social-icons a .icon {
+    width: 1.65rem;
+    height: 1.65rem;
+    filter: grayscale(40%) invert(80%);
+    transition: opacity 0.18s cubic-bezier(0.4, 0, 0.2, 1), filter 0.18s cubic-bezier(0.4, 0, 0.2, 1);
+    display: block;
+    text-indent: 0;
+  }
+
+  .social-icons a:hover,
+  .social-icons a:focus-visible {
+    opacity: 0.72;
+    outline: none;
+  }
+
+  .social-icons a:hover .icon,
+  .social-icons a:focus-visible .icon {
+    filter: grayscale(0%) invert(100%);
+  }
+
+  /* Logo */
+  .logo {
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: #fff;
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    letter-spacing: 0.05em;
+    flex: 1;
+    text-align: center;
+    margin: 0;
+  }
+
+  /* Dropdown */
+  .dropdown {
+    position: relative;
+    display: inline-block;
+    z-index: 10001;
+  }
+
+  .dropbtn {
+    background-color: rgba(30, 30, 30, 0.82);
+    backdrop-filter: blur(18px);
+    color: #e0e0e0;
+    padding: 0.55rem 1.1rem;
+    font-size: 0.9rem;
+    font-weight: 600;
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    cursor: pointer;
+    transition: background-color 0.18s cubic-bezier(0.4, 0, 0.2, 1), color 0.18s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.18s cubic-bezier(0.4, 0, 0.2, 1);
+    border-radius: 18px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    font-family: 'Instrument Sans Variable', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    letter-spacing: 0.02em;
+    height: fit-content;
+    min-height: 38px;
+  }
+
+  .dropbtn:hover,
+  .dropbtn:focus-visible {
+    background-color: rgba(50, 50, 50, 0.95);
+    color: #ffffff;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.26), inset 0 0 0 1px rgba(255, 255, 255, 0.12);
+    outline: none;
+  }
+
+  .dropdown-content {
+    position: absolute;
+    left: 0;
+    top: calc(100% + 2px);
+    background: rgba(30, 30, 30, 0.86);
+    backdrop-filter: blur(18px);
+    min-width: 126px;
+    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.24), 0 3px 10px rgba(0, 0, 0, 0.18);
+    z-index: 10002;
+    border-radius: 18px;
+    overflow: hidden;
+    border: 1px solid rgba(255, 255, 255, 0.07);
+    margin-top: 0;
+    padding: 0.2rem 0;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(6px) scale(0.98);
+    pointer-events: none;
+    transition: opacity 0.18s cubic-bezier(0.4, 0, 0.2, 1), transform 0.18s cubic-bezier(0.4, 0, 0.2, 1), visibility 0.18s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .dropdown-content a {
+    color: #e0e0e0;
+    padding: 0.42rem 0.85rem;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    font-family: 'Instrument Sans Variable', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    font-size: 0.84rem;
+    font-weight: 600;
+    transition: background-color 0.18s cubic-bezier(0.4, 0, 0.2, 1), color 0.18s cubic-bezier(0.4, 0, 0.2, 1);
+    letter-spacing: 0.01em;
+    margin: 0.08rem 0.3rem;
+    border-radius: 10px;
+    border: 1px solid transparent;
+    min-height: 40px;
+  }
+
+  .dropdown-content a.current {
+    background-color: rgba(60, 60, 60, 0.6);
+    color: #ffffff;
+  }
+
+  .dropdown-content a:hover,
+  .dropdown-content a:focus-visible {
+    background-color: rgba(60, 60, 60, 0.6);
+    color: #ffffff;
+    outline: none;
+    opacity: 1;
+    border-color: transparent;
+  }
+
+  .dropdown:hover .dropdown-content,
+  .dropdown:focus-within .dropdown-content,
+  .dropdown-content:hover {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+    transform: translateY(0) scale(1);
+  }
+
+  .dropdown::after {
+    content: "";
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 100%;
+    height: 10px;
+    background: transparent;
+    pointer-events: auto;
+  }
+
+  /* Icon styles */
+  .icon {
+    display: inline-block;
+    width: 1.65rem;
+    height: 1.65rem;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: contain;
+  }
+
+  .icon-instagram {
+    background-image: url('/images/icons/instagram.png');
+  }
+
+  .icon-linkedin {
+    background-image: url('/images/icons/linkedin.png');
+  }
+
+  .icon-pinterest {
+    background-image: url('/images/icons/pinterest.png');
+  }
+
+  .icon-spotify {
+    background-image: url('/images/icons/spotify.png');
+  }
+
+  .icon-github {
+    background-image: url('/images/icons/github.png');
+  }
+
+  /* Custom Tooltips - Only show on hover */
+  [data-tooltip] {
+    position: relative;
+  }
+
+  .custom-tooltip {
+    position: absolute;
+    bottom: calc(100% + 8px);
+    left: 50%;
+    transform: translateX(-50%) translateY(4px);
+    padding: 0.5rem 0.75rem;
+    background: rgba(30, 30, 30, 0.85);
+    backdrop-filter: blur(18px);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 12px;
+    color: #e0e0e0;
+    font-size: 0.8rem;
+    font-weight: 500;
+    white-space: nowrap;
+    pointer-events: none;
+    z-index: 10000;
+    opacity: 0;
+    visibility: hidden;
+    display: none;
+    transition: opacity 0.18s cubic-bezier(0.4, 0, 0.2, 1), 
+                transform 0.18s cubic-bezier(0.4, 0, 0.2, 1),
+                visibility 0.18s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.24);
+    font-family: 'Instrument Sans Variable', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  }
+
+  .custom-tooltip::after {
+    content: '';
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 0;
+    height: 0;
+    border-left: 6px solid transparent;
+    border-right: 6px solid transparent;
+    border-top: 6px solid rgba(30, 30, 30, 0.85);
+    filter: drop-shadow(0 2px 2px rgba(0, 0, 0, 0.1));
+  }
+
+  [data-tooltip]:hover .custom-tooltip,
+  [data-tooltip]:focus-visible .custom-tooltip {
+    opacity: 1;
+    visibility: visible;
+    display: block;
+    transform: translateX(-50%) translateY(0);
+  }
+
+  @media (max-width: 768px) {
+    .navbar {
+      width: calc(100% - 2rem);
+      padding: 0.55rem 0.9rem;
+    }
+
+    .logo {
+      font-size: 1.1rem;
+    }
+
+    .social-icons {
+      gap: 0.4rem;
+    }
+
+    .social-icons a .icon {
+      width: 1.5rem;
+      height: 1.5rem;
+    }
+  }
+</style>
+<script>
+  // Custom tooltip initialization
+  (function() {
+    function initTooltips() {
+      const tooltipElements = document.querySelectorAll('[data-tooltip]');
+      tooltipElements.forEach(element => {
+        const tooltipText = element.getAttribute('data-tooltip');
+        if (tooltipText && !element.querySelector('.custom-tooltip')) {
+          const tooltip = document.createElement('span');
+          tooltip.className = 'custom-tooltip';
+          tooltip.textContent = tooltipText;
+          element.appendChild(tooltip);
+          element.removeAttribute('title');
+        }
+      });
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initTooltips);
+    } else {
+      initTooltips();
+    }
+  })();
+</script>

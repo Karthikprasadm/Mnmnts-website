@@ -1,0 +1,190 @@
+---
+import { ClientRouter } from "astro:transitions";
+
+import "../styles/global.css";
+
+import { SEO } from "astro-seo";
+
+import SmoothScroll from "../components/SmoothScroll.astro";
+import Header from "../components/Header.astro";
+import Footer from "../components/Footer.astro";
+
+import "@fontsource-variable/instrument-sans";
+import instrumentSansWoff2 from "@fontsource-variable/instrument-sans/files/instrument-sans-latin-wght-normal.woff2";
+
+type Props = {
+  title: string;
+  description?: string;
+};
+
+const { title, description = "Mnmnts Repository - A curated collection of music artists and albums. Explore diverse genres, discover new sounds, and experience the digital museum of musical moments." } = Astro.props;
+
+// Current page value (/home, /about, /404 ...)
+const currentPage =
+  Astro.url.pathname.replace(/\/$/, "").split("/").pop() || "home";
+---
+
+<!doctype html>
+<html lang="en" data-page={currentPage}>
+  <head>
+    <SEO
+      title={title}
+      description={description}
+      charset="UTF-8"
+      openGraph={{
+        basic: {
+          title: title,
+          type: "website",
+          image: "https://ik.imagekit.io/ijv7nmfqx/Website_showcase/875320.jpg?updatedAt=1748107186320&v=2",
+          url: "https://karthikprasadm.github.io/",
+        },
+      }}
+      twitter={{
+        card: "summary_large_image",
+        title: title,
+        description: description,
+        image: "https://ik.imagekit.io/ijv7nmfqx/Website_showcase/875320.jpg?updatedAt=1748107186320&v=2",
+      }}
+      extend={{
+        // extending the default link tags
+        link: [
+          {
+            rel: "apple-touch-icon",
+            sizes: "57x57",
+            href: `/favicon/apple-icon-57x57.png`,
+          },
+          {
+            rel: "apple-touch-icon",
+            sizes: "60x60",
+            href: `/favicon/apple-icon-60x60.png`,
+          },
+          {
+            rel: "apple-touch-icon",
+            sizes: "72x72",
+            href: `/favicon/apple-icon-72x72.png`,
+          },
+          {
+            rel: "apple-touch-icon",
+            sizes: "76x76",
+            href: `favicon/apple-icon-76x76.png`,
+          },
+          {
+            rel: "apple-touch-icon",
+            sizes: "114x114",
+            href: `favicon/apple-icon-114x114.png`,
+          },
+          {
+            rel: "apple-touch-icon",
+            sizes: "120x120",
+            href: `favicon/apple-icon-120x120.png`,
+          },
+          {
+            rel: "apple-touch-icon",
+            sizes: "144x144",
+            href: `favicon/apple-icon-144x144.png`,
+          },
+          {
+            rel: "apple-touch-icon",
+            sizes: "152x152",
+            href: `favicon/apple-icon-152x152.png`,
+          },
+          {
+            rel: "apple-touch-icon",
+            sizes: "180x180",
+            href: `favicon/apple-icon-180x180.png`,
+          },
+          {
+            rel: "icon",
+            type: "image/png",
+            sizes: "192x192",
+            href: `favicon/android-icon-192x192.png`,
+          },
+          {
+            rel: "icon",
+            type: "image/png",
+            sizes: "32x32",
+            href: `favicon/favicon-32x32.png`,
+          },
+          {
+            rel: "icon",
+            type: "image/png",
+            sizes: "96x96",
+            href: `favicon/favicon-96x96.png`,
+          },
+          {
+            rel: "icon",
+            type: "image/png",
+            sizes: "16x16",
+            href: `favicon/favicon-16x16.png`,
+          },
+          { rel: "manifest", href: `favicon/manifest.json` },
+          { rel: "sitemap", href: `sitemap-index.xml` },
+          {
+            rel: "icon",
+            href: `favicon.ico`,
+            type: "image/x-icon",
+          },
+          {
+            rel: "shortcut icon",
+            href: `favicon.ico`,
+            type: "image/x-icon",
+          },
+          {
+            rel: "preload",
+            href: instrumentSansWoff2,
+            as: "font",
+            type: "font/woff2",
+            crossorigin: "anonymous",
+          },
+        ],
+        // extending the default meta tags
+        meta: [
+          { name: "description", content: description },
+          { name: "keywords", content: "Mnmnts, Museum of Moments, Music Artists, Albums, Portfolio, Karthik Prasad M, Digital Museum, Creative, Gallery, Music, Genres, Discover" },
+          { name: "author", content: "Karthik Prasad M" },
+          { name: "viewport", content: "width=device-width, initial-scale=1.0" },
+          { name: "msapplication-TileColor", content: "#22223b" },
+          { name: "msapplication-TileImage", content: `favicon/ms-icon-144x144.png` },
+          { name: "theme-color", content: "#ffb347" },
+          { name: "generator", content: Astro.generator },
+          { property: "og:site_name", content: "Mnmnts | Repo" },
+          { property: "og:locale", content: "en_US" },
+        ],
+      }}
+    />
+    <ClientRouter />
+    <!-- JSON-LD Structured Data -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      "name": "Mnmnts | Repo",
+      "alternateName": "Mnmnts Repository",
+      "url": "https://karthikprasadm.github.io/",
+      "description": "A curated collection of music artists and albums. Explore diverse genres, discover new sounds, and experience the digital museum of musical moments.",
+      "author": {
+        "@type": "Person",
+        "name": "Karthik Prasad M",
+        "url": "https://karthikprasadm.github.io/",
+        "sameAs": [
+          "https://www.instagram.com/kkarthhikk",
+          "https://www.linkedin.com/in/karthik-prasad-m-7673b5356/",
+          "https://github.com/Karthikprasadm",
+          "https://pin.it/70AOzYsfW",
+          "https://open.spotify.com/user/31g54rthdkjwc7tk2yzwlkptbbqi"
+        ]
+      },
+      "inLanguage": "en-US",
+      "keywords": "Mnmnts, Museum of Moments, Music Artists, Albums, Portfolio, Karthik Prasad M, Digital Museum, Creative, Gallery, Music, Genres"
+    }
+    </script>
+  </head>
+  <body>
+    <div class="stars"></div>
+    <SmoothScroll />
+    <Header />
+    <slot />
+    <Footer />
+    <script src="../scripts/imageFade.js"></script>
+  </body>
+</html>
