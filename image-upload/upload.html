@@ -283,6 +283,7 @@
                 // Validate file type and size before upload
                 const allowedTypes = [
                     "image/jpeg", 
+                    "image/jpg",
                     "image/png", 
                     "video/mp4",
                     "application/pdf",
@@ -294,10 +295,31 @@
                     "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
                 ];
                 const maxSize = 10 * 1024 * 1024; // 10MB
-                if (!allowedTypes.includes(file.type)) {
+                
+                // Handle files with empty or incorrect MIME types by checking file extension
+                let fileType = file.type;
+                if (!fileType || fileType === '') {
+                    const fileExtension = file.name.split('.').pop().toLowerCase();
+                    const extensionToMime = {
+                        'jpg': 'image/jpeg',
+                        'jpeg': 'image/jpeg',
+                        'png': 'image/png',
+                        'mp4': 'video/mp4',
+                        'pdf': 'application/pdf',
+                        'ppt': 'application/vnd.ms-powerpoint',
+                        'pptx': 'application/vnd.openxmlformats-officedocument.presentationml.presentation',
+                        'doc': 'application/msword',
+                        'docx': 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+                        'xls': 'application/vnd.ms-excel',
+                        'xlsx': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+                    };
+                    fileType = extensionToMime[fileExtension] || fileType;
+                }
+                
+                if (!allowedTypes.includes(fileType)) {
                     failedUploads++;
                     failedFiles.push(file.name);
-                    failedReasons.push(`${file.name}: Invalid file type (${file.type})`);
+                    failedReasons.push(`${file.name}: Invalid file type (${file.type || 'unknown'}). Allowed: images (JPEG, PNG), videos (MP4), documents (PDF, Word, Excel, PowerPoint)`);
                         updateProgress();
                         showToast(`${file.name}: invalid type`, "error");
                         setStatus(file.name, "error", "Invalid type");
