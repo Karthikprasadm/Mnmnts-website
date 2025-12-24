@@ -37,6 +37,14 @@
     {
       "source": "/repo/:path*",
       "destination": "/Repository/dist/:path*"
+    },
+    {
+      "source": "/_astro/:path*",
+      "destination": "/Repository/dist/_astro/:path*"
+    },
+    {
+      "source": "/favicon/:path*",
+      "destination": "/Repository/dist/favicon/:path*"
     }
   ],
   "headers": [
