@@ -146,6 +146,9 @@ body, button, input, select, textarea {
     flex: 0 0 auto;
     justify-content: center;
     align-items: center;
+    border-left: 1px solid rgba(255, 255, 255, 0.2);
+    padding-left: 1rem;
+    margin-left: 0.5rem;
 }
 
 .social-icons a {
