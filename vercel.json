@@ -27,16 +27,28 @@
       "destination": "/api/:path*"
     },
     {
-      "source": "/repo/images/:path*",
-      "destination": "/Repository/dist/images/:path*"
+      "source": "/repo/images/artists/(.*)",
+      "destination": "/Repository/dist/images/artists/$1"
     },
     {
-      "source": "/repo/_astro/:path*",
-      "destination": "/Repository/dist/_astro/:path*"
+      "source": "/repo/images/albums/(.*)",
+      "destination": "/Repository/dist/images/albums/$1"
     },
     {
-      "source": "/repo/favicon/:path*",
-      "destination": "/Repository/dist/favicon/:path*"
+      "source": "/repo/images/icons/(.*)",
+      "destination": "/Repository/dist/images/icons/$1"
+    },
+    {
+      "source": "/repo/images/(.*)",
+      "destination": "/Repository/dist/images/$1"
+    },
+    {
+      "source": "/repo/_astro/(.*)",
+      "destination": "/Repository/dist/_astro/$1"
+    },
+    {
+      "source": "/repo/favicon/(.*)",
+      "destination": "/Repository/dist/favicon/$1"
     },
     {
       "source": "/repo",
