@@ -5,10 +5,9 @@ import sitemap from '@astrojs/sitemap';
 
 // https://astro.build/config
 export default defineConfig({
-  // Set base path for Vercel deployment
-  // Always use /repo for production builds (Vercel)
-  // Use / for local development
-  base: process.env.NODE_ENV === 'production' ? '/repo' : '/',
+  // Always use /repo as base path for Vercel deployment
+  // This ensures all assets are correctly referenced under /repo
+  base: '/repo',
   devToolbar: {
     enabled: false,
   },
