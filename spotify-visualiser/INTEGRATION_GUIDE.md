@@ -96,7 +96,7 @@ jobs:
 ## 📁 File Structure
 
 ```
-Karthikprasadm.github.io/
+Mnmnts-website/
 ├── spotify-visualiser/
 │   ├── index.html          # Main entry point
 │   ├── src/                # Source files

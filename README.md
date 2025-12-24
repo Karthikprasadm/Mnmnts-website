@@ -146,8 +146,8 @@ See [SERVICE_WORKER_GUIDE.md](./SERVICE_WORKER_GUIDE.md) for detailed documentat
 
 1. **Clone the repository**
 ```bash
-git clone https://github.com/Karthikprasadm/Karthikprasadm.github.io.git
-cd Karthikprasadm.github.io
+git clone https://github.com/Karthikprasadm/Mnmnts-website.git
+cd Mnmnts-website
 ```
 
 2. **Install dependencies**

@@ -26,7 +26,7 @@ module.exports = async (req, res) => {
     endpoints: {
       signature: '/api/signature'
     },
-    documentation: 'https://github.com/Karthikprasadm/Karthikprasadm.github.io',
+    documentation: 'https://github.com/Karthikprasadm/Mnmnts-website',
     status: 'operational',
     note: 'Only utility endpoints remain. Portfolio API endpoints have been removed.'
   });

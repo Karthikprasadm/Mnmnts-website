@@ -1,7 +1,7 @@
 # Complete Project Structure Analysis
 
 ## Overview
-This is a comprehensive analysis of the entire `Karthikprasadm.github.io` project, covering all folders, subfolders, files, and subfiles.
+This is a comprehensive analysis of the entire `Mnmnts-website` project, covering all folders, subfolders, files, and subfiles.
 
 ## Project Type
 **Multi-project repository** containing:
