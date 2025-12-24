@@ -6,6 +6,11 @@ type Props = {
 };
 
 const { album } = Astro.props;
+
+// Prepend base path to image URL if it starts with /
+const imageSrc = album.data.image.src.startsWith('/') 
+  ? `${import.meta.env.BASE_URL}${album.data.image.src.slice(1)}`
+  : album.data.image.src;
 ---
 
 <a class="album-card" href={`/${album.data.artist.id}/albums/${album.id}`}>
@@ -13,7 +18,7 @@ const { album } = Astro.props;
     <img
       class="fade-in"
       loading="lazy"
-      src={album.data.image.src}
+      src={imageSrc}
       alt={album.data.image.alt}
     />
   </div>

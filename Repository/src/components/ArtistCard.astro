@@ -6,12 +6,17 @@ type Props = {
 };
 
 const { artist } = Astro.props;
+
+// Prepend base path to image URL if it starts with /
+const imageSrc = artist.data.image.src.startsWith('/') 
+  ? `${import.meta.env.BASE_URL}${artist.data.image.src.slice(1)}`
+  : artist.data.image.src;
 ---
 
 <a
   href={`/${artist.id}`}
   class="artist"
-  style={`--image: url('${artist.data.image.src}');`}
+  style={`--image: url('${imageSrc}');`}
   data-stagename={artist.data.stage_name}
   data-name={artist.data.name}
   data-genre={artist.data.genre}
