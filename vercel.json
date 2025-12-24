@@ -2,6 +2,13 @@
   "buildCommand": "npm install && cd Repository && npm install && npm run build && cd ../spotify-visualiser && npm install && npm run build",
   "installCommand": "npm install && cd Repository && npm install && cd ../spotify-visualiser && npm install",
   "outputDirectory": ".",
+  "redirects": [
+    {
+      "source": "/spotify-visualiser/index.html",
+      "destination": "/spotify-visualiser/dist/index.html",
+      "permanent": false
+    }
+  ],
   "rewrites": [
     {
       "source": "/spotify-visualiser",
@@ -9,10 +16,6 @@
     },
     {
       "source": "/spotify-visualiser/",
-      "destination": "/spotify-visualiser/dist/index.html"
-    },
-    {
-      "source": "/spotify-visualiser/index.html",
       "destination": "/spotify-visualiser/dist/index.html"
     },
     {
