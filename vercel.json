@@ -27,6 +27,18 @@
       "destination": "/api/:path*"
     },
     {
+      "source": "/repo/images/:path*",
+      "destination": "/Repository/dist/images/:path*"
+    },
+    {
+      "source": "/repo/_astro/:path*",
+      "destination": "/Repository/dist/_astro/:path*"
+    },
+    {
+      "source": "/repo/favicon/:path*",
+      "destination": "/Repository/dist/favicon/:path*"
+    },
+    {
       "source": "/repo",
       "destination": "/Repository/dist/index.html"
     },
@@ -37,14 +49,6 @@
     {
       "source": "/repo/:path*",
       "destination": "/Repository/dist/:path*"
-    },
-    {
-      "source": "/_astro/:path*",
-      "destination": "/Repository/dist/_astro/:path*"
-    },
-    {
-      "source": "/favicon/:path*",
-      "destination": "/Repository/dist/favicon/:path*"
     }
   ],
   "headers": [
@@ -54,6 +58,42 @@
         {
           "key": "Cache-Control",
           "value": "no-store"
+        }
+      ]
+    },
+    {
+      "source": "/repo/images/(.*\\.webp)",
+      "headers": [
+        {
+          "key": "Content-Type",
+          "value": "image/webp"
+        }
+      ]
+    },
+    {
+      "source": "/repo/images/(.*\\.png)",
+      "headers": [
+        {
+          "key": "Content-Type",
+          "value": "image/png"
+        }
+      ]
+    },
+    {
+      "source": "/repo/images/(.*\\.jpg)",
+      "headers": [
+        {
+          "key": "Content-Type",
+          "value": "image/jpeg"
+        }
+      ]
+    },
+    {
+      "source": "/repo/images/(.*\\.jpeg)",
+      "headers": [
+        {
+          "key": "Content-Type",
+          "value": "image/jpeg"
         }
       ]
     }
