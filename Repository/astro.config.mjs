@@ -5,7 +5,8 @@ import sitemap from '@astrojs/sitemap';
 
 // https://astro.build/config
 export default defineConfig({
-  // No base path - proxy will handle /repo prefix
+  // Set base path for Vercel deployment
+  base: process.env.VERCEL ? '/repo' : '/',
   devToolbar: {
     enabled: false,
   },

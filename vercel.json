@@ -1,9 +1,21 @@
 {
   "version": 2,
+  "buildCommand": "npm install && cd Repository && npm install && npm run build",
+  "installCommand": "npm install && cd Repository && npm install",
   "builds": [
     {
       "src": "api/**/*.js",
       "use": "@vercel/node"
+    }
+  ],
+  "rewrites": [
+    {
+      "source": "/repo",
+      "destination": "/Repository/dist/index.html"
+    },
+    {
+      "source": "/repo/:path*",
+      "destination": "/Repository/dist/:path*"
     }
   ],
   "routes": [
