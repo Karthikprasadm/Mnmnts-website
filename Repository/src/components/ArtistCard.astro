@@ -18,7 +18,7 @@ const imageSrc = artist.data.image.src.startsWith('/')
 ---
 
 <a
-  href={`/${artist.id}`}
+  href={`${baseUrl}/${artist.id}`}
   class="artist"
   style={`--image: url('${imageSrc}');`}
   data-stagename={artist.data.stage_name}

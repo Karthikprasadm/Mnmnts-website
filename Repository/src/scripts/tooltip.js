@@ -302,12 +302,18 @@ let tooltip;
 // Page event handler
 const handlePageEvent = (type) => {
   const page = document.documentElement.getAttribute('data-page');
-  if (page !== 'home') return;
+  // Initialize tooltip on 'home', 'repo', or 'index' pages
+  if (page !== 'home' && page !== 'repo' && page !== 'index') return;
 
   if (type === 'load') {
-    tooltip = new Tooltip(document.querySelector('[data-grid]'));
+    const gridEl = document.querySelector('[data-grid]');
+    if (gridEl) {
+      tooltip = new Tooltip(gridEl);
+    }
   } else if (type === 'before-swap') {
-    tooltip.destroy();
+    if (tooltip) {
+      tooltip.destroy();
+    }
   }
 };
 

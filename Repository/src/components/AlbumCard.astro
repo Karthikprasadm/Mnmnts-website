@@ -17,7 +17,7 @@ const imageSrc = album.data.image.src.startsWith('/')
   : album.data.image.src;
 ---
 
-<a class="album-card" href={`/${album.data.artist.id}/albums/${album.id}`}>
+<a class="album-card" href={`${baseUrl}/${album.data.artist.id}/albums/${album.id}`}>
   <div>
     <img
       class="fade-in"
