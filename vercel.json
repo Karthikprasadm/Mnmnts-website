@@ -32,20 +32,20 @@
       "destination": "/Repository/dist/_astro/$1"
     },
     {
-      "source": "/repo/images/artists/(.*)",
-      "destination": "/Repository/dist/images/artists/$1"
+      "source": "/repo/images/artists/:file",
+      "destination": "/Repository/dist/images/artists/:file"
     },
     {
-      "source": "/repo/images/albums/(.*)",
-      "destination": "/Repository/dist/images/albums/$1"
+      "source": "/repo/images/albums/:file",
+      "destination": "/Repository/dist/images/albums/:file"
     },
     {
-      "source": "/repo/images/icons/(.*)",
-      "destination": "/Repository/dist/images/icons/$1"
+      "source": "/repo/images/icons/:file",
+      "destination": "/Repository/dist/images/icons/:file"
     },
     {
-      "source": "/repo/images/(.*)",
-      "destination": "/Repository/dist/images/$1"
+      "source": "/repo/images/:file",
+      "destination": "/Repository/dist/images/:file"
     },
     {
       "source": "/repo/_astro/(.*)",
