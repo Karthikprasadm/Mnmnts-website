@@ -91,17 +91,30 @@ const init = () => {
 // Execute a callback only if the current page is the home page.
 const handlePageEvent = (_event, callback) => {
   const page = document.documentElement.getAttribute('data-page');
-  if (page === 'home') callback();
+  // Check for both 'home' and 'repo' (the index page)
+  if (page === 'home' || page === 'repo' || page === 'index') callback();
 };
 
 // Initialize immediately if DOM is ready, otherwise wait for DOMContentLoaded
-if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', () => {
+const initializePreloader = () => {
+  const page = document.documentElement.getAttribute('data-page');
+  // Only initialize on home/repo/index page
+  if (page === 'home' || page === 'repo' || page === 'index') {
     init();
-  });
+  } else {
+    // Hide preloader on other pages
+    const loading = document.querySelector('.loading');
+    if (loading) {
+      loading.classList.add('hidden');
+    }
+  }
+};
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initializePreloader);
 } else {
   // DOM is already ready, initialize immediately
-  init();
+  initializePreloader();
 }
 
 // Listen for Astro's lifecycle events.
