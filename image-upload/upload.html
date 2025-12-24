@@ -494,14 +494,43 @@
             }
 
             let isValid = true;
+            let errorDetails = [];
             files.forEach(file => {
-                if (!ALLOWED_TYPES.includes(file.type) || file.size > MAX_FILE_SIZE) {
+                // Handle files with empty or incorrect MIME types by checking file extension
+                let fileType = file.type;
+                if (!fileType || fileType === '') {
+                    const fileExtension = file.name.split('.').pop().toLowerCase();
+                    const extensionToMime = {
+                        'jpg': 'image/jpeg',
+                        'jpeg': 'image/jpeg',
+                        'png': 'image/png',
+                        'mp4': 'video/mp4',
+                        'pdf': 'application/pdf',
+                        'ppt': 'application/vnd.ms-powerpoint',
+                        'pptx': 'application/vnd.openxmlformats-officedocument.presentationml.presentation',
+                        'doc': 'application/msword',
+                        'docx': 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+                        'xls': 'application/vnd.ms-excel',
+                        'xlsx': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+                    };
+                    fileType = extensionToMime[fileExtension] || fileType;
+                }
+                
+                if (!ALLOWED_TYPES.includes(fileType)) {
                     isValid = false;
+                    const fileExtension = file.name.split('.').pop().toLowerCase();
+                    errorDetails.push(`${file.name}: Invalid file type (${file.type || 'unknown'}). Allowed: images (JPEG, PNG), videos (MP4), documents (PDF, Word, Excel, PowerPoint)`);
+                }
+                if (file.size > MAX_FILE_SIZE) {
+                    isValid = false;
+                    const sizeMB = (file.size / (1024 * 1024)).toFixed(2);
+                    errorDetails.push(`${file.name}: File size is ${sizeMB}MB (max 10MB)`);
                 }
             });
 
             if (!isValid) {
-                errorMessage.textContent = "Invalid file type or size (max 10MB).";
+                const errorText = errorDetails.length > 0 ? errorDetails.join('<br>') : "Invalid file type or size (max 10MB).";
+                errorMessage.innerHTML = errorText;
                 this.value = "";
                 preview.innerHTML = "";
                 showToast("Invalid file type or size (max 10MB).", "error");
