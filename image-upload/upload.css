@@ -93,6 +93,9 @@ main {
     display: inline-block;
     margin-top: 2rem;
     box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5);
+    min-width: 330px;
+    max-width: 330px;
+    width: 90%;
 }
 
 .upload-form label {
@@ -103,7 +106,7 @@ main {
 }
 
 .upload-help {
-    color: #b9d7ff;
+    color: #fece5c;
     font-size: 0.9rem;
     margin-top: 0.35rem;
     opacity: 0.9;
@@ -327,6 +330,51 @@ main {
     outline: none;
 }
 
+.document-file {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 150px;
+    height: 150px;
+    background: rgba(30, 30, 30, 0.7);
+    backdrop-filter: blur(12px);
+    border-radius: 12px;
+    padding: 1rem;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+    transition: transform var(--hover-speed) var(--hover-ease), box-shadow var(--hover-speed) var(--hover-ease), background var(--hover-speed) var(--hover-ease);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.document-file:hover,
+.document-file:focus-visible {
+    transform: scale(1.05);
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.45);
+    background: rgba(40, 40, 40, 0.8);
+    outline: none;
+}
+
+.document-icon {
+    font-size: 3rem;
+    margin-bottom: 0.5rem;
+}
+
+.document-name {
+    font-size: 0.75rem;
+    color: #e0e0e0;
+    text-align: center;
+    word-break: break-word;
+    margin-bottom: 0.25rem;
+    font-weight: 500;
+}
+
+.document-type {
+    font-size: 0.65rem;
+    color: #b0b0b0;
+    text-align: center;
+    opacity: 0.8;
+}
+
 .navbar {
     display: flex;
     align-items: center;
@@ -496,7 +544,7 @@ main {
 /* Upload page: keep footer line out of the way of previews */
 .upload-page .bottom-left-text {
     position: static;
-    margin: 2rem auto 1rem auto;
+    margin: 2rem auto 0.5rem auto;
     display: inline-block;
 }
 

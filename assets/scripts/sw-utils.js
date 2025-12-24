@@ -5,10 +5,19 @@ class ServiceWorkerUtils {
   constructor() {
     this.registration = null;
     this.messageHandler = null; // Store handler reference for cleanup
-    this.init();
+    this.enabled = typeof window !== 'undefined' && window.enableServiceWorker === true;
+    if (this.enabled) {
+      this.init();
+    } else {
+      // Optional: flip window.enableServiceWorker = true before this file loads to enable SW
+      if (typeof Logger !== 'undefined') {
+        Logger.info('Service Worker disabled (window.enableServiceWorker is not true)');
+      }
+    }
   }
 
   async init() {
+    if (!this.enabled) return;
     if ('serviceWorker' in navigator) {
       try {
         this.registration = await navigator.serviceWorker.register('/sw.js');

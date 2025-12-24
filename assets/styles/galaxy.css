@@ -1095,16 +1095,6 @@ body > div[style*="backdrop-filter"] {
         display: none !important;
     }
 
-    /* Optimize archive page */
-    .filters {
-        display: none !important;
-    }
-
-    .archive-title {
-        color: black !important;
-        font-size: 24pt;
-    }
-
     /* Optimize modals - show content if visible */
     .resume-modal-content,
     .project-modal-content {

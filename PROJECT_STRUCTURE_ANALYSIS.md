@@ -6,12 +6,10 @@ This is a comprehensive analysis of the entire `Karthikprasadm.github.io` projec
 ## Project Type
 **Multi-project repository** containing:
 1. Main portfolio website (static HTML/CSS/JS)
-2. ArchiveUpdated project (Astro-based, music artist showcase) - **ACTIVE** - Source code
-3. Archive directory (`archive/`) - Build output directory (contains generated `archive.html` from ArchiveUpdated/)
-4. Spotify Visualiser (Three.js/WebGL project) - **ACTIVE**
-5. ElasticGridScroll (extended gallery view) - **ACTIVE** (linked from gallery)
-6. API endpoints (Vercel serverless functions) - **ACTIVE**
-7. WebSocket server - **REMOVED** (functionality removed)
+2. Spotify Visualiser (Three.js/WebGL project) - **ACTIVE**
+3. ElasticGridScroll (extended gallery view) - **ACTIVE** (linked from gallery)
+4. API endpoints (Vercel serverless functions) - **ACTIVE**
+5. WebSocket server - **REMOVED** (functionality removed)
 
 ---
 
@@ -22,9 +20,9 @@ This is a comprehensive analysis of the entire `Karthikprasadm.github.io` projec
 - **`.env.example`** - Environment variables template
 - **`package.json`** - Main project dependencies (Express, ImageKit, Multer, CORS)
 - **`package-lock.json`** - Dependency lock file
-- **`Procfile`** - Heroku deployment configuration (`web: node server.js`)
 - **`LICENSE`** - All Rights Reserved (proprietary)
 - **`sitemap.xml`** - XML sitemap for SEO (5 main pages)
+- **(Removed)** `Procfile` - legacy Heroku config; no longer present
 
 ### Main HTML Files
 - **`index.html`** - Root redirect page (redirects to `gallery/index.html`)
@@ -48,8 +46,9 @@ This is a comprehensive analysis of the entire `Karthikprasadm.github.io` projec
 - **`API_SETUP.md`** - API setup guide (ImageKit signature endpoint)
 - **`SERVICE_WORKER_GUIDE.md`** - Service worker documentation
 - **`GLOBAL_VARIABLES_INIT.md`** - Global variable initialization order
-- **`ARCHIVE_BUILD_SUMMARY.md`** - Archive build implementation summary
-- **`ARCHIVE_BUILD_ANALYSIS.md`** - Archive build analysis report
+- **`BUILD_PROCESS_INTEGRATION.md`** - Current build/deploy flows
+- **`LOCAL_DEVELOPMENT.md`** - Local dev quickstart
+- **`BACKEND_PROXY_SETUP.md`** - Legacy Spotify proxy (historical only)
 
 ### Service Worker (optional)
 - **`sw.js`** - Enhanced service worker (519 lines)
@@ -63,42 +62,20 @@ This is a comprehensive analysis of the entire `Karthikprasadm.github.io` projec
 
 ## 📁 `/api/` - API Endpoints (Vercel Serverless Functions)
 
-### Structure
+### Structure (current)
 ```
 api/
-├── index.js                    # Health check endpoint
-├── signature.js                # ImageKit signature endpoint (ACTIVE)
-├── README.md                   # API documentation (notes API removed)
-├── about/
-│   └── index.js                # About endpoint
-├── about.js                    # About endpoint (alternative)
-├── gallery/
-│   ├── images/
-│   │   └── index.js           # Gallery images endpoint
-│   ├── images.js              # Gallery images (alternative)
-│   ├── videos/
-│   │   └── index.js           # Gallery videos endpoint
-│   └── videos.js              # Gallery videos (alternative)
-├── portfolio/
-│   └── index.js                # Portfolio endpoint
-├── portfolio.js                # Portfolio endpoint (alternative)
-├── projects/
-│   └── index.js                # Projects endpoint
-├── projects.js                 # Projects endpoint (alternative)
-├── social/
-│   └── index.js                # Social links endpoint
-├── social.js                   # Social links (alternative)
+├── index.js          # Health check endpoint
+├── signature.js      # ImageKit signature endpoint (ACTIVE)
+├── README.md         # Notes that other APIs were removed
 └── utils/
-    ├── auth.js                 # Authentication utilities
-    ├── cors.js                 # CORS configuration
-    ├── data-loader.js          # JSON file loader
-    └── response.js             # Standardized response helpers
+    ├── cors.js
+    └── response.js
 ```
 
 ### Status
 - **Active**: `signature.js` (ImageKit authentication)
-- **Inactive**: All other endpoints (documented as "temporarily removed")
-- **Pattern**: Each endpoint has both `/endpoint/index.js` and `/endpoint.js` versions
+- **Removed**: gallery/about/portfolio/projects/social endpoints and related helpers (auth, data-loader). Data now loads from JSON files as documented in README/API_SETUP.
 
 ---
 
@@ -191,95 +168,6 @@ assets/
 
 ---
 
-## 📁 `/archive/` - Archive Build Output Directory
-
-### Overview
-**Build output directory** - Contains generated files from ArchiveUpdated/ project. This directory contains the deployed archive website files, not source code.
-
-**Note:** Source code is in `ArchiveUpdated/` directory. This directory contains the build output.
-
-### Contents
-- `archive.html` - Main archive page (generated from ArchiveUpdated/)
-- `_astro/` - Compiled assets (JS, CSS, fonts)
-- `favicon/`, `images/`, `icons/` - Static assets
-- Artist pages, releases, history, store, contact pages (generated)
-
----
-
-## 📁 `/ArchiveUpdated/` - Archive Project Source (ACTIVE)
-
-### Overview
-**ACTIVE ARCHIVE PROJECT** - This is the active version of the archive project currently used on the website. Source code for the Astro-based music artists/albums showcase.
-
-**223 files total:**
-- 88 Markdown files (content)
-- 87 WebP images
-- 22 Astro files
-
-**Build Process:**
-- Builds to `dist/` directory
-- Output must be copied to `archive/` directory for deployment
-- Generates `archive/archive.html` and related assets
-
-### Structure
-```
-ArchiveUpdated/
-├── .gitattributes
-├── .github/
-│   └── workflows/
-│       └── astro.yml          # GitHub Pages deployment
-├── .gitignore
-├── astro.config.mjs           # Astro config (base: '/archive/')
-├── package.json               # Same dependencies as archive/
-├── package-lock.json
-├── tsconfig.json
-├── wrangler.jsonc             # Cloudflare Workers config
-├── README.md                  # Project documentation (48 lines)
-├── public/
-│   ├── _headers
-│   ├── favicon/               # 7 favicon files
-│   ├── icons/                 # 5 social icons
-│   ├── images/
-│   │   ├── albums/            # 60+ album covers
-│   │   └── artists/           # 28 artist images
-│   └── playersclub-og.jpg
-└── src/
-    ├── assets/
-    │   └── images/
-    │       ├── arrow.svg
-    │       └── cross.svg
-    ├── components/             # 13 components (Header.astro removed)
-    ├── data/
-    │   ├── albums/            # 60+ album markdown files
-    │   └── artists/           # 28 artist markdown files
-    ├── layouts/
-    │   └── BaseLayout.astro
-    ├── pages/                 # Same structure as archive/
-    ├── scripts/               # 6 JavaScript files
-    └── styles/
-        └── global.css
-```
-
-### Build Output
-
-After running `npm run build`, the output in `dist/` must be copied to `archive/` directory:
-- `dist/index.html` → `archive/archive.html`
-- `dist/_astro/` → `archive/_astro/`
-- `dist/favicon/` → `archive/favicon/`
-- `dist/images/` → `archive/images/`
-- `dist/icons/` → `archive/icons/`
-- All subdirectories (artist pages, etc.)
-
-### Key Features
-- **28 artists** with individual pages
-- **60+ albums** with detail pages
-- **Search/Sort/Shuffle** functionality
-- **GSAP animations** for page transitions
-- **Lenis smooth scrolling**
-- **Image preloading** with preloader component
-
----
-
 ## 📁 `/ElasticGridScroll/` - Extended Gallery View (ACTIVE)
 
 ### Overview
@@ -346,7 +234,6 @@ spotify-visualiser/
     ├── canvas.ts              # Three.js canvas setup
     ├── main.ts                # App entry point
     ├── planes.ts              # Plane geometry
-    ├── spotify.ts             # Spotify integration
     ├── style.css              # Styles
     ├── shaders/
     │   ├── fragment.glsl      # Fragment shader
@@ -412,10 +299,6 @@ spotify-visualiser/
 - **Production**: GitHub Pages (static hosting)
 - **Alternative**: Vercel deployment
 
-### Archive Project (ArchiveUpdated/)
-- **Build Command**: `npm run build` (in ArchiveUpdated/)
-- **Output**: Static HTML files in `dist/` → must be copied to `archive/` directory
-- **Note**: `archive-backup/` is old version (not used)
 
 ### Spotify Visualiser
 - **Dev**: `npm run dev` (Vite dev server)
@@ -436,7 +319,6 @@ spotify-visualiser/
 
 ### Technologies Used
 1. **Frontend**: HTML5, CSS3, JavaScript (ES6+)
-2. **Astro**: v5.3.0 (for archive projects)
 3. **Three.js**: v0.179.1 (for Spotify visualiser)
 4. **GSAP**: v3.12.5 (animations)
 5. **Lenis**: v1.1.17 (smooth scrolling)
@@ -449,18 +331,6 @@ spotify-visualiser/
 
 ## 🔗 Inter-Project Relationships
 
-### Main Website → Archive
-- Main site links to `/archive/archive.html`
-- Archive uses same design system (glassmorphism)
-- Shared assets (favicons, some icons)
-
-### ArchiveUpdated → Archive Directory
-- ArchiveUpdated/ is the **source code** (active)
-- Builds to `dist/` directory
-- Output copied to `archive/` directory for deployment
-- `archive/` contains build output, not source code
-
-
 ### Main Website → ElasticGridScroll
 - Gallery page links to ElasticGridScroll via "view more" button
 - Provides extended image viewing experience
@@ -472,7 +342,6 @@ spotify-visualiser/
 
 ### Main Website → Service Worker (optional)
 - `sw.js` caches all main pages
-- Includes archive pages in cache
 - Background sync for uploads
 
 ---
@@ -484,13 +353,10 @@ spotify-visualiser/
 2. **WebSocket**: Removed completely
 
 ### Build Dependencies
-1. **Archive.html**: Must exist for "View all" links to work
-2. **Base URL**: All archive projects use `/archive/` base path
-3. **PowerShell**: Required for archive build scripts (Windows)
+1. **PowerShell**: Required for build scripts (Windows)
 
 ### Path Resolution
 - Main site: Root-relative paths
-- Archive projects: `/archive/` prefixed paths
 - Both use `baseUrl` pattern for consistency
 
 ---
@@ -505,14 +371,12 @@ spotify-visualiser/
 - ✅ PWA capabilities — optional
 - ✅ SEO optimization
 
-### Archive Project (ArchiveUpdated/ - Active)
 - ✅ Artist showcase (28 artists)
 - ✅ Album display (60+ albums)
 - ✅ Search/Sort/Shuffle
 - ✅ GSAP animations
 - ✅ Smooth scrolling
 - ✅ Responsive grid layouts
-- ✅ Build output in `archive/` directory
 
 ### Spotify Visualiser
 - ✅ 3D WebGL visualizations
@@ -529,11 +393,10 @@ spotify-visualiser/
 3. **README_SECURITY.md** - Security quick reference
 4. **API_SETUP.md** - API setup (ImageKit signature)
 5. **SERVICE_WORKER_GUIDE.md** - Service worker docs
-7. **GLOBAL_VARIABLES_INIT.md** - Global variable order
-8. **ARCHIVE_BUILD_SUMMARY.md** - Archive build summary
-9. **ARCHIVE_BUILD_ANALYSIS.md** - Archive build analysis
-10. **archive/BUILD.md** - Archive build documentation
-11. **ArchiveUpdated/README.md** - ArchiveUpdated docs
+6. **GLOBAL_VARIABLES_INIT.md** - Global variable order
+7. **BUILD_PROCESS_INTEGRATION.md** - Build/deploy integration
+9. **LOCAL_DEVELOPMENT.md** - Local dev quickstart
+10. **BACKEND_PROXY_SETUP.md** - Legacy Spotify proxy (historical)
 
 ---
 
@@ -541,15 +404,7 @@ spotify-visualiser/
 
 ### Main Website
 - No build process (static HTML)
-- Direct deployment to GitHub Pages
-
-### Archive Projects
-1. Run `npm run build` in archive/ or ArchiveUpdated/
-2. Astro generates static files to `dist/`
-3. PowerShell script copies `dist/index.html` → `archive.html`
-4. Script copies assets and subdirectories
-5. Script updates paths in HTML files
-6. Output ready for deployment
+- Direct deployment to GitHub Pages from `modern-ui`
 
 ### Spotify Visualiser
 1. Run `npm run build`
@@ -561,9 +416,8 @@ spotify-visualiser/
 
 ## 🌐 Deployment Targets
 
-1. **GitHub Pages**: Main site + archive projects
+1. **GitHub Pages**: Main site
 2. **Vercel**: API endpoints (serverless functions)
-3. **Cloudflare Workers**: Archive projects (wrangler.jsonc)
 
 ---
 
@@ -571,9 +425,6 @@ spotify-visualiser/
 
 ### Main Project
 - express, imagekit, multer, cors, dotenv, uuid
-
-### Archive Projects
-- astro, gsap, lenis, imagesloaded, @astrojs/sitemap, @fontsource-variable/instrument-sans
 
 ### Spotify Visualiser
 - three, gsap, lenis, vite, typescript, tailwindcss, vite-plugin-glsl
@@ -591,7 +442,6 @@ spotify-visualiser/
 ### Typography
 - Body: Montserrat (400, 600)
 - Headings: Playfair Display (400, 600)
-- Archive: Instrument Sans Variable
 
 ### Effects
 - Glassmorphism: `rgba(30, 30, 30, 0.8)` with `blur(18px)`

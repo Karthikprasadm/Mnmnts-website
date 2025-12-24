@@ -15,7 +15,7 @@ A minimalist, interactive web experience designed as a digital museum of persona
 - **Resume viewer** with PDF.js integration
 
 ### Advanced Features
-- **Service Worker** - Offline support, background sync, and caching (optional; site runs fine online without it)
+- **Service Worker (legacy/disabled by default)** - Previously offered offline support, background sync, and caching; not registered now.
 - **Loading Skeletons** - Beautiful loading states for images
 - **Preloading** - Critical resources preloaded for faster performance
 - **Print Stylesheet** - Optimized printing experience
@@ -31,9 +31,8 @@ A minimalist, interactive web experience designed as a digital museum of persona
 
 - **Browse:** View a collection of moments as images and videos with smooth transitions
 - **Explore:** Click thumbnails to view media in detail, or use slideshow mode
-- **Archive:** Browse projects, artwork, and photos with filtering
 - **Upload:** (If enabled) Upload your own media directly from the browser, securely via ImageKit
-- **Offline:** Access cached content even when offline (after first visit)
+- **Offline:** (Legacy SW, currently disabled) Previously cached content after first visit
 
 ## 🛠️ Tech Stack
 
@@ -42,17 +41,13 @@ A minimalist, interactive web experience designed as a digital museum of persona
 - **Backend:** 
   - Vercel serverless functions (ImageKit signature only)
 - **Hosting:** GitHub Pages + Vercel
-- **PWA:** Service Worker, Web App Manifest
+- **PWA:** (Legacy) Service Worker & Web App Manifest; SW not registered by default
 
 ## 🏗️ Project Structure
 
 ```
 ├── api/                          # Serverless functions (Vercel)
 │   └── signature.js              # ImageKit signature endpoint
-├── ArchiveUpdated/               # Archive project source (Astro-based, active)
-│   └── dist/                     # Build output (copied to archive/)
-├── archive/                      # Archive build output directory
-│   └── archive.html              # Generated archive page (from ArchiveUpdated/)
 ├── assets/
 │   ├── images/                   # Gallery image data (JSON)
 │   │   └── gallery-data.json
@@ -80,7 +75,6 @@ A minimalist, interactive web experience designed as a digital museum of persona
 ├── 404_error/                     # Error page assets
 ├── Images_for_icon/               # Social media icons
 ├── icons8-baby-yoda-color-favicons/ # Resume button icons
-├── sw.js                          # Service worker
 ├── manifest.json                  # PWA manifest
 └── offline.html                   # Offline fallback page
 ```
@@ -88,7 +82,7 @@ A minimalist, interactive web experience designed as a digital museum of persona
 ## 🔒 Security
 
 - **Security Headers**: X-Content-Type-Options, X-Frame-Options, X-XSS-Protection
-- **Service Worker**: Secured background sync with endpoint validation
+- **Service Worker (legacy/disabled)**: Previously handled background sync; not registered now
 - **Upload Security**: ImageKit keys secured via backend signature endpoint
 - **CORS Restricted**: Only allows requests from authorized origins
 
@@ -114,7 +108,9 @@ Border Radius: 20-24px
 ```
 
 
-## ⚡ Service Worker & Performance (optional)
+## ⚡ Service Worker & Performance (legacy, currently disabled)
+
+> Service worker registration is off by default. The details below are kept for historical reference.
 
 ### Offline Support
 - Caches critical resources (optional)
@@ -249,7 +245,6 @@ All icons are centralized in `assets/styles/icons.css` and stored in `Images_for
 - **Spotify API removed**: The Spotify API proxy has been removed. The visualiser now uses only local audio files.
 - **Active API endpoints**: Only utility endpoints remain:
   - `/api/signature` - ImageKit upload signature (used by image-upload page)
-- **Archive**: `ArchiveUpdated/` is the active version for archive development. Use `npm run build:archive` in ArchiveUpdated/ to build and deploy.
 
 ## 🔧 Configuration
 
@@ -266,7 +261,7 @@ All icons are centralized in `assets/styles/icons.css` and stored in `Images_for
 ## 🚀 Deployment
 
 ### GitHub Pages
-1. Push to `master` branch
+1. Push to the `modern-ui` branch (current deployment branch)
 2. GitHub Pages automatically deploys
 3. Site available at `https://karthikprasadm.github.io`
 

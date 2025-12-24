@@ -28,7 +28,6 @@ The Spotify Visualizer has been added to the navigation menu on all pages:
 Menu Dropdown:
 ├── Open gallery
 ├── Know me
-├── View archive
 ├── Open upload
 └── Spotify Visualizer ← NEW
 ```
@@ -62,9 +61,9 @@ The Vite config is set with `base: "/spotify-visualiser/"` for GitHub Pages.
 
 **Deployment Steps:**
 1. Build the project: `npm run build`
-2. Copy `dist/` contents to the root `spotify-visualiser/` directory
-3. Commit and push to GitHub
-4. GitHub Pages will serve it automatically
+2. Commit the build output: `git add spotify-visualiser/dist`
+3. Commit and push to `modern-ui`
+4. GitHub Pages and `server.js` serve from `spotify-visualiser/dist`
 
 **Alternative (Automated):**
 You can set up a GitHub Actions workflow to automatically build and deploy:
@@ -88,12 +87,10 @@ jobs:
           cd spotify-visualiser
           npm install
           npm run build
-      - run: |
-          cp -r spotify-visualiser/dist/* spotify-visualiser/
       - uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./spotify-visualiser
+          publish_dir: ./spotify-visualiser/dist
 ```
 
 ## 📁 File Structure
@@ -104,12 +101,11 @@ Karthikprasadm.github.io/
 │   ├── index.html          # Main entry point
 │   ├── src/                # Source files
 │   ├── public/             # Static assets
-│   ├── dist/               # Build output (gitignored)
+│   ├── dist/               # Build output (committed for Pages/server.js)
 │   ├── package.json
 │   └── vite.config.js      # Configured with base path
 ├── gallery/
 ├── know-me/
-├── archive/
 └── image-upload/
 ```
 

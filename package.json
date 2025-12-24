@@ -1,7 +1,10 @@
 {
   "scripts": {
     "start": "node server.js",
-    "dev": "nodemon server.js",
+    "dev": "concurrently \"nodemon server.js\" \"cd Repository && npm run dev\"",
+    "dev:main": "nodemon server.js",
+    "dev:repo": "cd Repository && npm run dev",
+    "dev:all": "concurrently \"npm run dev:main\" \"npm run dev:repo\"",
     "stop": "powershell -Command \"Get-Process -Name node -ErrorAction SilentlyContinue | Where-Object { $_.MainWindowTitle -eq '' } | Stop-Process -Force\""
   },
   "dependencies": {
@@ -13,6 +16,8 @@
     "uuid": "^11.1.0"
   },
   "devDependencies": {
+    "concurrently": "^8.2.2",
+    "http-proxy-middleware": "^3.0.5",
     "nodemon": "^3.1.11"
   }
 }

@@ -9,6 +9,7 @@ const path = require("path");
 const fs = require("fs");
 const ImageKit = require('imagekit');
 const { v4: uuidv4 } = require('uuid');
+const { createProxyMiddleware } = require('http-proxy-middleware');
 
 // Configure ImageKit
 const imagekit = new ImageKit({
@@ -56,6 +57,9 @@ const upload = multer({ storage, fileFilter, limits: { fileSize: 150 * 1024 * 10
 
 // Enable JSON parsing for API endpoints
 app.use(express.json());
+
+// NOTE: Repository (Astro) now runs on its own dev server at http://localhost:4321
+// We no longer proxy it through /repo to keep things simple and stable.
 
 // Serve built Spotify Visualizer files FIRST (before general static files)
 // This ensures the built files take precedence over source files
@@ -184,6 +188,7 @@ app.use((req, res, next) => {
 });
 
 // Start the server
-app.listen(port, () => {
+app.listen(port, '0.0.0.0', () => {
     console.log(`Server running on http://localhost:${port}`);
+    console.log(`Server accessible on http://127.0.0.1:${port}`);
 });

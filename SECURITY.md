@@ -10,8 +10,6 @@ This portfolio website is **READ-ONLY**. Only the website owner can make changes
 
 The following folders are actively used and should be kept:
 - `api/` - Backend API endpoints (ImageKit signature)
-- `ArchiveUpdated/` - Active archive project source (Astro-based, generates `archive.html` to `archive/` directory)
-- `archive/` - Archive build output directory (contains generated `archive.html` and assets)
 - `assets/` - Main website assets (fonts, styles, scripts, images, videos)
 - `ElasticGridScroll/` - Extended gallery view (linked from gallery "view more" button)
 - `gallery/` - Main gallery page (homepage)
@@ -55,7 +53,7 @@ Portfolio API endpoints (gallery, about, portfolio, projects, social) have been 
 
 ### LocalStorage
 
-- Archive page uses localStorage for user-added projects
+- Some pages may use localStorage for client-side preferences
 - This is **client-side only** and doesn't affect the website
 - Data is stored locally in the user's browser
 - No server-side persistence

@@ -2,7 +2,7 @@
 
 ## Overview
 
-Enhanced service worker with comprehensive offline support, background sync, and preloading for critical resources. This is optional; the site works online without enabling the service worker/PWA.
+Enhanced service worker with comprehensive offline support, background sync, and preloading for critical resources. This is **optional**; the site works online without enabling the service worker/PWA.
 
 ## Features
 
@@ -51,16 +51,23 @@ Enhanced service worker with comprehensive offline support, background sync, and
 
 ## Usage
 
-### Service Worker Registration
+### Service Worker Registration / Toggle
 
-The service worker is automatically registered on page load. You can also use the utility:
+Registration is driven by `serviceWorkerUtils.init()` in your page scripts. To keep the feature off, remove or guard that call. Example guard:
 
 ```javascript
-// Check if service worker is active
-if (serviceWorkerUtils && serviceWorkerUtils.registration) {
-  console.log('Service Worker active');
+if (window.enableServiceWorker) {
+  serviceWorkerUtils.init();
 }
 ```
+
+Place the flag before loading `sw-utils.js`:
+```html
+<script>window.enableServiceWorker = true;</script>
+<script src="/assets/scripts/sw-utils.js"></script>
+```
+
+Leave `enableServiceWorker` undefined/false to disable offline/background sync. Set it to true when you want the service worker active.
 
 ### Background Sync
 

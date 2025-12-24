@@ -1,8 +1,8 @@
 # Deployment Guide
 
-## Quick Fix: Deploy Built Files
+## Deploy Built Files (served from `dist/`)
 
-The Spotify Visualizer needs to be **built** before it can be accessed from your website. The source files won't work directly.
+The Spotify Visualizer must be **built** and the `dist/` output committed. The local `server.js` and GitHub Pages serve from `spotify-visualiser/dist`, so do not copy build output over the source files.
 
 ### Step 1: Build the Project
 
@@ -15,15 +15,16 @@ This creates a `dist/` folder with all the production-ready files.
 
 ### Step 2: Deploy to GitHub Pages
 
-**Option A: Copy dist files to spotify-visualiser directory**
+Commit the build output so it’s available at `/spotify-visualiser/`:
 
-```powershell
-# PowerShell
-cd spotify-visualiser
-Copy-Item -Path "dist\*" -Destination "." -Recurse -Force
+```bash
+cd ..
+git add spotify-visualiser/dist
+git commit -m "chore: update visualiser build"
+git push origin modern-ui
 ```
 
-**Option B: Use GitHub Actions (Recommended)**
+**Optional: GitHub Actions (Recommended)**
 
 Create `.github/workflows/deploy-spotify-visualiser.yml`:
 
@@ -57,14 +58,12 @@ jobs:
           cd spotify-visualiser
           npm run build
           
-      - name: Deploy
+      - name: Deploy build output
         run: |
-          cd spotify-visualiser
-          cp -r dist/* .
           git config user.name "GitHub Actions"
           git config user.email "actions@github.com"
-          git add .
-          git commit -m "Deploy Spotify Visualizer" || exit 0
+          git add spotify-visualiser/dist
+          git commit -m "Deploy Spotify Visualizer build" || exit 0
           git push
 ```
 
@@ -91,6 +90,8 @@ When accessing from your website menu, you're serving the raw HTML file, which d
 - Optimizes assets
 - Updates paths to work from `/spotify-visualiser/` subdirectory
 
+The built assets live in `spotify-visualiser/dist` and are served directly from there.
+
 ## Troubleshooting
 
 ### Still seeing white page?
@@ -105,6 +106,6 @@ When accessing from your website menu, you're serving the raw HTML file, which d
 ### Need to update?
 1. Make changes to source files
 2. Run `npm run build`
-3. Copy `dist/*` to `spotify-visualiser/`
-4. Commit and push
+3. Commit `spotify-visualiser/dist`
+4. Push to `modern-ui`
 

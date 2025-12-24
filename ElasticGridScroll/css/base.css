@@ -191,7 +191,6 @@ a {
   grid-template-areas:
     'title'
     'back'
-    'archive'
     'github'
     'demos'
     'info'
@@ -220,11 +219,6 @@ a {
 
   .frame__back {
     grid-area: back;
-    justify-self: start;
-  }
-
-  .frame__archive {
-    grid-area: archive;
     justify-self: start;
   }
 
@@ -261,9 +255,9 @@ a {
     grid-template-rows: auto auto auto;
     grid-column-gap: 2rem;
     grid-template-areas:
-      'title back github archive tags sponsor'
-      'demos demos demos ... ... sponsor'
-      'info info info ... ... sponsor';
+      'title back github tags sponsor'
+      'demos demos demos ... sponsor'
+      'info info info ... sponsor';
 
     #cdawrap {
       justify-self: end;

@@ -19,7 +19,6 @@
     <link rel="preload" href="../assets/scripts/logger.js" as="script">
     <link rel="preload" href="../assets/scripts/error-handler.js" as="script">
     <link rel="preload" href="../assets/scripts/global-error-handler.js" as="script">
-    <link rel="preload" href="../assets/scripts/sw-utils.js" as="script">
     <link rel="preload" href="../assets/scripts/script.js" as="script">
     <link rel="preload" href="../assets/images/gallery-data.json" as="fetch" crossorigin>
     
@@ -63,7 +62,7 @@
         "@type": "SearchAction",
         "target": {
           "@type": "EntryPoint",
-          "urlTemplate": "https://karthikprasadm.github.io/archive/archive.html?q={search_term_string}"
+          "urlTemplate": "https://karthikprasadm.github.io/gallery/index.html?q={search_term_string}"
         },
         "query-input": "required name=search_term_string"
       },
@@ -154,9 +153,9 @@
             <button class="dropbtn" aria-label="Open menu" tabindex="0">Menu</button>
             <div class="dropdown-content" role="menu">
                 <a href="../know-me/about.html" role="menuitem">Know me</a>
-                <a href="../archive/archive.html" role="menuitem">View archive</a>
                 <a href="../image-upload/upload.html" role="menuitem">Open upload</a>
                 <a href="../spotify-visualiser/index.html" role="menuitem">Spotify Visualizer</a>
+                <a href="http://localhost:4321/" role="menuitem" target="_blank" rel="noreferrer">Repository</a>
                 <a href="./index.html" role="menuitem" aria-current="page">Open gallery</a>
             </div>
         </div>
@@ -221,357 +220,19 @@
         <img src="../icons8-baby-yoda-color-favicons/web/icons8-baby-yoda-color-48.png" alt="Baby Yoda favicon" />
     </div>
     <div id="resumeModal" class="resume-modal-overlay" style="display:none;">
-        <div class="stars"></div>
-        <div class="resume-modal-content darksite-modal modern-modal">
-            <div class="modern-modal-actions" style="position:absolute;top:12px;right:12px;z-index:300;display:flex;gap:12px;align-items:center;">
-                <button class="modern-modal-action" id="openResumeBtn" title="Open in new tab" aria-label="Open in new tab">↗️</button>
-                <button class="modern-modal-action" id="fullscreenResumeBtn" title="Fullscreen">⛶</button>
-                <button class="modern-modal-action" id="downloadResumeBtn" title="Download PDF">⬇️</button>
-                <button class="modern-modal-action" id="printResumeBtn" title="Print PDF">🖨️</button>
-                <button class="resume-modal-close modern-modal-close" id="closeResumeModal" aria-label="Close">&times;</button>
-            </div>
-            <div class="modern-modal-header">
-                <span class="modern-modal-pdficon">📄</span>
-                <span class="modern-modal-title">Resume</span>
-            </div>
-            <div class="resume-pdf-paper darksite-paper modern-modal-paper">
-                <div id="pdfjs-viewer" class="pdfjs-viewer"></div>
-                <div class="pdfjs-controls" style="display:none;"></div>
-            </div>
+            <button id="popOutBtn" class="pop-out-btn" aria-label="Open PDF in new window" title="Open in new window">🢅</button>
+        <div class="resume-modal-inner">
+            <iframe
+              id="resumeViewerFrame"
+              class="resume-pdf-frame"
+              title="Resume PDF viewer"
+              loading="lazy"
+              frameborder="0"
+              style="border: none; outline: none;"
+            ></iframe>
         </div>
     </div>
-    <link rel="stylesheet" href="../assets/pdfjs/pdf_viewer.min.css">
-    <script src="../assets/pdfjs/pdf.min.js"></script>
-    <script>
-    // PDF.js worker setup
-    pdfjsLib.GlobalWorkerOptions.workerSrc = '../assets/pdfjs/pdf.worker.min.js';
-    function renderPDF(url, containerId) {
-        const container = document.getElementById(containerId);
-        if (!container) {
-            console.error('PDF container not found');
-            return;
-        }
-        container.innerHTML = '<p style="color: #bfcaff; text-align: center; padding: 2rem;">Loading PDF...</p>';
-        pdfjsLib.getDocument(url).promise.then(function(pdf) {
-            container.innerHTML = '';
-            const renderPromises = [];
-            for (let pageNum = 1; pageNum <= pdf.numPages; pageNum++) {
-                renderPromises.push(
-                    pdf.getPage(pageNum).then(function(page) {
-                        const scale = 1;
-                        const quality = 3;
-                        const viewport = page.getViewport({ scale });
-                        const canvas = document.createElement('canvas');
-                        canvas.className = 'pdfjs-canvas';
-                        canvas.style.scrollSnapAlign = 'start';
-                        container.appendChild(canvas);
-                        const context = canvas.getContext('2d');
-                        canvas.width = viewport.width * quality;
-                        canvas.height = viewport.height * quality;
-                        canvas.style.width = viewport.width + 'px';
-                        canvas.style.height = viewport.height + 'px';
-                        context.setTransform(quality, 0, 0, quality, 0, 0);
-                        return page.render({ canvasContext: context, viewport: viewport }).promise;
-                    }).catch(function(err) {
-                        console.error('Error rendering PDF page:', err);
-                        const errorDiv = document.createElement('div');
-                        errorDiv.style.cssText = 'color: #ff6b6b; padding: 1rem; text-align: center;';
-                        errorDiv.textContent = 'Error loading page ' + pageNum;
-                        container.appendChild(errorDiv);
-                    })
-                );
-            }
-            Promise.all(renderPromises).catch(function(err) {
-                console.error('Error rendering PDF:', err);
-                container.innerHTML = '<p style="color: #ff6b6b; text-align: center; padding: 2rem;">Failed to load PDF. Please try again.</p>';
-            });
-        }).catch(function(err) {
-            console.error('Error loading PDF:', err);
-            container.innerHTML = '<p style="color: #ff6b6b; text-align: center; padding: 2rem;">Failed to load PDF. Please check if the file exists.</p>';
-        });
-    }
-    document.getElementById('yodaResumeBtn').onclick = function() {
-        var modal = document.getElementById('resumeModal');
-        modal.style.display = 'flex';
-        setTimeout(function(){modal.classList.add('show');}, 10);
-        renderPDF('../assets/resume/karthik_resume.pdf', 'pdfjs-viewer');
-    };
-    document.getElementById('closeResumeModal').onclick = function(e) {
-        var modal = document.getElementById('resumeModal');
-        modal.classList.remove('show');
-        setTimeout(function(){modal.style.display = 'none';}, 200);
-    };
-    document.getElementById('resumeModal').onclick = function(e) {
-        if (e.target === this) {
-            this.classList.remove('show');
-            var that = this;
-            setTimeout(function(){that.style.display = 'none';}, 200);
-        }
-    };
-    document.getElementById('downloadResumeBtn').onclick = function(e) {
-        e.stopPropagation();
-        const link = document.createElement('a');
-        link.href = '../assets/resume/karthik_resume.pdf';
-        link.download = 'Karthik_Resume.pdf';
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-    };
-    document.getElementById('openResumeBtn').onclick = function(e) {
-        e.stopPropagation();
-        window.open('../assets/resume/karthik_resume.pdf', '_blank', 'noopener');
-    };
-    document.getElementById('printResumeBtn').onclick = function(e) {
-        e.stopPropagation();
-        let printFrame = document.getElementById('resumePrintFrame');
-        if (!printFrame) {
-            printFrame = document.createElement('iframe');
-            printFrame.id = 'resumePrintFrame';
-            printFrame.style.display = 'none';
-            printFrame.src = '../assets/resume/karthik_resume.pdf';
-            document.body.appendChild(printFrame);
-            printFrame.onload = function() {
-                printFrame.contentWindow.focus();
-                printFrame.contentWindow.print();
-            };
-        } else {
-            printFrame.contentWindow.focus();
-            printFrame.contentWindow.print();
-        }
-    };
-    document.getElementById('fullscreenResumeBtn').onclick = function(e) {
-        e.stopPropagation();
-        var modal = document.getElementById('resumeModal');
-        if (!document.fullscreenElement) {
-            if (modal.requestFullscreen) {
-                modal.requestFullscreen();
-            } else if (modal.webkitRequestFullscreen) {
-                modal.webkitRequestFullscreen();
-            } else if (modal.mozRequestFullScreen) {
-                modal.mozRequestFullScreen();
-            } else if (modal.msRequestFullscreen) {
-                modal.msRequestFullscreen();
-            }
-        } else {
-            if (document.exitFullscreen) {
-                document.exitFullscreen();
-            } else if (document.webkitExitFullscreen) {
-                document.webkitExitFullscreen();
-            } else if (document.mozCancelFullScreen) {
-                document.mozCancelFullScreen();
-            } else if (document.msExitFullscreen) {
-                document.msExitFullscreen();
-            }
-        }
-    };
-    // Removed paging; modal now renders all pages and scrolls normally
-    </script>
-    <style>
-    .resume-modal-overlay {
-        position: fixed;
-        top: 0; left: 0; right: 0; bottom: 0;
-        z-index: 2000;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        opacity: 0;
-        pointer-events: none;
-        transition: opacity 0.3s cubic-bezier(.4,0,.2,1);
-        animation: fadeInModalBg 0.4s cubic-bezier(.4,0,.2,1);
-        overflow-y: visible;
-        background: #0a0a0a;
-        box-shadow: none;
-        backdrop-filter: blur(5px) saturate(1.1);
-        -webkit-backdrop-filter: blur(5px) saturate(1.1);
-    }
-    .resume-modal-overlay::before {
-        content: '';
-        position: fixed;
-        top: 0; left: 0; right: 0; bottom: 0;
-        z-index: 0;
-        pointer-events: none;
-        background: url('https://www.transparenttextures.com/patterns/stardust.png');
-        opacity: 0.7;
-        animation: twinkling 100s linear infinite;
-    }
-    @keyframes twinkling {
-        from { background-position: 0 0; }
-        to { background-position: -1000px 1000px; }
-    }
-    .resume-modal-overlay.show {
-        opacity: 1;
-        pointer-events: auto;
-    }
-    .modern-modal {
-        max-width: 900px;
-        width: 98vw;
-        max-height: 92vh;
-        min-width: 320px;
-        margin: 0 auto;
-        display: flex;
-        flex-direction: column;
-        align-items: stretch;
-        overflow: hidden;
-        position: relative;
-        background: rgba(28, 28, 36, 0.97);
-        border-radius: 18px;
-        box-shadow: 0 4px 32px 0 #000a;
-        border: 1.5px solid rgba(120,140,255,0.08);
-    }
-    .modern-modal-header {
-        position: sticky;
-        top: 0;
-        z-index: 100;
-        background: rgba(28, 28, 36, 0.97);
-        box-shadow: 0 2px 8px #0002;
-        display: flex;
-        align-items: center;
-        justify-content: flex-start;
-        width: 100%;
-        border-bottom: 1px solid rgba(120,140,255,0.07);
-        padding: 0.5rem 1.1rem 0.5rem 1.1rem;
-        min-height: 32px;
-    }
-    .modern-modal-title {
-        font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-        font-weight: 700;
-        font-size: 1.2rem;
-        color: #f3f3f3;
-        letter-spacing: 1px;
-        flex: 1;
-        text-shadow: none;
-    }
-    .modern-modal-pdficon {
-        font-size: 1.3rem;
-        margin-right: 0.7rem;
-        color: #bfcaff;
-        filter: none;
-        text-shadow: none;
-    }
-    .resume-modal-close, .modern-modal-action {
-        background: rgba(44, 46, 60, 0.92);
-        border: none;
-        color: #e0e0e0;
-        font-size: 1.3rem;
-        cursor: pointer;
-        z-index: 200 !important;
-        position: absolute;
-        border-radius: 50%;
-        width: 36px;
-        height: 36px;
-        box-shadow: 0 2px 8px #23234a33;
-        transition: background 0.18s, color 0.18s, box-shadow 0.18s, transform 0.14s;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        outline: none;
-        opacity: 0.95;
-        backdrop-filter: blur(1.5px) saturate(1.1);
-    }
-    .resume-modal-close:hover, .modern-modal-action:hover, .resume-modal-close:focus, .modern-modal-action:focus {
-        background: #bfcaff;
-        color: #23234a;
-        box-shadow: 0 4px 16px #bfcaff33;
-        transform: scale(1.08);
-        opacity: 1;
-    }
-    /* Even gap and alignment are handled by the actions container; override absolute positioning inside it */
-    .modern-modal-actions .modern-modal-action,
-    .modern-modal-actions .resume-modal-close { position: static; }
-    .modern-modal-paper {
-        max-height: 80vh;
-        overflow-y: visible;
-        width: 100%;
-        min-width: 0;
-        margin-top: 0;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        background: transparent;
-        box-shadow: none;
-    }
-    .pdfjs-viewer {
-        width: 100%;
-        min-height: 60vh;
-        max-height: 80vh;
-        overflow-y: auto;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: flex-start;
-        gap: 1rem;
-        z-index: 2;
-        padding-top: 72px;
-        scroll-behavior: smooth;
-        overscroll-behavior: contain;
-        margin-top: 0;
-    }
-    .pdfjs-canvas {
-        border-radius: 18px;
-        box-shadow: 0 4px 32px #00ffe744, 0 1.5px 4px #23234a33;
-        background: #23234a;
-        margin-bottom: 0;
-        max-width: 100%;
-        height: auto;
-        transition: box-shadow 0.3s;
-    }
-    .pdfjs-canvas:hover {
-        box-shadow: 0 8px 48px #aab6ff44, 0 2px 8px #23234a55;
-    }
-    @media (max-width: 1200px) {
-        .modern-modal {
-            max-width: 98vw;
-            max-height: 98vh;
-        }
-        .modern-modal-paper {
-            max-height: 70vh;
-        }
-    }
-    @media (max-width: 600px) {
-        .modern-modal {
-            max-width: 98vw;
-            max-height: 98vh;
-            border-radius: 18px;
-        }
-        .modern-modal-paper {
-            max-height: 50vh;
-        }
-        .modern-modal-header { padding: 0.7rem 1rem 0.7rem 1rem; min-height: 44px; }
-        .modern-modal-title { font-size: 1.1rem; }
-        .modern-modal-pdficon { font-size: 1.3rem; }
-        .modern-modal-close, .modern-modal-action { width: 38px; height: 38px; font-size: 1.1rem; top: 8px; }
-        #downloadResumeBtn { right: 60px; }
-        #printResumeBtn { right: 36px; }
-        #closeResumeModal { right: 8px; }
-    }
-    /* Hide or style scrollbars for dark theme */
-    body, .resume-modal-overlay, .modern-modal-paper, .pdfjs-viewer {
-        scrollbar-width: thin;
-        scrollbar-color: #23234a #181a26;
-    }
-    body::-webkit-scrollbar, .resume-modal-overlay::-webkit-scrollbar, .modern-modal-paper::-webkit-scrollbar, .pdfjs-viewer::-webkit-scrollbar {
-        width: 10px;
-        background: #181a26;
-    }
-    body::-webkit-scrollbar-thumb, .resume-modal-overlay::-webkit-scrollbar-thumb, .modern-modal-paper::-webkit-scrollbar-thumb, .pdfjs-viewer::-webkit-scrollbar-thumb {
-        background: #23234a;
-        border-radius: 8px;
-        border: 2px solid #181a26;
-    }
-    body::-webkit-scrollbar-track, .resume-modal-overlay::-webkit-scrollbar-track, .modern-modal-paper::-webkit-scrollbar-track, .pdfjs-viewer::-webkit-scrollbar-track {
-        background: #181a26;
-        border-radius: 8px;
-    }
-    /* Enable smooth scrolling for modal and PDF viewer */
-    .resume-modal-overlay, .modern-modal-paper, .pdfjs-viewer {
-        scroll-behavior: smooth;
-    }
-    </style>
 
-    <!-- Service Worker Registration -->
-    <script src="../assets/scripts/sw-utils.js"></script>
-    <!-- Service worker is automatically registered by sw-utils.js -->
-    
     <!-- Logger Utility (load first for standardized logging) -->
     <script src="../assets/scripts/logger.js"></script>
     <!-- Error Handler (load early for error handling) -->
@@ -591,6 +252,161 @@
     });
     </script>
     <script src="../assets/scripts/tooltips.js"></script>
+    <script>
+    const RESUME_URL = window.location.origin + '/assets/resume/karthik_resume.pdf#zoom=page-width';
+
+    document.getElementById('yodaResumeBtn').onclick = function() {
+        var modal = document.getElementById('resumeModal');
+        var frame = document.getElementById('resumeViewerFrame');
+        if (frame && !frame.src) {
+            frame.src = RESUME_URL;
+        }
+        modal.style.display = 'flex';
+        setTimeout(function(){modal.classList.add('show');}, 10);
+    };
+
+    document.getElementById('popOutBtn').onclick = function(e) {
+        e.stopPropagation();
+        window.open(RESUME_URL, '_blank', 'noopener,noreferrer');
+    };
+
+    document.getElementById('resumeModal').onclick = function(e) {
+        if (e.target === this) {
+            this.classList.remove('show');
+            var that = this;
+            setTimeout(function(){that.style.display = 'none';}, 200);
+        }
+    };
+    </script>
+    <style>
+    .resume-modal-overlay {
+        position: fixed;
+        inset: 0;
+        z-index: 2000;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        background: rgba(5,5,10,0.92);
+        backdrop-filter: blur(12px) saturate(1.2);
+        -webkit-backdrop-filter: blur(12px) saturate(1.2);
+    }
+    .resume-modal-overlay::before {
+        content: "";
+        position: fixed;
+        inset: 0;
+        z-index: -1;
+        pointer-events: none;
+        background: url("https://www.transparenttextures.com/patterns/stardust.png");
+        opacity: 0.7;
+        animation: twinkling 100s linear infinite;
+    }
+    @keyframes twinkling {
+        from { background-position: 0 0; }
+        to   { background-position: -1000px 1000px; }
+    }
+    .resume-modal-overlay.show {
+        opacity: 1;
+        pointer-events: auto;
+    }
+    .resume-modal-overlay.show .resume-modal-inner {
+        animation: modalSlideIn 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    @keyframes modalSlideIn {
+        from {
+            opacity: 0;
+            transform: scale(0.95) translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: scale(1) translateY(0);
+        }
+    }
+    .resume-modal-inner {
+        width: 98vw;
+        max-width: 960px;
+        height: 85vh;
+        border-radius: 32px;
+        overflow: hidden;
+        box-shadow: 
+            0 20px 60px rgba(0, 0, 0, 0.5),
+            0 8px 24px rgba(0, 0, 0, 0.3);
+        background: rgba(255, 255, 255, 0.99);
+        backdrop-filter: blur(24px) saturate(1.15);
+        -webkit-backdrop-filter: blur(24px) saturate(1.15);
+        border: none;
+        outline: none;
+        margin: 0;
+        padding: 0;
+        position: relative;
+        z-index: 1;
+        transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1), border-color 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .resume-pdf-frame {
+        width: 100%;
+        height: calc(100% + 2px);
+        margin-bottom: -2px;
+        border: none;
+        outline: none;
+        display: block;
+        background: #ffffff;
+        position: relative;
+        z-index: 2;
+    }
+    .pop-out-btn {
+        position: absolute;
+        top: calc(50% - 42.5vh - 1.5rem);
+        right: calc(50% - 480px - 2.5rem);
+        z-index: 2001;
+        background: transparent;
+        backdrop-filter: none;
+        -webkit-backdrop-filter: none;
+        border: none;
+        border-radius: 0;
+        width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        color: rgba(255, 255, 255, 0.9);
+        transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        box-shadow: none;
+        font-size: 1.5rem;
+        line-height: 1;
+    }
+    @media (max-width: 960px) {
+        .pop-out-btn {
+            right: 1rem;
+        }
+    }
+    .pop-out-btn:hover {
+        background: transparent;
+        color: rgba(255, 255, 255, 1);
+        transform: scale(1.05);
+        box-shadow: none;
+    }
+    .pop-out-btn:active {
+        transform: scale(0.95);
+    }
+    /* Separator line between social icons and moon button - home page only */
+    .navbar-center::before {
+        content: '';
+        position: absolute;
+        left: -0.8rem;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 1.5px;
+        height: 60%;
+        background: rgba(180, 180, 200, 0.4);
+        border-radius: 2px;
+    }
+    .navbar-center {
+        position: relative;
+    }
+    </style>
 
 </body>
 </html>

@@ -12,7 +12,6 @@
     <link rel="preload" href="../assets/scripts/logger.js" as="script">
     <link rel="preload" href="../assets/scripts/error-handler.js" as="script">
     <link rel="preload" href="../assets/scripts/global-error-handler.js" as="script">
-    <link rel="preload" href="../assets/scripts/sw-utils.js" as="script">
     <link rel="stylesheet" href="../assets/styles/galaxy.css">
     <link rel="stylesheet" href="../assets/fonts/fonts.css">
     <link rel="stylesheet" href="upload.css">
@@ -97,8 +96,8 @@
             <div class="dropdown-content" role="menu">
                 <a href="../gallery/index.html" role="menuitem">Open gallery</a>
                 <a href="../know-me/about.html" role="menuitem">Know me</a>
-                <a href="../archive/archive.html" role="menuitem">View archive</a>
                 <a href="../spotify-visualiser/index.html" role="menuitem">Spotify Visualizer</a>
+                <a href="http://localhost:4321/" role="menuitem" target="_blank" rel="noreferrer">Repository</a>
                 <a href="./upload.html" role="menuitem" aria-current="page">Open upload</a>
             </div>
         </div>
@@ -127,9 +126,9 @@
     <div class="upload-container">
         <h1>Upload Your Media</h1>
         <form id="uploadForm" class="upload-form">
-            <label for="mediaUpload" class="custom-file-upload">Choose Photos/Videos</label>
-            <div class="upload-help">Accepted: JPG/PNG/MP4 • Max size: 10MB per file</div>
-            <input type="file" id="mediaUpload" name="media" accept="image/*, video/*" multiple>
+            <label for="mediaUpload" class="custom-file-upload">Choose Files</label>
+            <div class="upload-help">Max size: 10MB per file</div>
+            <input type="file" id="mediaUpload" name="media" accept="image/*, video/*, application/pdf, application/vnd.ms-powerpoint, application/vnd.openxmlformats-officedocument.presentationml.presentation, application/msword, application/vnd.openxmlformats-officedocument.wordprocessingml.document, application/vnd.ms-excel, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" multiple>
 
             <button type="button" id="uploadButton" aria-label="Upload Media">Upload</button>
 
@@ -145,157 +144,48 @@
         <div id="uploadedMedia" class="gallery"></div>
     </div>
 
-    <!-- Bottom-left text -->
-    <div class="bottom-left-text">
-        &copy; 2025 Mnmnts. All rights reserved.
-    </div>
-
     <div class="yoda-favicon" id="yodaResumeBtn" style="cursor:pointer;" aria-label="Open resume modal">
         <div class="yoda-modern-box"> my resume!!</div>
         <img src="../icons8-baby-yoda-color-favicons/web/icons8-baby-yoda-color-48.png" alt="Baby Yoda favicon" loading="lazy" />
     </div>
     <div id="resumeModal" class="resume-modal-overlay" style="display:none;">
-        <div class="stars"></div>
-        <div class="resume-modal-content darksite-modal modern-modal">
-            <div class="modern-modal-actions" style="position:absolute;top:12px;right:12px;z-index:300;display:flex;gap:12px;align-items:center;">
-                <button class="modern-modal-action" id="openResumeBtn" title="Open in new tab" aria-label="Open in new tab">↗️</button>
-                <button class="modern-modal-action" id="fullscreenResumeBtn" title="Fullscreen">⛶</button>
-                <button class="modern-modal-action" id="downloadResumeBtn" title="Download PDF">⬇️</button>
-                <button class="modern-modal-action" id="printResumeBtn" title="Print PDF">🖨️</button>
-                <button class="resume-modal-close modern-modal-close" id="closeResumeModal" aria-label="Close">&times;</button>
-            </div>
-            <div class="modern-modal-header">
-                <span class="modern-modal-pdficon">📄</span>
-                <span class="modern-modal-title">Resume</span>
-            </div>
-            <div class="resume-pdf-paper darksite-paper modern-modal-paper">
-                <div id="pdfjs-viewer" class="pdfjs-viewer"></div>
-                <div class="pdfjs-controls" style="display:none;"></div>
-            </div>
+            <button id="popOutBtn" class="pop-out-btn" aria-label="Open PDF in new window" title="Open in new window">🢅</button>
+        <div class="resume-modal-inner">
+            <iframe
+              id="resumeViewerFrame"
+              class="resume-pdf-frame"
+              title="Resume PDF viewer"
+              loading="lazy"
+              frameborder="0"
+              style="width: 100%; height: 100%; border: none; outline: none;"
+            ></iframe>
         </div>
     </div>
-    <link rel="stylesheet" href="../assets/pdfjs/pdf_viewer.min.css">
-    <script src="../assets/pdfjs/pdf.min.js"></script>
     <script>
-    // PDF.js worker setup
-    pdfjsLib.GlobalWorkerOptions.workerSrc = '../assets/pdfjs/pdf.worker.min.js';
-    function renderPDF(url, containerId) {
-        const container = document.getElementById(containerId);
-        if (!container) {
-            console.error('PDF container not found');
-            return;
-        }
-        container.innerHTML = '<p style="color: #bfcaff; text-align: center; padding: 2rem;">Loading PDF...</p>';
-        pdfjsLib.getDocument(url).promise.then(function(pdf) {
-        container.innerHTML = '';
-            const renderPromises = [];
-            for (let pageNum = 1; pageNum <= pdf.numPages; pageNum++) {
-                renderPromises.push(
-                pdf.getPage(pageNum).then(function(page) {
-                    const scale = 1;
-                    const quality = 3;
-                    const viewport = page.getViewport({ scale });
-                    const canvas = document.createElement('canvas');
-                    canvas.className = 'pdfjs-canvas';
-                    canvas.style.scrollSnapAlign = 'start';
-                    container.appendChild(canvas);
-                    const context = canvas.getContext('2d');
-                    canvas.width = viewport.width * quality;
-                    canvas.height = viewport.height * quality;
-                    canvas.style.width = viewport.width + 'px';
-                    canvas.style.height = viewport.height + 'px';
-                    context.setTransform(quality, 0, 0, quality, 0, 0);
-                        return page.render({ canvasContext: context, viewport: viewport }).promise;
-                    }).catch(function(err) {
-                        console.error('Error rendering PDF page:', err);
-                        const errorDiv = document.createElement('div');
-                        errorDiv.style.cssText = 'color: #ff6b6b; padding: 1rem; text-align: center;';
-                        errorDiv.textContent = 'Error loading page ' + pageNum;
-                        container.appendChild(errorDiv);
-                    })
-                );
-            }
-            Promise.all(renderPromises).catch(function(err) {
-                console.error('Error rendering PDF:', err);
-                container.innerHTML = '<p style="color: #ff6b6b; text-align: center; padding: 2rem;">Failed to load PDF. Please try again.</p>';
-            });
-        }).catch(function(err) {
-            console.error('Error loading PDF:', err);
-            container.innerHTML = '<p style="color: #ff6b6b; text-align: center; padding: 2rem;">Failed to load PDF. Please check if the file exists.</p>';
-        });
-    }
+    const RESUME_URL = window.location.origin + '/assets/resume/karthik_resume.pdf#zoom=page-width';
+
     document.getElementById('yodaResumeBtn').onclick = function() {
         var modal = document.getElementById('resumeModal');
-        modal.style.display = 'flex';
-        setTimeout(function(){modal.classList.add('show');}, 10);
-        renderPDF('../assets/resume/karthik_resume.pdf', 'pdfjs-viewer');
+        var frame = document.getElementById('resumeViewerFrame');
+        if (frame && !frame.src) {
+            frame.src = RESUME_URL;
+        }
+        if (modal) {
+            modal.style.display = 'flex';
+            setTimeout(function(){modal.classList.add('show');}, 10);
+        }
     };
-    document.getElementById('closeResumeModal').onclick = function(e) {
-        var modal = document.getElementById('resumeModal');
-        modal.classList.remove('show');
-        setTimeout(function(){modal.style.display = 'none';}, 200);
+
+    document.getElementById('popOutBtn').onclick = function(e) {
+        e.stopPropagation();
+        window.open(RESUME_URL, '_blank', 'noopener,noreferrer');
     };
+
     document.getElementById('resumeModal').onclick = function(e) {
         if (e.target === this) {
             this.classList.remove('show');
             var that = this;
             setTimeout(function(){that.style.display = 'none';}, 200);
-        }
-    };
-    document.getElementById('downloadResumeBtn').onclick = function(e) {
-        e.stopPropagation();
-        const link = document.createElement('a');
-        link.href = '../assets/resume/karthik_resume.pdf';
-        link.download = 'Karthik_Resume.pdf';
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-    };
-    document.getElementById('openResumeBtn').onclick = function(e) {
-        e.stopPropagation();
-        window.open('../assets/resume/karthik_resume.pdf', '_blank', 'noopener');
-    };
-    document.getElementById('printResumeBtn').onclick = function(e) {
-        e.stopPropagation();
-        let printFrame = document.getElementById('resumePrintFrame');
-        if (!printFrame) {
-            printFrame = document.createElement('iframe');
-            printFrame.id = 'resumePrintFrame';
-            printFrame.style.display = 'none';
-            printFrame.src = '../assets/resume/karthik_resume.pdf';
-            document.body.appendChild(printFrame);
-            printFrame.onload = function() {
-                printFrame.contentWindow.focus();
-                printFrame.contentWindow.print();
-            };
-        } else {
-            printFrame.contentWindow.focus();
-            printFrame.contentWindow.print();
-        }
-    };
-    document.getElementById('fullscreenResumeBtn').onclick = function(e) {
-        e.stopPropagation();
-        var modal = document.getElementById('resumeModal');
-        if (!document.fullscreenElement) {
-            if (modal.requestFullscreen) {
-                modal.requestFullscreen();
-            } else if (modal.webkitRequestFullscreen) {
-                modal.webkitRequestFullscreen();
-            } else if (modal.mozRequestFullScreen) {
-                modal.mozRequestFullScreen();
-            } else if (modal.msRequestFullscreen) {
-                modal.msRequestFullscreen();
-            }
-        } else {
-            if (document.exitFullscreen) {
-                document.exitFullscreen();
-            } else if (document.webkitExitFullscreen) {
-                document.webkitExitFullscreen();
-            } else if (document.mozCancelFullScreen) {
-                document.mozCancelFullScreen();
-            } else if (document.msExitFullscreen) {
-                document.msExitFullscreen();
-            }
         }
     };
     </script>
@@ -389,7 +279,18 @@
                     const file = files[index];
                     setStatus(file.name, "pending", "Queued");
                 // Validate file type and size before upload
-                const allowedTypes = ["image/jpeg", "image/png", "video/mp4"];
+                const allowedTypes = [
+                    "image/jpeg", 
+                    "image/png", 
+                    "video/mp4",
+                    "application/pdf",
+                    "application/vnd.ms-powerpoint",
+                    "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+                    "application/msword",
+                    "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+                    "application/vnd.ms-excel",
+                    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+                ];
                 const maxSize = 10 * 1024 * 1024; // 10MB
                 if (!allowedTypes.includes(file.type)) {
                     failedUploads++;
@@ -498,11 +399,36 @@
         const uploadedMedia = document.getElementById("uploadedMedia");
 
         const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
-        const ALLOWED_TYPES = ["image/jpeg", "image/png", "video/mp4"];
+        const ALLOWED_TYPES = [
+            "image/jpeg", 
+            "image/png", 
+            "video/mp4",
+            "application/pdf",
+            "application/vnd.ms-powerpoint",
+            "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+            "application/msword",
+            "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+            "application/vnd.ms-excel",
+            "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+        ];
 
         function displayUploadedMedia(files) {
             uploadedMedia.innerHTML = "";
             Array.from(files).forEach(file => {
+                // Handle document files (PDF, PPT, Word, Excel) differently
+                if (file.type.startsWith("application/")) {
+                    const docElement = document.createElement("div");
+                    docElement.classList.add("gallery-media", "document-file");
+                    docElement.innerHTML = `
+                        <div class="document-icon">📄</div>
+                        <div class="document-name">${file.name}</div>
+                        <div class="document-type">${getFileTypeLabel(file.type)}</div>
+                    `;
+                    uploadedMedia.appendChild(docElement);
+                    return;
+                }
+                
+                // Handle images and videos
                 const reader = new FileReader();
                 reader.onload = function (e) {
                     const mediaElement = document.createElement(file.type.startsWith("image") ? "img" : "video");
@@ -518,6 +444,19 @@
                 };
                 reader.readAsDataURL(file);
             });
+        }
+        
+        function getFileTypeLabel(mimeType) {
+            const typeMap = {
+                "application/pdf": "PDF",
+                "application/vnd.ms-powerpoint": "PowerPoint",
+                "application/vnd.openxmlformats-officedocument.presentationml.presentation": "PowerPoint",
+                "application/msword": "Word",
+                "application/vnd.openxmlformats-officedocument.wordprocessingml.document": "Word",
+                "application/vnd.ms-excel": "Excel",
+                "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet": "Excel"
+            };
+            return typeMap[mimeType] || "Document";
         }
 
         mediaUpload.addEventListener("change", function () {
@@ -600,22 +539,21 @@
         justify-content: center;
         opacity: 0;
         pointer-events: none;
-        transition: opacity 0.3s cubic-bezier(.4,0,.2,1);
-        animation: fadeInModalBg 0.4s cubic-bezier(.4,0,.2,1);
+        transition: opacity 0.4s cubic-bezier(0.4, 0, 0.2, 1);
         overflow-y: visible;
-        background: #0a0a0a;
+        background: rgba(5,5,10,0.92);
         box-shadow: none;
-        backdrop-filter: blur(5px) saturate(1.1);
-        -webkit-backdrop-filter: blur(5px) saturate(1.1);
+        backdrop-filter: blur(12px) saturate(1.2);
+        -webkit-backdrop-filter: blur(12px) saturate(1.2);
     }
     .resume-modal-overlay::before {
         content: '';
         position: fixed;
         top: 0; left: 0; right: 0; bottom: 0;
-        z-index: 0;
+        z-index: -1;
         pointer-events: none;
         background: url('https://www.transparenttextures.com/patterns/stardust.png');
-        opacity: 0.7;
+        opacity: 0.6;
         animation: twinkling 100s linear infinite;
     }
     @keyframes twinkling {
@@ -625,6 +563,95 @@
     .resume-modal-overlay.show {
         opacity: 1;
         pointer-events: auto;
+    }
+    .resume-modal-overlay.show .resume-modal-inner {
+        animation: modalSlideIn 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    @keyframes modalSlideIn {
+        from {
+            opacity: 0;
+            transform: scale(0.95) translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: scale(1) translateY(0);
+        }
+    }
+    /* Shared resume modal container to match gallery/about */
+    .resume-modal-inner {
+        width: 98vw;
+        max-width: 960px;
+        height: 85vh;
+        min-width: 600px;
+        min-height: 400px;
+        border-radius: 32px;
+        overflow: hidden;
+        box-shadow: 
+            0 20px 60px rgba(0, 0, 0, 0.5),
+            0 8px 24px rgba(0, 0, 0, 0.3);
+        background: rgba(255, 255, 255, 0.99);
+        backdrop-filter: blur(24px) saturate(1.15);
+        -webkit-backdrop-filter: blur(24px) saturate(1.15);
+        border: none;
+        transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1), border-color 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        outline: none;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        flex-direction: column;
+        position: relative;
+        z-index: 1;
+        transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .resume-pdf-frame {
+        width: 100% !important;
+        height: calc(100% + 2px) !important;
+        min-width: 100%;
+        min-height: 100%;
+        margin-bottom: -2px;
+        border: none !important;
+        outline: none !important;
+        display: block;
+        background: #ffffff;
+        flex: 1;
+        position: relative;
+        z-index: 2;
+    }
+    .pop-out-btn {
+        position: absolute;
+        top: calc(50% - 42.5vh - 1.5rem);
+        right: calc(50% - 480px - 2.5rem);
+        z-index: 2001;
+        background: transparent;
+        backdrop-filter: none;
+        -webkit-backdrop-filter: none;
+        border: none;
+        border-radius: 0;
+        width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        color: rgba(255, 255, 255, 0.9);
+        transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        box-shadow: none;
+        font-size: 1.5rem;
+        line-height: 1;
+    }
+    @media (max-width: 960px) {
+        .pop-out-btn {
+            right: 1rem;
+        }
+    }
+    .pop-out-btn:hover {
+        background: transparent;
+        color: rgba(255, 255, 255, 1);
+        transform: scale(1.05);
+        box-shadow: none;
+    }
+    .pop-out-btn:active {
+        transform: scale(0.95);
     }
     .modern-modal {
         max-width: 900px;
@@ -768,8 +795,6 @@
         #closeResumeModal { right: 8px; }
     }
     </style>
-    <!-- Service Worker Registration -->
-    <script src="../assets/scripts/sw-utils.js"></script>
     <!-- Logger Utility (load first for standardized logging) -->
     <script src="../assets/scripts/logger.js"></script>
     <!-- Error Handler (load early for error handling) -->

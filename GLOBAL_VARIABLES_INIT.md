@@ -15,7 +15,7 @@ The following global variables are created in this order:
 2. **`errorHandler`** (`assets/scripts/error-handler.js`)
    - **Created**: Immediately on script load
    - **Dependencies**: None (but uses Logger if available)
-   - **Used by**: `global-error-handler.js`, `script.js`, `archive.js`, `about.js`
+   - **Used by**: `global-error-handler.js`, `script.js`, `about.js`
    - **Availability**: `window.errorHandler`
 
 3. **`serviceWorkerUtils`** (`assets/scripts/sw-utils.js`)
