@@ -20,6 +20,10 @@
       "destination": "/Repository/dist/:path*"
     },
     {
+      "source": "/spotify-visualiser/index.html",
+      "destination": "/spotify-visualiser/dist/index.html"
+    },
+    {
       "source": "/spotify-visualiser",
       "destination": "/spotify-visualiser/dist/index.html"
     },
@@ -28,8 +32,23 @@
       "destination": "/spotify-visualiser/dist/index.html"
     },
     {
+      "source": "/spotify-visualiser/src/:path*",
+      "destination": "/404"
+    },
+    {
       "source": "/spotify-visualiser/:path*",
       "destination": "/spotify-visualiser/dist/:path*"
+    }
+  ],
+  "headers": [
+    {
+      "source": "/spotify-visualiser/src/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "no-store"
+        }
+      ]
     }
   ]
 }
