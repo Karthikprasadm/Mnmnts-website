@@ -14,6 +14,10 @@
       "destination": "/Repository/dist/index.html"
     },
     {
+      "source": "/repo/",
+      "destination": "/Repository/dist/index.html"
+    },
+    {
       "source": "/repo/:path*",
       "destination": "/Repository/dist/:path*"
     }
