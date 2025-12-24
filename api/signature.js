@@ -50,7 +50,7 @@ module.exports = async (req, res) => {
 
     // Return signature, expire, and token directly (not wrapped in data object)
     // The upload.html expects: { signature, expire, token }
-    setSecurityHeaders(res);
+    setCORSHeaders(req, res);
     res.status(200).json({
       signature: signature.signature,
       expire: signature.expire,
