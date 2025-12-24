@@ -11,7 +11,7 @@ const initializeElements = () => {
 // Load all images and background images on the page.
 // Resolves when all assets are loaded, or rejects if any fail.
 const loadImages = () => {
-  return new Promise((resolve, reject) => {
+  return new Promise((resolve, _reject) => {
     // Collect all <img> elements.
     const imgElements = document.querySelectorAll('img');
 
@@ -89,7 +89,7 @@ const init = () => {
 };
 
 // Execute a callback only if the current page is the home page.
-const handlePageEvent = (event, callback) => {
+const handlePageEvent = (_event, callback) => {
   const page = document.documentElement.getAttribute('data-page');
   if (page === 'home') callback();
 };
