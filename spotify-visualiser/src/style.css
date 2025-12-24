@@ -145,7 +145,7 @@ body {
 /* Music Player Overlay */
 .music-player-overlay {
   position: fixed;
-  top: 50%;
+  top: calc(50% + 40px);
   left: 50%;
   transform: translate(-50%, -50%) translateZ(0); /* Force GPU acceleration */
   z-index: 100;
