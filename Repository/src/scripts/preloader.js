@@ -94,6 +94,16 @@ const handlePageEvent = (_event, callback) => {
   if (page === 'home') callback();
 };
 
+// Initialize immediately if DOM is ready, otherwise wait for DOMContentLoaded
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', () => {
+    init();
+  });
+} else {
+  // DOM is already ready, initialize immediately
+  init();
+}
+
 // Listen for Astro's lifecycle events.
 document.addEventListener('astro:page-load', () => {
   handlePageEvent('page-load', init);
@@ -107,3 +117,11 @@ document.addEventListener('astro:before-swap', () => {
 window.addEventListener('beforeunload', () => {
   sessionStorage.removeItem('preloadComplete');
 });
+
+// Fallback: ensure preloader is hidden after 10 seconds regardless
+setTimeout(() => {
+  const loading = document.querySelector('.loading');
+  if (loading && !loading.classList.contains('hidden')) {
+    loading.classList.add('hidden');
+  }
+}, 10000);

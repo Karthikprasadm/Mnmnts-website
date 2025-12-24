@@ -14,6 +14,26 @@
       overflow: hidden;
       transition: opacity 0.2s ease-out;
     }
+    .loading.hidden {
+      display: none !important;
+      opacity: 0;
+      pointer-events: none;
+    }
+  }
+  /* Fallback: hide preloader if scripts are disabled or fail */
+  @media (scripting: disabled) {
+    .loading {
+      display: none !important;
+    }
   }
 </style>
 <script src="../scripts/preloader.js"></script>
+<script>
+  // Fallback: hide preloader after 5 seconds if script fails
+  setTimeout(() => {
+    const loading = document.querySelector('.loading');
+    if (loading && !loading.classList.contains('hidden')) {
+      loading.classList.add('hidden');
+    }
+  }, 5000);
+</script>
