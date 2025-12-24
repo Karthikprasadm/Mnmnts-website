@@ -9,6 +9,7 @@
       "permanent": false
     }
   ],
+  "cleanUrls": false,
   "rewrites": [
     {
       "source": "/spotify-visualiser",
