@@ -4,6 +4,22 @@
   "outputDirectory": ".",
   "rewrites": [
     {
+      "source": "/spotify-visualiser",
+      "destination": "/spotify-visualiser/dist/index.html"
+    },
+    {
+      "source": "/spotify-visualiser/",
+      "destination": "/spotify-visualiser/dist/index.html"
+    },
+    {
+      "source": "/spotify-visualiser/index.html",
+      "destination": "/spotify-visualiser/dist/index.html"
+    },
+    {
+      "source": "/spotify-visualiser/:path*",
+      "destination": "/spotify-visualiser/dist/:path*"
+    },
+    {
       "source": "/api/:path*",
       "destination": "/api/:path*"
     },
@@ -18,26 +34,6 @@
     {
       "source": "/repo/:path*",
       "destination": "/Repository/dist/:path*"
-    },
-    {
-      "source": "/spotify-visualiser/index.html",
-      "destination": "/spotify-visualiser/dist/index.html"
-    },
-    {
-      "source": "/spotify-visualiser",
-      "destination": "/spotify-visualiser/dist/index.html"
-    },
-    {
-      "source": "/spotify-visualiser/",
-      "destination": "/spotify-visualiser/dist/index.html"
-    },
-    {
-      "source": "/spotify-visualiser/src/:path*",
-      "destination": "/404"
-    },
-    {
-      "source": "/spotify-visualiser/:path*",
-      "destination": "/spotify-visualiser/dist/:path*"
     }
   ],
   "headers": [
