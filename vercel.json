@@ -27,6 +27,10 @@
       "destination": "/api/:path*"
     },
     {
+      "source": "/_astro/(.*)",
+      "destination": "/Repository/dist/_astro/$1"
+    },
+    {
       "source": "/repo/images/artists/(.*)",
       "destination": "/Repository/dist/images/artists/$1"
     },
