@@ -146,9 +146,22 @@ body, button, input, select, textarea {
     flex: 0 0 auto;
     justify-content: center;
     align-items: center;
-    border-left: 1px solid rgba(255, 255, 255, 0.2);
+    position: relative;
     padding-left: 1rem;
     margin-left: 0.5rem;
+}
+
+/* Separator line between social icons and moon button */
+.navbar-center::before {
+    content: '';
+    position: absolute;
+    left: -0.5rem; /* Moved further right (was -0.8rem) */
+    top: 50%;
+    transform: translateY(-50%);
+    width: 1.5px;
+    height: 60%;
+    background: rgba(180, 180, 200, 0.4);
+    border-radius: 2px;
 }
 
 .social-icons a {
