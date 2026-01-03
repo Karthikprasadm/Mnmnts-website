@@ -16,7 +16,4 @@ export default defineConfig({
   site: 'https://karthikprasadm.github.io/',
 
   integrations: [sitemap()],
-  experimental: {
-    svg: true,
-  },
 });

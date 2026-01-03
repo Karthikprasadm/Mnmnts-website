@@ -53,6 +53,54 @@
   100% { background-position: 0% 0%; }
 }
 
+/* Marquee animation for truncated text */
+@keyframes marquee {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(var(--scroll-distance, -100%)); }
+}
+
+/* Truncated text with marquee on hover */
+.text-marquee-container {
+  position: relative;
+  overflow: hidden;
+  min-width: 0;
+  flex: 1;
+}
+
+.text-marquee {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  display: block;
+  width: 100%;
+  position: relative;
+}
+
+.text-marquee-wrapper {
+  display: inline-block;
+  white-space: nowrap;
+}
+
+.text-marquee-wrapper.can-scroll {
+  padding-right: 20px;
+}
+
+/* Only animate if text is actually truncated */
+.text-marquee-container:hover .text-marquee {
+  text-overflow: clip;
+}
+
+.text-marquee-container:hover .text-marquee-wrapper.can-scroll {
+  animation: marquee 3s linear infinite;
+  animation-delay: 0.3s;
+}
+
+/* Reset animation when not hovering */
+.text-marquee-container:not(:hover) .text-marquee-wrapper {
+  animation: none;
+  transform: translateX(0);
+}
+
 .glass-overlay {
   z-index: 2;
   background: var(--bg-color);
@@ -164,6 +212,7 @@ body {
 .music-player-overlay * {
   overscroll-behavior: contain;
 }
+
 
 /* Keyboard shortcut help styling */
 kbd {

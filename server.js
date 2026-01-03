@@ -11,12 +11,18 @@ const ImageKit = require('imagekit');
 const { v4: uuidv4 } = require('uuid');
 const { createProxyMiddleware } = require('http-proxy-middleware');
 
-// Configure ImageKit
-const imagekit = new ImageKit({
-  publicKey: process.env.IMAGEKIT_PUBLIC_KEY,
-  privateKey: process.env.IMAGEKIT_PRIVATE_KEY,
-  urlEndpoint: process.env.IMAGEKIT_URL_ENDPOINT
-});
+// Configure ImageKit (only if env vars are present)
+let imagekit = null;
+if (process.env.IMAGEKIT_PUBLIC_KEY && process.env.IMAGEKIT_PRIVATE_KEY && process.env.IMAGEKIT_URL_ENDPOINT) {
+  imagekit = new ImageKit({
+    publicKey: process.env.IMAGEKIT_PUBLIC_KEY,
+    privateKey: process.env.IMAGEKIT_PRIVATE_KEY,
+    urlEndpoint: process.env.IMAGEKIT_URL_ENDPOINT
+  });
+  console.log('✅ ImageKit configured');
+} else {
+  console.log('⚠️  ImageKit not configured (missing .env file). Upload features will not work.');
+}
 
 const app = express();
 const port = 3000;
@@ -58,8 +64,32 @@ const upload = multer({ storage, fileFilter, limits: { fileSize: 150 * 1024 * 10
 // Enable JSON parsing for API endpoints
 app.use(express.json());
 
-// NOTE: Repository (Astro) now runs on its own dev server at http://localhost:4321
-// We no longer proxy it through /repo to keep things simple and stable.
+// Serve built Repository (Astro) files from /repo
+const repositoryDist = path.join(__dirname, 'Repository', 'dist');
+if (fs.existsSync(repositoryDist)) {
+  // Explicitly handle index.html routes FIRST (these MUST come before express.static)
+  app.get('/repo', (req, res) => {
+    const builtIndex = path.join(repositoryDist, 'index.html');
+    console.log('✅ Serving Repository index.html from:', builtIndex);
+    res.sendFile(builtIndex);
+  });
+  app.get('/repo/', (req, res) => {
+    const builtIndex = path.join(repositoryDist, 'index.html');
+    console.log('✅ Serving Repository index.html from:', builtIndex);
+    res.sendFile(builtIndex);
+  });
+  app.get('/repo/index.html', (req, res) => {
+    const builtIndex = path.join(repositoryDist, 'index.html');
+    console.log('✅ Serving Repository index.html from:', builtIndex);
+    res.sendFile(builtIndex);
+  });
+  
+  // Then serve all other built files from dist folder
+  app.use('/repo', express.static(repositoryDist));
+  console.log('✅ Serving built Repository from dist/');
+} else {
+  console.warn('⚠️  Repository dist/ not found. Run: cd Repository && npm run build');
+}
 
 // Serve built Spotify Visualizer files FIRST (before general static files)
 // This ensures the built files take precedence over source files
@@ -116,6 +146,12 @@ app.get('/', (req, res) => {
 
 // Local signature endpoint for ImageKit direct upload
 app.get('/api/signature', (req, res) => {
+  if (!imagekit) {
+    return res.status(503).json({
+      success: false,
+      error: 'ImageKit not configured. Please set IMAGEKIT_PUBLIC_KEY, IMAGEKIT_PRIVATE_KEY, and IMAGEKIT_URL_ENDPOINT in .env file'
+    });
+  }
   const token = uuidv4();
   const expire = Math.floor(Date.now() / 1000) + 60 * 5; // 5 minutes from now
   const signature = imagekit.getAuthenticationParameters(token, expire);
@@ -127,9 +163,193 @@ app.get('/api/signature', (req, res) => {
   });
 });
 
+// Spotify API endpoints (for local development)
+// In production, these are handled by Vercel serverless functions in /api/spotify/
+app.post('/api/spotify/token', async (req, res) => {
+  const { setCORSHeaders, handleOptions } = require('./api/utils/cors');
+  const { successResponse, errorResponse } = require('./api/utils/response');
+  
+  setCORSHeaders(req, res);
+  
+  if (req.method === 'OPTIONS') {
+    handleOptions(req, res);
+    return;
+  }
+
+  const { SPOTIFY_CLIENT_ID, SPOTIFY_CLIENT_SECRET } = process.env;
+
+  if (!SPOTIFY_CLIENT_ID || !SPOTIFY_CLIENT_SECRET) {
+    return res.status(503).json({
+      success: false,
+      error: 'Spotify credentials not configured. Please set SPOTIFY_CLIENT_ID and SPOTIFY_CLIENT_SECRET environment variables.'
+    });
+  }
+
+  try {
+    const { code, redirect_uri, grant_type = 'authorization_code', refresh_token } = req.body;
+
+    if (grant_type === 'authorization_code') {
+      if (!code || !redirect_uri) {
+        return res.status(400).json({
+          success: false,
+          error: 'Missing required parameters: code and redirect_uri are required.'
+        });
+      }
+
+      const tokenResponse = await fetch('https://accounts.spotify.com/api/token', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+          'Authorization': `Basic ${Buffer.from(`${SPOTIFY_CLIENT_ID}:${SPOTIFY_CLIENT_SECRET}`).toString('base64')}`,
+        },
+        body: new URLSearchParams({
+          grant_type: 'authorization_code',
+          code: code,
+          redirect_uri: redirect_uri,
+        }),
+      });
+
+      const tokenData = await tokenResponse.json();
+
+      if (!tokenResponse.ok) {
+        return res.status(tokenResponse.status).json({
+          success: false,
+          error: tokenData.error_description || tokenData.error || 'Failed to exchange authorization code'
+        });
+      }
+
+      return res.status(200).json({
+        success: true,
+        data: {
+          access_token: tokenData.access_token,
+          refresh_token: tokenData.refresh_token,
+          expires_in: tokenData.expires_in,
+          token_type: tokenData.token_type,
+        }
+      });
+    } else if (grant_type === 'refresh_token') {
+      if (!refresh_token) {
+        return res.status(400).json({
+          success: false,
+          error: 'Missing required parameter: refresh_token is required.'
+        });
+      }
+
+      const tokenResponse = await fetch('https://accounts.spotify.com/api/token', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+          'Authorization': `Basic ${Buffer.from(`${SPOTIFY_CLIENT_ID}:${SPOTIFY_CLIENT_SECRET}`).toString('base64')}`,
+        },
+        body: new URLSearchParams({
+          grant_type: 'refresh_token',
+          refresh_token: refresh_token,
+        }),
+      });
+
+      const tokenData = await tokenResponse.json();
+
+      if (!tokenResponse.ok) {
+        return res.status(tokenResponse.status).json({
+          success: false,
+          error: tokenData.error_description || tokenData.error || 'Failed to refresh token'
+        });
+      }
+
+      return res.status(200).json({
+        success: true,
+        data: {
+          access_token: tokenData.access_token,
+          expires_in: tokenData.expires_in,
+          token_type: tokenData.token_type,
+          refresh_token: tokenData.refresh_token || refresh_token,
+        }
+      });
+    } else {
+      return res.status(400).json({
+        success: false,
+        error: 'Invalid grant_type. Supported values: authorization_code, refresh_token'
+      });
+    }
+  } catch (error) {
+    console.error('Spotify token error:', error);
+    return res.status(500).json({
+      success: false,
+      error: `Internal server error: ${error.message}`
+    });
+  }
+});
+
+app.get('/api/spotify', async (req, res) => {
+  const { setCORSHeaders, handleOptions } = require('./api/utils/cors');
+  const { successResponse, errorResponse } = require('./api/utils/response');
+  
+  setCORSHeaders(req, res);
+  
+  if (req.method === 'OPTIONS') {
+    handleOptions(req, res);
+    return;
+  }
+
+  try {
+    const { endpoint } = req.query;
+    const accessToken = req.headers.authorization?.replace('Bearer ', '');
+
+    if (!endpoint) {
+      return res.status(400).json({
+        success: false,
+        error: 'Missing required parameter: endpoint'
+      });
+    }
+
+    if (!accessToken) {
+      return res.status(401).json({
+        success: false,
+        error: 'Missing authorization token. Please provide Bearer token in Authorization header.'
+      });
+    }
+
+    const normalizedEndpoint = endpoint.startsWith('/v1/') ? endpoint : `/v1/${endpoint}`;
+
+    const spotifyResponse = await fetch(`https://api.spotify.com${normalizedEndpoint}`, {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${accessToken}`,
+        'Content-Type': 'application/json',
+      },
+    });
+
+    const data = await spotifyResponse.json();
+
+    if (!spotifyResponse.ok) {
+      return res.status(spotifyResponse.status).json({
+        success: false,
+        error: data.error?.message || 'Spotify API request failed'
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      data: data
+    });
+  } catch (error) {
+    console.error('Spotify API proxy error:', error);
+    return res.status(500).json({
+      success: false,
+      error: `Internal server error: ${error.message}`
+    });
+  }
+});
+
 // ImageKit upload handler for /upload endpoint
 app.post('/upload', upload.array('media'), async (req, res) => {
   try {
+    if (!imagekit) {
+      return res.status(503).json({
+        success: false,
+        error: 'ImageKit not configured. Please set IMAGEKIT_PUBLIC_KEY, IMAGEKIT_PRIVATE_KEY, and IMAGEKIT_URL_ENDPOINT in .env file'
+      });
+    }
     if (!req.files || req.files.length === 0) {
       return res.status(400).send('No files uploaded.');
     }

@@ -1,9 +1,67 @@
 import { useState, useRef, useEffect, useCallback, useMemo, memo } from "react"
-import { Play, Pause, SkipBack, SkipForward, Repeat, Star, MoreHorizontal, Keyboard, Search, Volume2, VolumeX, X, Plus, FileText } from "lucide-react"
+import { Play, Pause, SkipBack, SkipForward, Repeat, Star, MoreHorizontal, Keyboard, Search, Volume2, VolumeX, X, Plus, FileText, Music } from "lucide-react"
 import { motion } from "framer-motion"
+import SpotifyAuth from "./SpotifyAuth"
+import { useSpotifyPlayer } from "../hooks/useSpotifyPlayer"
+import { 
+  getStoredToken, 
+  getUserPlaylists, 
+  getPlaylistTracks, 
+  searchTracks, 
+  getSavedTracks,
+  getTopTracks,
+  formatDuration,
+  type SpotifyTrack 
+} from "../services/spotify"
 
 // Base URL for assets (handles subdirectory deployment)
 const BASE_URL = import.meta.env.BASE_URL || "/spotify-visualiser/"
+
+// Marquee text component that scrolls on hover when truncated
+const MarqueeText = memo(({ text, className = "" }: { text: string; className?: string }) => {
+  const containerRef = useRef<HTMLDivElement>(null)
+  const textRef = useRef<HTMLSpanElement>(null)
+  const [isTruncated, setIsTruncated] = useState(false)
+
+  useEffect(() => {
+    const checkTruncation = () => {
+      if (containerRef.current && textRef.current) {
+        const containerWidth = containerRef.current.offsetWidth
+        const textWidth = textRef.current.scrollWidth
+        const truncated = textWidth > containerWidth
+        setIsTruncated(truncated)
+        if (truncated && containerRef.current) {
+          // Calculate scroll distance: move text left by (textWidth - containerWidth)
+          const scrollDistance = textWidth - containerWidth
+          containerRef.current.style.setProperty('--scroll-distance', `-${scrollDistance}px`)
+        }
+      }
+    }
+
+    // Small delay to ensure DOM is ready
+    const timeoutId = setTimeout(checkTruncation, 0)
+    window.addEventListener('resize', checkTruncation)
+    return () => {
+      clearTimeout(timeoutId)
+      window.removeEventListener('resize', checkTruncation)
+    }
+  }, [text])
+
+  return (
+    <div ref={containerRef} className={`text-marquee-container ${className}`}>
+      <div className="text-marquee">
+        <span 
+          ref={textRef}
+          className={`text-marquee-wrapper ${isTruncated ? 'can-scroll' : ''}`}
+        >
+          {text}
+        </span>
+      </div>
+    </div>
+  )
+})
+
+MarqueeText.displayName = 'MarqueeText'
 
 // Lyrics data for tracks
 const lyricsData: Record<number, string[]> = {
@@ -164,6 +222,25 @@ const playlist = [
 ]
 
 export default function MusicPlayer() {
+  // Spotify integration
+  const spotifyClientId = import.meta.env.VITE_SPOTIFY_CLIENT_ID || ''
+  const [useSpotify, setUseSpotify] = useState(false)
+  const [spotifyPlaylist, setSpotifyPlaylist] = useState<Array<{
+    id: string
+    title: string
+    artist: string
+    duration: string
+    cover: string
+    uri: string
+    hasLyrics: boolean
+  }>>([])
+  const [spotifyTrackIndex, setSpotifyTrackIndex] = useState(0)
+  const [isLoadingSpotify, setIsLoadingSpotify] = useState(false)
+  
+  const spotifyPlayer = useSpotifyPlayer()
+  const isSpotifyAuthenticated = !!getStoredToken()
+  
+  // Local audio state
   const [isPlaying, setIsPlaying] = useState(false)
   const [progress, setProgress] = useState(25)
   const [isDragging, setIsDragging] = useState(false)
@@ -191,28 +268,78 @@ export default function MusicPlayer() {
     return `${m}:${s.toString().padStart(2, "0")}`
   }
 
+  // Determine current track based on mode
+  const currentTrack = useMemo(() => {
+    if (useSpotify && spotifyPlaylist.length > 0) {
+      return spotifyPlaylist[spotifyTrackIndex]
+    }
+    return playlist[currentTrackIndex]
+  }, [useSpotify, spotifyPlaylist, spotifyTrackIndex, currentTrackIndex])
+
+  // Sync Spotify player state
+  useEffect(() => {
+    if (useSpotify && spotifyPlayer.playbackState) {
+      const state = spotifyPlayer.playbackState
+      setIsPlaying(!state.paused)
+      setCurrentTimeSeconds(state.position / 1000)
+      setDurationSeconds(state.duration / 1000)
+      setProgress((state.position / state.duration) * 100)
+      setVolume(state.volume * 100)
+    }
+  }, [useSpotify, spotifyPlayer.playbackState])
+
+  // Load Spotify playlists when authenticated
+  useEffect(() => {
+    if (useSpotify && isSpotifyAuthenticated && spotifyPlaylist.length === 0 && !isLoadingSpotify) {
+      loadSpotifyTracks()
+    }
+  }, [useSpotify, isSpotifyAuthenticated])
+
+  const loadSpotifyTracks = async () => {
+    setIsLoadingSpotify(true)
+    try {
+      const tracks = await getTopTracks('medium_term', 50)
+      const formattedTracks = tracks.map((track, index) => ({
+        id: track.id,
+        title: track.name,
+        artist: track.artists.map(a => a.name).join(', '),
+        duration: formatDuration(track.duration_ms),
+        cover: track.album.images[0]?.url || `${BASE_URL}placeholder.svg`,
+        uri: track.uri,
+        hasLyrics: false,
+      }))
+      setSpotifyPlaylist(formattedTracks)
+    } catch (err: any) {
+      setError(`Failed to load Spotify tracks: ${err.message}`)
+      setTimeout(() => setError(null), 5000)
+    } finally {
+      setIsLoadingSpotify(false)
+    }
+  }
+
   const currentTime = formatTime(currentTimeSeconds)
   const remainingTime = durationSeconds
     ? `-${formatTime(Math.max(durationSeconds - currentTimeSeconds, 0))}`
     : "-0:00"
-  const currentTrack = useMemo(() => playlist[currentTrackIndex], [currentTrackIndex])
   
   // Get lyrics for current track - memoized for performance
   const currentLyrics = useMemo(() => {
     if (!currentTrack.hasLyrics) return null
-    return lyricsData[currentTrack.id] || null
+    const trackId = typeof currentTrack.id === 'number' ? currentTrack.id : null
+    return trackId ? (lyricsData[trackId] || null) : null
   }, [currentTrack])
 
   // Filter playlist based on search query - memoized for performance
   const filteredPlaylist = useMemo(() => {
-    if (!searchQuery.trim()) return playlist
+    const activePlaylist = useSpotify ? spotifyPlaylist : playlist
+    if (!searchQuery.trim()) return activePlaylist
     const query = searchQuery.toLowerCase()
-    return playlist.filter(
+    return activePlaylist.filter(
       (song) =>
         song.title.toLowerCase().includes(query) ||
         song.artist.toLowerCase().includes(query)
     )
-  }, [searchQuery])
+  }, [searchQuery, useSpotify, spotifyPlaylist])
 
   // ----- Local audio playback -----
 
@@ -347,7 +474,25 @@ export default function MusicPlayer() {
     setTimeout(() => setError(null), 3000)
   }
 
-  const handlePlayPause = useCallback(() => {
+  const handlePlayPause = useCallback(async () => {
+    if (useSpotify && spotifyPlayer.isReady) {
+      try {
+        if (spotifyPlayer.isPlaying) {
+          await spotifyPlayer.pause()
+        } else {
+          if (spotifyPlayer.currentTrack) {
+            await spotifyPlayer.resume()
+          } else if (currentTrack && 'uri' in currentTrack) {
+            await spotifyPlayer.play(currentTrack.uri)
+          }
+        }
+      } catch (err: any) {
+        setError(`Spotify playback error: ${err.message}`)
+        setTimeout(() => setError(null), 3000)
+      }
+      return
+    }
+
     const audio = audioRef.current
     if (!audio) return
 
@@ -366,9 +511,19 @@ export default function MusicPlayer() {
           setError("Unable to play audio")
         })
     }
-  }, [isPlaying])
+  }, [isPlaying, useSpotify, spotifyPlayer, currentTrack])
 
-  const handlePreviousTrack = useCallback(() => {
+  const handlePreviousTrack = useCallback(async () => {
+    if (useSpotify && spotifyPlayer.isReady) {
+      try {
+        await spotifyPlayer.previousTrack()
+      } catch (err: any) {
+        setError(`Failed to play previous track: ${err.message}`)
+        setTimeout(() => setError(null), 3000)
+      }
+      return
+    }
+
     try {
       setCurrentTrackIndex((prev) => (prev === 0 ? playlist.length - 1 : prev - 1))
       setProgress(0)
@@ -378,9 +533,19 @@ export default function MusicPlayer() {
       setError("Failed to load previous track")
       setTimeout(() => setError(null), 3000)
     }
-  }, [])
+  }, [useSpotify, spotifyPlayer])
 
-  const handleNextTrack = useCallback(() => {
+  const handleNextTrack = useCallback(async () => {
+    if (useSpotify && spotifyPlayer.isReady) {
+      try {
+        await spotifyPlayer.nextTrack()
+      } catch (err: any) {
+        setError(`Failed to play next track: ${err.message}`)
+        setTimeout(() => setError(null), 3000)
+      }
+      return
+    }
+
     try {
       // Move to next track, looping at the end
       setCurrentTrackIndex((prev) => (prev + 1) % playlist.length)
@@ -391,11 +556,25 @@ export default function MusicPlayer() {
       setError("Failed to load next track")
       setTimeout(() => setError(null), 3000)
     }
-  }, [])
+  }, [useSpotify, spotifyPlayer])
 
-  const addToQueue = useCallback((song: typeof playlist[0]) => {
+  const addToQueue = useCallback((song: typeof playlist[0] | typeof spotifyPlaylist[0]) => {
     try {
-      setQueue((prev) => [...prev, song])
+      // Convert Spotify track to local format for queue
+      if ('uri' in song) {
+        const localFormat = {
+          id: parseInt(song.id) || Date.now(),
+          title: song.title,
+          artist: song.artist,
+          duration: song.duration,
+          cover: song.cover,
+          src: song.uri, // Use URI as src for Spotify tracks
+          hasLyrics: song.hasLyrics,
+        }
+        setQueue((prev) => [...prev, localFormat])
+      } else {
+        setQueue((prev) => [...prev, song])
+      }
       setError(null)
     } catch (err) {
       setError("Failed to add track to queue")
@@ -597,7 +776,7 @@ export default function MusicPlayer() {
 
       <motion.div
         ref={modalRef}
-        className="glass-card relative w-full max-w-5xl h-[650px] rounded-3xl overflow-hidden shadow-2xl"
+        className="glass-card relative w-full max-w-5xl h-[550px] rounded-3xl overflow-hidden shadow-2xl"
         initial={{ opacity: 0, scale: 0.9, y: 50 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
         transition={{
@@ -619,7 +798,7 @@ export default function MusicPlayer() {
         <div className="glass-overlay" />
 
         {/* Content */}
-        <div className="glass-content relative z-[4] p-8 h-full flex flex-col">
+        <div className="glass-content relative z-[4] p-5 h-full flex flex-col" style={{ pointerEvents: 'auto' }}>
           {/* Error Toast */}
           {error && (
             <motion.div
@@ -636,18 +815,48 @@ export default function MusicPlayer() {
             </motion.div>
           )}
           
+          {/* Spotify Authentication & Mode Toggle */}
+          {spotifyClientId && (
+            <div className="mb-4 flex items-center justify-between gap-3">
+              <SpotifyAuth 
+                clientId={spotifyClientId}
+                onAuthSuccess={() => {
+                  if (isSpotifyAuthenticated && !useSpotify) {
+                    setUseSpotify(true)
+                  }
+                }}
+                onAuthError={(err) => setError(err)}
+              />
+              {isSpotifyAuthenticated && (
+                <motion.button
+                  onClick={() => setUseSpotify(!useSpotify)}
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${
+                    useSpotify
+                      ? 'bg-green-500/20 text-green-300 border border-green-500/30'
+                      : 'bg-white/10 text-white/70 border border-white/10 hover:bg-white/20'
+                  }`}
+                >
+                  <Music className="w-3 h-3" />
+                  {useSpotify ? 'Spotify Mode' : 'Local Mode'}
+                </motion.button>
+              )}
+            </div>
+          )}
+
           {/* Mnmnts Logo */}
-          <div className="flex items-center justify-between mb-6">
+          <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-2">
               <img 
                 src={`${BASE_URL}favicon-logo.png`}
                 alt="Mnmnts Logo" 
-                className="w-8 h-8"
+                className="w-7 h-7"
                 onError={(e) => {
                   e.currentTarget.src = `${BASE_URL}placeholder.svg`
                 }}
               />
-              <span className="text-2xl font-bold text-[#e0e0e0] font-sans">Mnmnts</span>
+              <span className="text-xl font-bold text-[#e0e0e0] font-sans">Mnmnts</span>
             </div>
             {/* Keyboard Shortcuts Help */}
             <div className="relative">
@@ -683,12 +892,12 @@ export default function MusicPlayer() {
           </div>
 
           {/* Main Content */}
-          <div className="flex gap-8 flex-1 overflow-hidden">
+          <div className="flex gap-5 flex-1 overflow-hidden">
             {/* Left Side - Album Art and Controls */}
-            <div className="flex flex-col justify-between w-[320px]">
+            <div className="flex flex-col justify-between w-[280px]">
               {/* Album Art */}
               <motion.div
-                className="bg-black/60 rounded-2xl p-3 backdrop-blur-md w-[290px] mx-auto border border-white/5"
+                className="bg-black/60 rounded-2xl p-2.5 backdrop-blur-md w-[260px] mx-auto border border-white/5"
                 initial={{ opacity: 0, scale: 0.8, rotateY: -15 }}
                 animate={{ opacity: 1, scale: 1, rotateY: 0 }}
                 transition={{
@@ -709,14 +918,16 @@ export default function MusicPlayer() {
                   decoding="async"
                   onError={(e) => {
                     e.currentTarget.src = `${BASE_URL}placeholder.svg`
-                    handleImageError(currentTrack.id)
+                    if (typeof currentTrack.id === 'number') {
+                      handleImageError(currentTrack.id)
+                    }
                   }}
                 />
               </motion.div>
 
               {/* Player Controls */}
               <motion.div
-                className="bg-black/40 backdrop-blur-md rounded-2xl p-4 mt-4 border border-white/5"
+                className="bg-black/40 backdrop-blur-md rounded-2xl p-3 mt-1.5 border border-white/5"
                 initial={{ opacity: 0, y: 30 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{
@@ -727,12 +938,12 @@ export default function MusicPlayer() {
                 }}
               >
                 {/* Song Info */}
-                <div className="text-[#e0e0e0] mb-3">
-                  <h3 className="font-semibold text-sm">{currentTrack.title} - {currentTrack.artist}</h3>
+                <div className="text-[#e0e0e0] mb-2.5">
+                  <h3 className="font-semibold text-xs leading-tight line-clamp-2">{currentTrack.title} - {currentTrack.artist}</h3>
                 </div>
 
                 {/* Progress Bar */}
-                <div className="flex items-center gap-2 mb-4">
+                <div className="flex items-center gap-2 mb-3">
                   <span className="text-[#e0e0e0] text-xs font-medium select-none">{currentTime}</span>
                   <div
                     ref={progressRef}
@@ -768,7 +979,7 @@ export default function MusicPlayer() {
                 </div>
 
                 {/* Volume Control */}
-                <div className="flex items-center gap-2 mb-4">
+                <div className="flex items-center gap-2 mb-3">
                   <motion.button
                     onClick={toggleMute}
                     className="text-[#e0e0e0] touch-none"
@@ -929,7 +1140,7 @@ export default function MusicPlayer() {
                     </motion.button>
                   </div>
                   <div className="space-y-2">
-                    {currentLyrics.map((line, index) => (
+                    {currentLyrics.map((line: string, index: number) => (
                       <motion.p
                         key={index}
                         className={`text-[#e0e0e0] ${
@@ -958,7 +1169,7 @@ export default function MusicPlayer() {
               {!showLyrics && (
                 <>
                   {/* Search Bar */}
-                  <div className="mb-4 relative">
+                  <div className="mb-3 relative">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#e0e0e0]/60" />
                 <input
                   type="text"
@@ -981,9 +1192,11 @@ export default function MusicPlayer() {
                   </div>
 
                   {/* Queue Toggle */}
-                  <div className="flex items-center justify-between mb-3">
+                  <div className="flex items-center justify-between mb-2">
                     <span className="text-[#e0e0e0] text-sm font-medium">
-                      {searchQuery ? `Search Results (${filteredPlaylist.length})` : `Playlist (${playlist.length})`}
+                      {searchQuery 
+                        ? `Search Results (${filteredPlaylist.length})` 
+                        : `Playlist (${useSpotify ? spotifyPlaylist.length : playlist.length})`}
                     </span>
                     <button
                       onClick={() => setShowQueue(!showQueue)}
@@ -1029,19 +1242,24 @@ export default function MusicPlayer() {
                     onWheel={(e) => e.stopPropagation()}
                     onTouchMove={(e) => e.stopPropagation()}
                   >
-                    <div className="space-y-2">
+                    <div className="space-y-1.5">
                   {filteredPlaylist.length === 0 ? (
                     <div className="text-center py-8 text-[#e0e0e0]/60 text-sm">
                       No tracks found matching "{searchQuery}"
                     </div>
                   ) : (
                     filteredPlaylist.map((song, index) => {
-                      const originalIndex = playlist.findIndex((s) => s.id === song.id)
+                      const originalIndex = useSpotify 
+                        ? spotifyPlaylist.findIndex((s) => s.id === song.id)
+                        : playlist.findIndex((s) => s.id === song.id)
+                      const isActive = useSpotify
+                        ? spotifyTrackIndex === originalIndex
+                        : currentTrackIndex === originalIndex
                       return (
                     <motion.div
                       key={song.id}
-                      className={`flex items-center gap-3 p-3 rounded-xl hover:bg-white/5 transition-colors cursor-pointer group border ${
-                        currentTrackIndex === originalIndex ? "border-white/20 bg-white/5" : "border-transparent"
+                      className={`flex items-center gap-2.5 p-2 rounded-xl hover:bg-white/5 transition-colors cursor-pointer group border ${
+                        isActive ? "border-white/20 bg-white/5" : "border-transparent"
                       } hover:border-white/5`}
                       initial={{ opacity: 0, y: 20 }}
                       animate={{ opacity: 1, y: 0 }}
@@ -1053,34 +1271,53 @@ export default function MusicPlayer() {
                       }}
                       whileHover={{ scale: 1.02, x: 5 }}
                       whileTap={{ scale: 0.98 }}
-                      onClick={() => {
-                        try {
-                          setCurrentTrackIndex(originalIndex)
-                          setIsPlaying(false)
-                          setProgress(0)
-                          setError(null)
-                        } catch (err) {
-                          setError("Failed to load track")
-                          setTimeout(() => setError(null), 3000)
+                      onClick={async () => {
+                        if (useSpotify && spotifyPlayer.isReady && 'uri' in song) {
+                          try {
+                            await spotifyPlayer.play(song.uri)
+                            setSpotifyTrackIndex(originalIndex)
+                            setIsPlaying(true)
+                          } catch (err: any) {
+                            setError(`Failed to play track: ${err.message}`)
+                            setTimeout(() => setError(null), 3000)
+                          }
+                        } else {
+                          try {
+                            setCurrentTrackIndex(originalIndex)
+                            setIsPlaying(true)
+                            setProgress(0)
+                            setError(null)
+                          } catch (err) {
+                            setError("Failed to load track")
+                            setTimeout(() => setError(null), 3000)
+                          }
                         }
                       }}
                     >
                       <motion.img
-                        src={imageErrors.has(song.id) ? `${BASE_URL}placeholder.svg` : (song.cover || `${BASE_URL}placeholder.svg`)}
+                        src={(typeof song.id === 'number' && imageErrors.has(song.id)) ? `${BASE_URL}placeholder.svg` : (song.cover || `${BASE_URL}placeholder.svg`)}
                         alt={song.title}
-                        className="w-12 h-12 rounded-lg object-cover"
+                        className="w-10 h-10 rounded-lg object-cover flex-shrink-0"
                         loading="lazy"
                         decoding="async"
-                        whileHover={{ scale: 1.1, rotate: 5 }}
+                        whileHover={{ scale: 1.1 }}
                         transition={{ type: "spring", stiffness: 300, damping: 20 }}
                         onError={(e) => {
                           e.currentTarget.src = `${BASE_URL}placeholder.svg`
-                          handleImageError(song.id)
+                          if (typeof song.id === 'number') {
+                            handleImageError(song.id)
+                          }
                         }}
                       />
                       <div className="flex-1 min-w-0">
-                        <h4 className="text-[#e0e0e0] font-medium text-sm truncate">{song.title}</h4>
-                        <p className="text-[#e0e0e0]/70 text-xs truncate">{song.artist}</p>
+                        <MarqueeText 
+                          text={song.title} 
+                          className="text-[#e0e0e0] font-medium text-sm mb-0.5"
+                        />
+                        <MarqueeText 
+                          text={song.artist} 
+                          className="text-[#e0e0e0]/70 text-xs"
+                        />
                       </div>
                       <div className="flex items-center gap-2">
                         <motion.button
@@ -1107,6 +1344,7 @@ export default function MusicPlayer() {
             </motion.div>
           </div>
         </div>
+
       </motion.div>
     </>
   )
