@@ -7,9 +7,9 @@
     <button class="dropbtn" aria-label="Open menu" tabindex="0">Menu</button>
     <div class="dropdown-content" role="menu">
       <a href="/gallery/index.html" role="menuitem">Back to gallery</a>
-      <a href="/know-me/about.html" role="menuitem">Know me</a>
-      <a href="/image-upload/upload.html" role="menuitem">Image upload</a>
-      <a href="/spotify-visualiser/index.html" role="menuitem">Spotify visualizer</a>
+      <a href="/know-me/about.html" role="menuitem">About</a>
+      <a href="/image-upload/upload.html" role="menuitem">Upload</a>
+      <a href="/spotify-visualiser/index.html" role="menuitem">Visualizer</a>
     </div>
   </div>
   <!-- Social Icons (Left-Center) -->
@@ -33,28 +33,34 @@
 </nav>
 
 <style>
-  /* Unified Navbar */
+  /* Unified Navbar - Use same styling as main pages */
   .navbar {
-    position: fixed;
-    top: 1.25rem;
-    left: 50%;
-    transform: translateX(-50%);
+    position: relative;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 0.6rem;
-    padding: 0.5rem 0.9rem;
+    gap: 0.9rem;
+    padding: 0.65rem 1.15rem;
     background: rgba(30, 30, 30, 0.8);
     backdrop-filter: blur(18px);
-    width: 340px;
-    max-width: calc(100% - 2rem);
+    position: relative;
+    width: fit-content;
+    max-width: 450px;
+    margin: 1.5rem auto;
     border-radius: 20px;
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.16);
     border: 1px solid rgba(255, 255, 255, 0.06);
-    font-family: 'Instrument Sans Variable', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
     z-index: 1000;
     height: fit-content;
+    min-height: fit-content;
+    max-height: fit-content;
     line-height: 1;
+    /* Smooth width transition */
+    transition: width 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94), max-width 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    /* Prevent layout shifts */
+    contain: layout style;
+    will-change: width;
   }
 
   /* Social Icons */
@@ -128,7 +134,7 @@
     transition: background-color 0.18s cubic-bezier(0.4, 0, 0.2, 1), color 0.18s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.18s cubic-bezier(0.4, 0, 0.2, 1);
     border-radius: 18px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-    font-family: 'Instrument Sans Variable', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
     letter-spacing: 0.02em;
     height: fit-content;
     min-height: 38px;
@@ -142,6 +148,7 @@
     outline: none;
   }
 
+  /* Dropdown content - base styles, will be overridden by galaxy.css when navbar-expanded */
   .dropdown-content {
     position: absolute;
     left: 0;
@@ -163,6 +170,24 @@
     transition: opacity 0.18s cubic-bezier(0.4, 0, 0.2, 1), transform 0.18s cubic-bezier(0.4, 0, 0.2, 1), visibility 0.18s cubic-bezier(0.4, 0, 0.2, 1);
   }
 
+  /* Hide default dropdown when navbar is expanded - galaxy.css will handle it */
+  .navbar-expanded .dropdown-content {
+    position: static !important;
+    display: flex !important;
+    flex-direction: row !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+    pointer-events: auto !important;
+    transform: none !important;
+    background: transparent !important;
+    backdrop-filter: none !important;
+    box-shadow: none !important;
+    border: none !important;
+    border-radius: 0 !important;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+
   .dropdown-content a {
     color: #e0e0e0;
     padding: 0.42rem 0.85rem;
@@ -170,7 +195,7 @@
     display: flex;
     align-items: center;
     gap: 0.35rem;
-    font-family: 'Instrument Sans Variable', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
     font-size: 0.84rem;
     font-weight: 600;
     transition: background-color 0.18s cubic-bezier(0.4, 0, 0.2, 1), color 0.18s cubic-bezier(0.4, 0, 0.2, 1);
@@ -195,13 +220,24 @@
     border-color: transparent;
   }
 
-  .dropdown:hover .dropdown-content,
-  .dropdown:focus-within .dropdown-content,
-  .dropdown-content:hover {
-    opacity: 1;
-    visibility: visible;
-    pointer-events: auto;
-    transform: translateY(0) scale(1);
+  /* Disable default dropdown hover - navbar-expand.js handles it */
+  .dropdown.hover-based:hover .dropdown-content,
+  .dropdown.hover-based:focus-within .dropdown-content,
+  .navbar:not(.navbar-expanded) .dropdown.hover-based:hover .dropdown-content,
+  .navbar:not(.navbar-expanded) .dropdown.hover-based:focus-within .dropdown-content {
+    opacity: 0 !important;
+    visibility: hidden !important;
+    pointer-events: none !important;
+    display: none !important;
+  }
+
+  /* Ensure galaxy.css navbar-expanded styles work */
+  .navbar-expanded .dropbtn {
+    display: none !important;
+  }
+
+  .navbar-expanded .social-icons {
+    display: none !important;
   }
 
   .dropdown::after {
@@ -315,6 +351,11 @@
     .social-icons a .icon {
       width: 1.5rem;
       height: 1.5rem;
+    }
+
+    /* Hide dropdown on mobile, show hamburger */
+    .dropdown {
+      display: none;
     }
   }
 </style>

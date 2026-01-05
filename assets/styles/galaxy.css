@@ -98,7 +98,20 @@ body, button, input, select, textarea {
     font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
     z-index: 1000;
     height: fit-content;
+    min-height: fit-content;
+    max-height: fit-content;
     line-height: 1;
+    /* Smooth width transition */
+    transition: width 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94), max-width 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    /* Prevent layout shifts */
+    contain: layout style;
+    will-change: width;
+}
+
+/* Set default navbar width to match expanded state on main page (gallery) */
+/* JavaScript will measure and set the exact expanded width */
+body:not(.about-page):not(.upload-page) .navbar {
+    width: fit-content;
 }
 
 /* Slideshow Toggle Button */
@@ -155,7 +168,7 @@ body, button, input, select, textarea {
 .navbar-center::before {
     content: '';
     position: absolute;
-    left: -0.5rem; /* Moved further right (was -0.8rem) */
+    left: -0.2rem; /* Moved further right */
     top: 50%;
     transform: translateY(-50%);
     width: 1.5px;
@@ -599,12 +612,324 @@ h2, .h2 {
     z-index: 10001;
 }
 
+/* Click-based dropdown (no hover) - only when NOT expanded */
+.dropdown.click-based:not(.navbar-expanded .dropdown):hover .dropdown-content,
+.dropdown.click-based:not(.navbar-expanded .dropdown):focus-within .dropdown-content {
+    /* Disable hover behavior for click-based dropdowns when collapsed */
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+}
+
+/* Hover-based dropdown - disable default hover behavior completely */
+.dropdown.hover-based:hover .dropdown-content,
+.dropdown.hover-based:focus-within .dropdown-content,
+.navbar:not(.navbar-expanded) .dropdown.hover-based:hover .dropdown-content,
+.navbar:not(.navbar-expanded) .dropdown.hover-based:focus-within .dropdown-content {
+    /* Disable default dropdown hover - we use navbar expansion instead */
+    opacity: 0 !important;
+    visibility: hidden !important;
+    pointer-events: none !important;
+    display: none !important;
+}
+
 /* Dropdown positioning */
 .navbar .dropdown-content {
     left: 0;
     right: auto;
     transform: none;
     top: calc(100% + 2px);
+}
+
+/* Navbar expanded state - inline menu (Desktop/PC focus) */
+.navbar-expanded {
+    /* Allow horizontal expansion, lock height only */
+    flex-wrap: nowrap;
+    gap: 0.9rem !important; /* Keep same gap as original */
+    padding: 0.65rem 1.15rem !important; /* Keep same padding */
+    justify-content: flex-start;
+    align-items: center;
+    margin: 1.5rem auto !important; /* Keep same margin */
+    border-radius: 20px !important; /* Keep same border radius */
+    overflow: hidden; /* Prevent content from expanding navbar */
+    box-sizing: border-box; /* Include padding in width calculation */
+    /* Allow width to expand, height locked by JavaScript */
+    width: fit-content !important;
+    /* Smooth width transition */
+    transition: width 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94), max-width 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    /* Prevent content below from shifting */
+    contain: layout style;
+    isolation: isolate;
+}
+
+/* Increase navbar width on about and upload pages to fit all options */
+.about-page .navbar-expanded,
+.upload-page .navbar-expanded {
+    max-width: 550px !important;
+    width: fit-content !important;
+    align-items: center !important;
+    position: relative !important;
+    top: auto !important;
+    margin: 1.25rem auto 1rem !important; /* Keep exact same margin as about page */
+    /* Smooth width transition */
+    transition: width 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94), max-width 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    contain: layout style;
+    isolation: isolate;
+}
+
+.about-page .navbar,
+.upload-page .navbar {
+    max-width: 550px;
+    height: fit-content;
+    min-height: fit-content;
+    max-height: fit-content;
+    contain: layout style;
+    will-change: width;
+}
+
+/* Ensure menu items don't cause vertical expansion on about/upload pages */
+.about-page .navbar-expanded .dropdown-content,
+.upload-page .navbar-expanded .dropdown-content {
+    align-items: center !important;
+    height: auto !important;
+    max-height: 100% !important;
+    overflow: hidden;
+}
+
+.about-page .navbar-expanded .dropdown-content a,
+.upload-page .navbar-expanded .dropdown-content a {
+    line-height: 1 !important;
+    height: auto !important;
+    max-height: 100% !important;
+    vertical-align: middle;
+    /* Minimal aesthetic enhancements */
+    position: relative !important;
+    color: rgba(255, 255, 255, 0.85) !important;
+    font-weight: 500 !important;
+    letter-spacing: 0.01em;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Subtle hover effect for about/upload pages */
+.about-page .navbar-expanded .dropdown-content a:hover,
+.about-page .navbar-expanded .dropdown-content a:focus-visible,
+.upload-page .navbar-expanded .dropdown-content a:hover,
+.upload-page .navbar-expanded .dropdown-content a:focus-visible {
+    color: rgba(255, 255, 255, 1) !important;
+    opacity: 1 !important;
+    transform: translateY(-1px);
+}
+
+/* Minimal underline on hover for about/upload pages */
+.about-page .navbar-expanded .dropdown-content a::after,
+.upload-page .navbar-expanded .dropdown-content a::after {
+    content: '' !important;
+    position: absolute !important;
+    bottom: 2px !important;
+    left: 50% !important;
+    width: 0 !important;
+    height: 1.5px !important;
+    background: rgba(255, 255, 255, 0.6) !important;
+    transform: translateX(-50%) !important;
+    transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    border-radius: 1px !important;
+    z-index: 1;
+}
+
+.about-page .navbar-expanded .dropdown-content a:hover::after,
+.about-page .navbar-expanded .dropdown-content a:focus-visible::after,
+.upload-page .navbar-expanded .dropdown-content a:hover::after,
+.upload-page .navbar-expanded .dropdown-content a:focus-visible::after {
+    width: 80% !important;
+}
+
+/* Hide menu button when expanded */
+.navbar-expanded .dropbtn {
+    display: none;
+}
+
+/* Hide social icons when expanded */
+.navbar-expanded .social-icons {
+    display: none;
+}
+
+.navbar-expanded .dropdown {
+    order: 0;
+    width: auto;
+    flex: 0 0 auto;
+    margin: 0;
+    position: static;
+    min-width: 0;
+    max-width: none;
+}
+
+.navbar-expanded .dropdown-content {
+    position: static;
+    display: flex !important;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    gap: 0.35rem; /* Slightly increased for better spacing */
+    opacity: 1 !important;
+    visibility: visible !important;
+    pointer-events: auto !important;
+    transform: none !important;
+    background: transparent;
+    backdrop-filter: none;
+    box-shadow: none;
+    border: none;
+    padding: 0;
+    margin: 0;
+    min-width: 0;
+    width: 100%;
+    max-width: 100%;
+    border-radius: 0;
+    align-items: center;
+    justify-content: flex-start;
+    overflow: hidden; /* Prevent overflow */
+    flex-shrink: 1; /* Allow shrinking if needed */
+    animation: menuContentFadeIn 0.35s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+    /* Ensure it fits within navbar without changing navbar size */
+    box-sizing: border-box;
+    height: 100%;
+    max-height: 100%;
+}
+
+/* Minimal separator between menu items (subtle dot) - All pages */
+.navbar-expanded .dropdown-content a:not(:last-child)::before {
+    content: '·';
+    position: absolute;
+    right: -0.2rem;
+    color: rgba(255, 255, 255, 0.25);
+    font-weight: 300;
+    pointer-events: none;
+}
+
+/* Minimal menu content fade-in animation */
+@keyframes menuContentFadeIn {
+    from {
+        opacity: 0;
+        transform: scale(0.98);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+/* Ensure menu items stay visible on hover when navbar is expanded */
+.navbar-expanded .dropdown:hover .dropdown-content,
+.navbar-expanded .dropdown:focus-within .dropdown-content,
+.navbar-expanded .dropdown-content:hover {
+    opacity: 1 !important;
+    visibility: visible !important;
+    pointer-events: auto !important;
+    transform: none !important;
+    display: flex !important;
+}
+
+.navbar-expanded .dropdown-content a {
+    display: inline-flex;
+    padding: 0.35rem 0.6rem; /* Slightly increased for better touch targets */
+    margin: 0;
+    white-space: nowrap;
+    background: transparent;
+    backdrop-filter: none;
+    border: none;
+    border-radius: 0;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    flex: 0 0 auto;
+    font-size: 0.85rem;
+    line-height: 1.2;
+    opacity: 0;
+    transform: scale(0.9);
+    animation: menuItemScaleFade 0.35s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+    color: rgba(255, 255, 255, 0.8);
+    font-weight: 500;
+    letter-spacing: 0.01em;
+    position: relative;
+}
+
+/* Subtle staggered animation for each menu item */
+.navbar-expanded .dropdown-content a:nth-child(1) {
+    animation-delay: 0.02s;
+}
+
+.navbar-expanded .dropdown-content a:nth-child(2) {
+    animation-delay: 0.04s;
+}
+
+.navbar-expanded .dropdown-content a:nth-child(3) {
+    animation-delay: 0.06s;
+}
+
+.navbar-expanded .dropdown-content a:nth-child(4) {
+    animation-delay: 0.08s;
+}
+
+.navbar-expanded .dropdown-content a:nth-child(5) {
+    animation-delay: 0.1s;
+}
+
+/* Minimal menu item scale + fade animation with subtle bounce */
+@keyframes menuItemScaleFade {
+    from {
+        opacity: 0;
+        transform: scale(0.9);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+/* Respect reduced motion preference */
+@media (prefers-reduced-motion: reduce) {
+    .navbar-expanded .dropdown-content,
+    .navbar-expanded .dropdown-content a {
+        animation: none;
+        opacity: 1;
+        transform: none;
+    }
+}
+
+.navbar-expanded .dropdown-content a:hover,
+.navbar-expanded .dropdown-content a:focus-visible {
+    background: transparent;
+    border: none;
+    transform: translateY(-1px);
+    box-shadow: none;
+    opacity: 1;
+    color: rgba(255, 255, 255, 1);
+}
+
+/* Subtle underline on hover for all pages */
+.navbar-expanded .dropdown-content a::after {
+    content: '';
+    position: absolute;
+    bottom: 2px;
+    left: 50%;
+    width: 0;
+    height: 1.5px;
+    background: rgba(255, 255, 255, 0.5);
+    transform: translateX(-50%);
+    transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    border-radius: 1px;
+}
+
+.navbar-expanded .dropdown-content a:hover::after,
+.navbar-expanded .dropdown-content a:focus-visible::after {
+    width: 75%;
+}
+
+.navbar-expanded .navbar-center {
+    order: 1;
+    flex: 0 0 auto;
+    margin-left: auto;
+}
+
+/* Hide dropdown bridge when expanded */
+.navbar-expanded .dropdown::after {
+    display: none;
 }
 
 .dropbtn {
@@ -695,9 +1020,10 @@ h2, .h2 {
     border-color: transparent;
 }
 
-.dropdown:hover .dropdown-content,
-.dropdown:focus-within .dropdown-content,
-.dropdown-content:hover {
+/* Only apply hover behavior if not click-based AND not hover-based AND not in expanded navbar */
+.navbar:not(.navbar-expanded) .dropdown:not(.click-based):not(.hover-based):hover .dropdown-content,
+.navbar:not(.navbar-expanded) .dropdown:not(.click-based):not(.hover-based):focus-within .dropdown-content,
+.navbar:not(.navbar-expanded) .dropdown:not(.click-based):not(.hover-based) .dropdown-content:hover {
     opacity: 1;
     visibility: visible;
     pointer-events: auto;
@@ -1376,5 +1702,232 @@ body > div[style*="backdrop-filter"] {
     }
     100% {
         background-position: 60px 0, -40px 0, 30px 0, -30px 0;
+    }
+}
+
+/* ============================================
+   PAGE TRANSITIONS
+   ============================================ */
+
+/* Page transition base styles */
+.page-transition-ready {
+    transition: opacity 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+                transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Page exit animation (fade out and scale down) */
+.page-exit {
+    opacity: 0;
+    transform: scale(0.98);
+    pointer-events: none;
+}
+
+/* Page enter animation (fade in and scale up) */
+.page-enter {
+    animation: pageEnter 0.4s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+@keyframes pageEnter {
+    from {
+        opacity: 0;
+        transform: scale(1.02);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+/* Respect reduced motion preference */
+@media (prefers-reduced-motion: reduce) {
+    .page-transition-ready,
+    .page-exit,
+    .page-enter {
+        transition: none;
+        animation: none;
+    }
+}
+
+/* ============================================
+   MOBILE HAMBURGER MENU
+   ============================================ */
+
+/* Mobile menu toggle button (hamburger) */
+.mobile-menu-toggle {
+    display: none;
+    flex-direction: column;
+    justify-content: space-around;
+    width: 32px;
+    height: 32px;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    z-index: 10003;
+    position: relative;
+    transition: transform 0.3s ease;
+}
+
+.mobile-menu-toggle:focus-visible {
+    outline: 2px solid rgba(255, 255, 255, 0.5);
+    outline-offset: 2px;
+    border-radius: 4px;
+}
+
+/* Hamburger lines */
+.hamburger-line {
+    width: 100%;
+    height: 3px;
+    background-color: #e0e0e0;
+    border-radius: 2px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    transform-origin: center;
+}
+
+/* Active state (X shape) */
+.mobile-menu-toggle.active .hamburger-line:nth-child(1) {
+    transform: translateY(10px) rotate(45deg);
+}
+
+.mobile-menu-toggle.active .hamburger-line:nth-child(2) {
+    opacity: 0;
+    transform: scaleX(0);
+}
+
+.mobile-menu-toggle.active .hamburger-line:nth-child(3) {
+    transform: translateY(-10px) rotate(-45deg);
+}
+
+/* Mobile menu overlay */
+.mobile-menu-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.85);
+    backdrop-filter: blur(20px);
+    z-index: 10002;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+                visibility 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.mobile-menu-overlay[aria-hidden="false"] {
+    opacity: 1;
+    visibility: visible;
+}
+
+/* Mobile menu content */
+.mobile-menu-content {
+    background: rgba(30, 30, 30, 0.95);
+    backdrop-filter: blur(24px);
+    border-radius: 24px;
+    padding: 2rem 1.5rem;
+    min-width: 280px;
+    max-width: 90%;
+    max-height: 80vh;
+    overflow-y: auto;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+    transform: scale(0.9) translateY(20px);
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.mobile-menu-overlay[aria-hidden="false"] .mobile-menu-content {
+    transform: scale(1) translateY(0);
+}
+
+/* Mobile menu links */
+.mobile-menu-content a {
+    display: block;
+    padding: 1rem 1.25rem;
+    color: #e0e0e0;
+    text-decoration: none;
+    font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    font-size: 1rem;
+    font-weight: 600;
+    border-radius: 12px;
+    margin: 0.5rem 0;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    text-align: center;
+    border: 1px solid transparent;
+}
+
+.mobile-menu-content a:hover,
+.mobile-menu-content a:focus-visible {
+    background: rgba(60, 60, 60, 0.8);
+    color: #ffffff;
+    transform: translateX(4px);
+    border-color: rgba(255, 255, 255, 0.1);
+    outline: none;
+}
+
+/* Hide current page link in mobile menu */
+.mobile-menu-content a[aria-current="page"] {
+    display: none;
+}
+
+/* Prevent body scroll when menu is open */
+body.mobile-menu-open {
+    overflow: hidden;
+}
+
+/* Mobile menu - DISABLED (focusing on desktop/PC development) */
+@media (max-width: 768px) {
+    .mobile-menu-toggle {
+        display: none; /* Disabled for now */
+    }
+
+    .navbar .dropdown {
+        display: block; /* Keep dropdown visible on all screen sizes */
+    }
+}
+
+/* Smaller hamburger on very small screens */
+@media (max-width: 480px) {
+    .mobile-menu-toggle {
+        width: 28px;
+        height: 28px;
+    }
+
+    .hamburger-line {
+        height: 2.5px;
+    }
+
+    .mobile-menu-toggle.active .hamburger-line:nth-child(1) {
+        transform: translateY(9px) rotate(45deg);
+    }
+
+    .mobile-menu-toggle.active .hamburger-line:nth-child(3) {
+        transform: translateY(-9px) rotate(-45deg);
+    }
+
+    .mobile-menu-content {
+        padding: 1.5rem 1rem;
+        min-width: 260px;
+    }
+
+    .mobile-menu-content a {
+        padding: 0.875rem 1rem;
+        font-size: 0.95rem;
+    }
+}
+
+/* Respect reduced motion */
+@media (prefers-reduced-motion: reduce) {
+    .mobile-menu-toggle,
+    .mobile-menu-overlay,
+    .mobile-menu-content,
+    .mobile-menu-content a {
+        transition: none;
+    }
+
+    .mobile-menu-overlay[aria-hidden="false"] .mobile-menu-content {
+        transform: none;
     }
 }

@@ -573,7 +573,7 @@ export default function MusicPlayer() {
         }
         setQueue((prev) => [...prev, localFormat])
       } else {
-        setQueue((prev) => [...prev, song])
+      setQueue((prev) => [...prev, song])
       }
       setError(null)
     } catch (err) {
@@ -844,7 +844,7 @@ export default function MusicPlayer() {
               )}
             </div>
           )}
-
+          
           {/* Mnmnts Logo */}
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-2">
@@ -919,7 +919,7 @@ export default function MusicPlayer() {
                   onError={(e) => {
                     e.currentTarget.src = `${BASE_URL}placeholder.svg`
                     if (typeof currentTrack.id === 'number') {
-                      handleImageError(currentTrack.id)
+                    handleImageError(currentTrack.id)
                     }
                   }}
                 />
@@ -1282,14 +1282,14 @@ export default function MusicPlayer() {
                             setTimeout(() => setError(null), 3000)
                           }
                         } else {
-                          try {
-                            setCurrentTrackIndex(originalIndex)
+                        try {
+                          setCurrentTrackIndex(originalIndex)
                             setIsPlaying(true)
-                            setProgress(0)
-                            setError(null)
-                          } catch (err) {
-                            setError("Failed to load track")
-                            setTimeout(() => setError(null), 3000)
+                          setProgress(0)
+                          setError(null)
+                        } catch (err) {
+                          setError("Failed to load track")
+                          setTimeout(() => setError(null), 3000)
                           }
                         }
                       }}
@@ -1305,7 +1305,7 @@ export default function MusicPlayer() {
                         onError={(e) => {
                           e.currentTarget.src = `${BASE_URL}placeholder.svg`
                           if (typeof song.id === 'number') {
-                            handleImageError(song.id)
+                          handleImageError(song.id)
                           }
                         }}
                       />

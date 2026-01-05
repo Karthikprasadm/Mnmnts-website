@@ -186,5 +186,10 @@ const currentPage =
     <slot />
     <Footer />
     <script src="../scripts/imageFade.js"></script>
+    <!-- Mobile menu and page transitions (for non-Astro pages) -->
+    <!-- Load galaxy.css AFTER component styles to ensure navbar-expanded styles apply -->
+    <link rel="stylesheet" href="/assets/styles/galaxy.css">
+    <script src="/assets/scripts/mobile-menu.js" defer></script>
+    <script src="/assets/scripts/navbar-expand.js" defer></script>
   </body>
 </html>

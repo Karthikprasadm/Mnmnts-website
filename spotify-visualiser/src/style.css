@@ -299,22 +299,26 @@ input[type="range"]::-moz-range-track {
   gap: 0.9rem;
   padding: 0.65rem 1.15rem;
   background: rgba(30, 30, 30, 0.8);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  position: fixed;
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  position: relative;
   width: fit-content;
   max-width: 450px;
   margin: 1.5rem auto;
-  left: 50%;
-  transform: translateX(-50%) translateZ(0);
-  will-change: transform;
   border-radius: 20px;
   box-shadow: 0 5px 15px rgba(0, 0, 0, 0.16);
   border: 1px solid rgba(255, 255, 255, 0.06);
   font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
   z-index: 1000;
   height: fit-content;
+  min-height: fit-content;
+  max-height: fit-content;
   line-height: 1;
+  /* Smooth width transition */
+  transition: width 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94), max-width 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  /* Prevent layout shifts */
+  contain: layout style;
+  will-change: width;
 }
 
 .audio-hint {
@@ -480,6 +484,34 @@ input[type="range"]::-moz-range-track {
               visibility 0.18s var(--hover-ease);
 }
 
+/* Hide default dropdown when navbar is expanded - galaxy.css will handle it */
+.navbar-expanded .dropdown-content {
+  position: static !important;
+  display: flex !important;
+  flex-direction: row !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+  pointer-events: auto !important;
+  transform: none !important;
+  background: transparent !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  box-shadow: none !important;
+  border: none !important;
+  border-radius: 0 !important;
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+/* Ensure galaxy.css navbar-expanded styles work */
+.navbar-expanded .dropbtn {
+  display: none !important;
+}
+
+.navbar-expanded .social-icons {
+  display: none !important;
+}
+
 .dropdown-content a {
   color: #e0e0e0;
   padding: 0.42rem 0.85rem;
@@ -514,13 +546,25 @@ input[type="range"]::-moz-range-track {
   border-color: transparent;
 }
 
-.dropdown:hover .dropdown-content,
-.dropdown:focus-within .dropdown-content,
+/* Disable default dropdown hover - navbar-expand.js handles it */
+.dropdown.hover-based:hover .dropdown-content,
+.dropdown.hover-based:focus-within .dropdown-content,
+.navbar:not(.navbar-expanded) .dropdown.hover-based:hover .dropdown-content,
+.navbar:not(.navbar-expanded) .dropdown.hover-based:focus-within .dropdown-content {
+    /* Disable default dropdown hover - we use navbar expansion instead */
+    opacity: 0 !important;
+    visibility: hidden !important;
+    pointer-events: none !important;
+    display: none !important;
+}
+
+.dropdown:not(.hover-based):hover .dropdown-content,
+.dropdown:not(.hover-based):focus-within .dropdown-content,
 .dropdown-content:hover {
-  opacity: 1;
-  visibility: visible;
-  pointer-events: auto;
-  transform: translateY(0) scale(1);
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+    transform: translateY(0) scale(1);
 }
 
 /* Hover bridge to prevent accidental close when moving cursor */

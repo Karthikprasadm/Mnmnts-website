@@ -41,7 +41,7 @@ body.about-page {
     backdrop-filter: blur(18px);
     position: relative;
     width: fit-content;
-    max-width: 420px;
+    max-width: 550px; /* Increased to fit all menu options */
     margin: 1.25rem auto 1rem;
     border-radius: 22px;
     box-shadow: 0 6px 18px rgba(0, 0, 0, 0.18);
@@ -49,7 +49,28 @@ body.about-page {
     font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
     z-index: 1000;
     height: fit-content;
+    min-height: fit-content;
+    max-height: fit-content;
     line-height: 1;
+    /* Smooth width transition */
+    transition: width 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94), max-width 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    /* Prevent layout shifts */
+    contain: layout style;
+    will-change: width;
+}
+
+/* Lock navbar height and position when expanded on about page */
+.about-page .navbar-expanded {
+    max-width: 550px !important;
+    width: fit-content !important;
+    align-items: center !important;
+    position: relative !important;
+    top: auto !important;
+    margin: 1.25rem auto 1rem !important; /* Keep exact same margin */
+    /* Smooth width transition */
+    transition: width 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94), max-width 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    contain: layout style;
+    isolation: isolate;
 }
 
 .navbar .logo {
