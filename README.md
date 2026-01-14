@@ -11,7 +11,10 @@ A minimalist, interactive web experience designed as a digital museum of persona
 - **Direct uploads** to ImageKit with secure backend signature
 - **Upload progress bar** and feedback
 - **Responsive, modern UI** with dark theme and glassmorphism design
-- **Unified Navigation** - Consistent navbar component (Menu-new) across all pages
+- **Unified Navigation** - Consistent navbar component (Menu-new) across all pages with CSS Grid overlay system
+- **Hover Expansion** - Menu button hover reveals navigation links (Gallery, About, Upload, Visualizer, Repository)
+- **Size Consistency** - Navbar maintains size using CSS Grid overlay (no layout shifts)
+- **Page-Specific Behavior** - Gallery expands to 380px when options shown; Upload/About fixed at 300px
 - **Social links** integration with unified icon system
 - **Resume viewer** with PDF.js integration
 
@@ -297,6 +300,8 @@ All icons are centralized in `assets/styles/icons.css` and stored in `Images_for
 ## 🎯 Features Roadmap
 
 - [x] Unified icon system
+- [x] Unified navbar component (Menu-new) across all pages
+- [x] CSS Grid overlay system for navbar (prevents size changes)
 - [x] Print stylesheet
 - [x] JSON-LD structured data
 - [x] Service worker offline support

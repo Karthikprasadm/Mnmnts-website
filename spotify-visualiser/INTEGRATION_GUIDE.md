@@ -121,11 +121,13 @@ The `vite.config.js` includes:
 
 ### Navbar Integration
 The visualizer uses the Menu-new navbar component (same as all other pages):
-- Consistent styling (glassmorphism, fixed size)
+- Consistent styling (glassmorphism, CSS Grid overlay system)
 - Same social icons (Instagram, LinkedIn, Pinterest, Spotify, GitHub)
 - Unified navigation menu with hover expansion
 - Links: Gallery, About, Upload, Repository
-- Z-index: 1000 (matches gallery/home page)
+- Fixed positioning: `position: fixed`, `top: 0.5rem`, `z-index: 5000` (above 3D canvas)
+- Size: Fixed 300px (no expansion on hover)
+- Behavior: Hover menu button to expand, Escape key to collapse
 
 ## 🚀 Features
 

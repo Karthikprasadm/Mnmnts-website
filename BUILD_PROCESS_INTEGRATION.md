@@ -24,6 +24,7 @@ The repository contains multiple projects with different build processes:
 - `gallery/index.html`
 - `know-me/about.html`
 - `image-upload/upload.html`
+- `Menu-new/` (unified navbar component - HTML, CSS, JS, icons)
 - `assets/` (scripts, styles, images, videos)
 - `sw.js` (service worker)
 - `manifest.json` (PWA manifest)

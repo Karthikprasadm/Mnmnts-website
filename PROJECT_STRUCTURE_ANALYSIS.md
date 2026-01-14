@@ -138,20 +138,27 @@ assets/
 ## 📁 `/Menu-new/` - Unified Navbar Component
 
 ### Overview
-Reusable navbar component used across all pages (gallery, about, upload, spotify-visualiser). Provides consistent navigation with hover expansion behavior.
+Reusable navbar component used across all pages (gallery, about, upload, spotify-visualiser). Provides consistent navigation with hover expansion behavior using CSS Grid overlay system to prevent size changes.
 
 ### Files
 - **`index.html`** - Standalone demo page for navbar
-- **`style.css`** - Navbar styles (glassmorphism, fixed size, hover transitions)
-- **`script.js`** - Navbar hover/expand logic (menu button hover shows links)
+- **`style.css`** - Navbar styles (glassmorphism, CSS Grid overlay, hover transitions)
+- **`script.js`** - Navbar hover/expand logic (menu button hover shows links, Escape key to collapse)
 - **`icons/`** - Social media icons (Instagram, LinkedIn, Pinterest, Spotify, GitHub)
 
 ### Features
 - **Hover Expansion**: Menu button hover reveals navigation links
-- **Fixed Size**: Navbar maintains consistent size (no layout shift)
+- **CSS Grid Overlay**: Both states (default and expanded) occupy same grid area, preventing size changes
 - **Consistent Styling**: Glassmorphism design matching site theme
-- **Social Icons**: Five social media links with hover effects
-- **Responsive**: Mobile-friendly (menu button hidden on small screens)
+- **Social Icons**: Five social media links with hover effects (grayscale to full color)
+- **Responsive**: Mobile-friendly (menu button hidden on small screens < 768px)
+- **Keyboard Accessible**: Escape key collapses expanded menu
+
+### Technical Implementation
+- **CSS Grid System**: Uses `grid-template-areas: "content"` to overlay both states
+- **Size Consistency**: Navbar sizes to wider content (expanded links) and stays that size
+- **Smooth Transitions**: `0.15s ease` opacity/visibility transitions
+- **No Layout Shift**: Fixed positioning prevents content jumping
 
 ### Usage
 All pages include:
@@ -167,6 +174,11 @@ All pages include:
 - Visualizer
 - Repository
 
+### Page-Specific Styling
+- **Gallery (Home)**: Default 300px, expands to 380px when options shown
+- **Upload/About**: Fixed 300px (no expansion)
+- **Spotify Visualiser**: Fixed positioning with z-index 5000 (above 3D canvas)
+
 ---
 
 ## 📁 `/gallery/` - Main Gallery Page
@@ -174,7 +186,8 @@ All pages include:
 ### Files
 - **`index.html`** (597 lines)
   - Main gallery page with image/video display
-  - Uses Menu-new navbar component
+  - Uses Menu-new navbar component with special expansion behavior
+  - Navbar: Default 300px, expands to 380px when menu options are shown
   - Preloads critical resources
   - SEO metadata and JSON-LD structured data
   - Service worker registration
@@ -201,7 +214,7 @@ All pages include:
 ### Files
 - **`upload.html`** (743 lines)
   - ImageKit upload interface
-  - Uses Menu-new navbar component (smaller size variant)
+  - Uses Menu-new navbar component (fixed 300px, no expansion)
   - Drag & drop functionality
   - Progress indicators
   - Form validation
@@ -209,7 +222,7 @@ All pages include:
   - Upload page styling
   - Glassmorphism design
   - Responsive layout
-  - Custom navbar sizing (max-width: 300px)
+  - Custom navbar sizing (max-width: 300px, width: fit-content)
 
 ---
 
