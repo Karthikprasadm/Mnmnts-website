@@ -16,6 +16,7 @@
     <link rel="stylesheet" href="../assets/styles/galaxy.css">
     <link rel="stylesheet" href="../assets/styles/icons.css">
     <link rel="stylesheet" href="../assets/fonts/fonts.css">
+    <link rel="stylesheet" href="../Menu-new/style.css">
     <link rel="stylesheet" href="about.css">
     <meta name="description" content="About Karthik Prasad M – web developer, creative storyteller, and digital artist. Learn more about my skills, interests, and creative journey.">
     <meta name="keywords" content="Karthik Prasad, About, Portfolio, Web Developer, Creative, Storytelling, Skills, Interests, Art, Tech, Frontend, JavaScript, HTML, CSS">
@@ -101,36 +102,40 @@
 </head>
 <body class="about-page">
     <div class="stars"></div>
-    <!-- Unified Navbar -->
+    <!-- Menu-new Navbar -->
     <nav class="navbar" role="navigation" aria-label="Main navigation">
-        <!-- Menu Button (Left) -->
+      <div class="navbar-content">
+        <div class="navbar-default">
         <div class="dropdown">
             <button class="dropbtn" aria-label="Open menu" tabindex="0">Menu</button>
-            <div class="dropdown-content" role="menu">
-                <a href="../gallery/index.html" role="menuitem">Open gallery</a>
-                <a href="../image-upload/upload.html" role="menuitem">Upload</a>
-                <a href="../spotify-visualiser/index.html" role="menuitem">Visualizer</a>
-                <a href="/repo" role="menuitem">Repository</a>
-                <a href="./about.html" role="menuitem" aria-current="page">About</a>
-            </div>
         </div>
-        <!-- Social Icons (Left-Center) -->
         <div class="social-icons" aria-label="Social links">
-            <a href="https://www.instagram.com/kkarthhikk" target="_blank" aria-label="Instagram" data-tooltip="Instagram">
+            <a href="https://www.instagram.com/kkarthhikk" target="_blank" aria-label="Instagram">
                 <span class="icon icon-instagram" aria-hidden="true"></span>
             </a>
-            <a href="https://www.linkedin.com/in/karthik-prasad-m-7673b5356/" target="_blank" aria-label="LinkedIn" data-tooltip="LinkedIn">
+            <a href="https://www.linkedin.com/in/karthik-prasad-m-7673b5356/" target="_blank" aria-label="LinkedIn">
                 <span class="icon icon-linkedin" aria-hidden="true"></span>
             </a>
-            <a href="https://pin.it/70AOzYsfW" target="_blank" aria-label="Pinterest" data-tooltip="Pinterest">
+            <a href="https://pin.it/70AOzYsfW" target="_blank" aria-label="Pinterest">
                 <span class="icon icon-pinterest" aria-hidden="true"></span>
             </a>
-            <a href="https://open.spotify.com/user/31g54rthdkjwc7tk2yzwlkptbbqi" target="_blank" aria-label="Spotify" data-tooltip="Spotify">
+            <a href="https://open.spotify.com/user/31g54rthdkjwc7tk2yzwlkptbbqi" target="_blank" aria-label="Spotify">
                 <span class="icon icon-spotify" aria-hidden="true"></span>
             </a>
-            <a href="https://github.com/Karthikprasadm" target="_blank" aria-label="GitHub" data-tooltip="GitHub">
+            <a href="https://github.com/Karthikprasadm" target="_blank" aria-label="GitHub">
                 <span class="icon icon-github" aria-hidden="true"></span>
             </a>
+          </div>
+        </div>
+        <div class="navbar-expanded-content">
+          <a href="../gallery/index.html">Gallery</a>
+          <span class="dot">·</span>
+          <a href="../image-upload/upload.html">Upload</a>
+          <span class="dot">·</span>
+          <a href="../spotify-visualiser/index.html">Visualizer</a>
+          <span class="dot">·</span>
+          <a href="/repo">Repository</a>
+        </div>
         </div>
     </nav>
     <main class="about-container">
@@ -198,6 +203,7 @@
         }
     };
     </script>
+    <script src="../Menu-new/script.js" defer></script>
     <style>
     .resume-modal-overlay {
         position: fixed;

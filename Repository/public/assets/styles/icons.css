@@ -1,0 +1,42 @@
+/* Shared icon definitions for navbar/social icons */
+
+.icon {
+    display: inline-block;
+    width: 2rem;
+    height: 2rem;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: contain;
+    filter: grayscale(40%) invert(80%);
+    transition: opacity var(--hover-speed) var(--hover-ease),
+                filter var(--hover-speed) var(--hover-ease),
+                transform var(--hover-speed) var(--hover-ease);
+}
+
+.icon:hover,
+.icon:focus-visible {
+    transform: scale(1.12);
+}
+
+.icon-instagram {
+    background-image: url("../../Images_for_icon/instagram.png");
+}
+
+.icon-linkedin {
+    background-image: url("../../Images_for_icon/linkedin.png");
+}
+
+.icon-pinterest {
+    background-image: url("../../Images_for_icon/pinterest.png");
+}
+
+.icon-spotify {
+    background-image: url("../../Images_for_icon/spotify.png");
+}
+
+.icon-github {
+    /* Local GitHub icon relative to this CSS file */
+    background-image: url("../../Images_for_icon/github.png");
+}
+
+

@@ -1,0 +1,1898 @@
+/* galaxy.css */
+/* General Page Styling */
+:root {
+    --hover-speed: 0.18s;
+    --hover-ease: cubic-bezier(0.4, 0, 0.2, 1);
+    --modal-speed: 0.35s;
+}
+
+html {
+    position: static !important;
+    transform: none !important;
+    will-change: auto !important;
+    contain: none !important;
+    isolation: auto !important;
+    overflow-x: hidden;
+    overflow-y: auto;
+}
+
+* {
+    font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+}
+
+body {
+    background: #0a0a0a;
+    color: #e0e0e0;
+    font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    margin: 0 !important;
+    padding: 0 !important;
+    overflow-x: hidden;
+    position: static !important;
+    transform: none !important;
+    will-change: auto !important;
+    contain: none !important;
+    isolation: auto !important;
+    line-height: 1.6;
+    font-size: 1rem;
+    scroll-behavior: smooth;
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none; /* IE 10+ */
+}
+
+html::-webkit-scrollbar, body::-webkit-scrollbar {
+    display: none; /* Chrome, Safari, Opera */
+}
+
+/* Galaxy Background */
+body::before {
+    content: "";
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: url('https://wallpaperaccess.com/full/1751663.jpg') no-repeat center center/cover;
+    opacity: 0.6;
+    z-index: -2;
+}
+
+/* Animated Stars */
+@keyframes twinkling {
+    from { background-position: 0 0; }
+    to { background-position: -1000px 1000px; }
+}
+
+/* Apply local font stack */
+body, button, input, select, textarea {
+    font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+}
+
+.stars {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: url('https://www.transparenttextures.com/patterns/stardust.png');
+    opacity: 0.8;
+    animation: twinkling 100s linear infinite;
+    z-index: -1;
+}
+
+/* Unified Navbar */
+.navbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.9rem;
+    padding: 0.65rem 1.15rem;
+    background: rgba(30, 30, 30, 0.8);
+    backdrop-filter: blur(18px);
+    position: relative;
+    width: fit-content;
+    max-width: 450px;
+    margin: 1.5rem auto;
+    border-radius: 20px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.16);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    z-index: 1000;
+    height: fit-content;
+    min-height: fit-content;
+    max-height: fit-content;
+    line-height: 1;
+    /* Smooth width transition */
+    transition: width 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94), max-width 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    /* Prevent layout shifts */
+    contain: layout style;
+    will-change: width;
+}
+
+/* Set default navbar width to match expanded state on main page (gallery) */
+/* JavaScript will measure and set the exact expanded width */
+body:not(.about-page):not(.upload-page) .navbar {
+    width: fit-content;
+}
+
+/* Slideshow Toggle Button */
+.moon-button {
+    font-size: 1.3rem;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    color: #e0e0e0;
+    transition: opacity var(--hover-speed) var(--hover-ease);
+    padding: 0.45rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    margin: 0;
+    border-radius: 18px;
+}
+
+.moon-button:hover,
+.moon-button:focus-visible {
+    opacity: 0.82;
+    outline: none;
+}
+
+/* Social Icons */
+.social-icons {
+    display: flex;
+    gap: 0.6rem;
+    align-items: center;
+    flex: 0 0 auto;
+}
+
+.logo {
+    flex: 1;
+    text-align: center;
+    margin: 0;
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: #e0e0e0;
+}
+
+.navbar-center {
+    display: flex;
+    flex: 0 0 auto;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    padding-left: 1rem;
+    margin-left: 0.5rem;
+}
+
+/* Separator line between social icons and moon button */
+.navbar-center::before {
+    content: '';
+    position: absolute;
+    left: -0.2rem; /* Moved further right */
+    top: 50%;
+    transform: translateY(-50%);
+    width: 1.5px;
+    height: 60%;
+    background: rgba(180, 180, 200, 0.4);
+    border-radius: 2px;
+}
+
+.social-icons a {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.25rem;
+    transition: opacity var(--hover-speed) var(--hover-ease);
+}
+
+.social-icons a img,
+.social-icons a .icon {
+    width: 1.65rem;
+    height: 1.65rem;
+    filter: grayscale(40%) invert(80%);
+    transition: opacity var(--hover-speed) var(--hover-ease), filter var(--hover-speed) var(--hover-ease);
+}
+
+/* Logo */
+.logo {
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: #fff;
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    letter-spacing: 0.05em;
+    font-family: 'Playfair Display', serif;
+    flex: 1;
+    text-align: center;
+    margin: 0;
+}
+
+.social-icons a:hover,
+.social-icons a:focus-visible {
+    opacity: 0.72;
+    outline: none;
+}
+
+.social-icons a:hover img,
+.social-icons a:focus-visible img,
+.social-icons a:hover .icon,
+.social-icons a:focus-visible .icon {
+    filter: grayscale(0%) invert(100%);
+}
+
+/* Custom Tooltips */
+[data-tooltip] {
+    position: relative;
+}
+
+.custom-tooltip {
+    position: absolute;
+    bottom: calc(100% + 8px);
+    left: 50%;
+    transform: translateX(-50%) translateY(4px);
+    padding: 0.5rem 0.75rem;
+    background: rgba(30, 30, 30, 0.85);
+    backdrop-filter: blur(18px);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 12px;
+    color: #e0e0e0;
+    font-size: 0.8rem;
+    font-weight: 500;
+    white-space: nowrap;
+    pointer-events: none;
+    z-index: 10000;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity var(--hover-speed) var(--hover-ease), 
+                transform var(--hover-speed) var(--hover-ease),
+                visibility var(--hover-speed) var(--hover-ease);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.24);
+    font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+}
+
+.custom-tooltip::after {
+    content: '';
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 0;
+    height: 0;
+    border-left: 6px solid transparent;
+    border-right: 6px solid transparent;
+    border-top: 6px solid rgba(30, 30, 30, 0.85);
+    filter: drop-shadow(0 2px 2px rgba(0, 0, 0, 0.1));
+}
+
+[data-tooltip]:hover .custom-tooltip,
+[data-tooltip]:focus-visible .custom-tooltip {
+    opacity: 1;
+    visibility: visible;
+    transform: translateX(-50%) translateY(0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .custom-tooltip {
+        transition: opacity 0.1s ease, visibility 0.1s ease;
+        transform: translateX(-50%) translateY(0) !important;
+    }
+}
+
+/* Image Gallery */
+.container {
+    text-align: center;
+    margin-top: 2.5rem;
+    padding: 0 1.25rem 3rem;
+    position: relative;
+    z-index: 1;
+}
+
+.main-image {
+    position: relative;
+    min-height: 400px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+}
+
+.main-image img {
+    width: 90%;
+    max-width: 800px;
+    border-radius: 22px;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    transition: opacity 0.35s var(--hover-ease), transform 0.35s var(--hover-ease);
+    position: relative;
+    z-index: 2;
+}
+
+.main-image img.loading {
+    opacity: 0;
+}
+
+.main-image img.loaded {
+    opacity: 1;
+}
+
+/* Type scale */
+h1, .h1 {
+    font-size: 2.4rem;
+    line-height: 1.2;
+    margin: 0 0 0.5em;
+}
+
+h2, .h2 {
+    font-size: 1.6rem;
+    line-height: 1.3;
+    margin: 0 0 0.5em;
+}
+
+/* Thumbnails */
+.thumbnails {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-top: 1rem;
+    gap: 0.5rem;
+    position: relative;
+}
+
+.thumbnails > * {
+    position: relative;
+}
+
+.thumb, .video-thumb {
+    width: 7rem;
+    height: auto;
+    flex-shrink: 0;
+    border-radius: 22px;
+    cursor: pointer;
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.2);
+    transition: transform var(--hover-speed) var(--hover-ease), box-shadow var(--hover-speed) var(--hover-ease), border-color var(--hover-speed) var(--hover-ease);
+    position: relative;
+}
+
+.thumb.loading,
+.video-thumb.loading {
+    opacity: 0;
+}
+
+.thumb.loaded,
+.video-thumb.loaded {
+    opacity: 1;
+}
+
+.thumb:hover, .video-thumb:hover,
+.thumb:focus-visible, .video-thumb:focus-visible {
+    transform: scale(1.05);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.28), 0 2px 8px rgba(0, 0, 0, 0.18);
+    border-color: rgba(255, 255, 255, 0.15);
+    outline: none;
+}
+
+.active {
+    border: 2px solid rgba(255, 255, 255, 0.3) !important;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3), 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .navbar {
+        padding: 0.6rem 1rem;
+        margin: 1rem auto;
+        border-radius: 14px;
+        max-width: 95%;
+        width: auto;
+        gap: 0.7rem;
+    }
+
+    .logo {
+        font-size: 1rem;
+    }
+    
+    .social-icons {
+        gap: 0.375rem;
+    }
+    
+    .social-icons a img {
+        width: 1.5rem;
+        height: 1.5rem;
+    }
+    
+    .moon-button {
+        font-size: 1.3rem;
+    }
+    
+    .dropbtn {
+        padding: 0.55rem 1.1rem;
+        font-size: 0.9rem;
+    }
+
+    .main-image img {
+        width: 100%;
+    }
+
+    .thumb {
+        width: 6rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .social-icons a img {
+        width: 1.625rem;
+        height: 1.625rem;
+    }
+
+    .thumb {
+        width: 5rem;
+    }
+}
+
+/* Loading Skeletons */
+.skeleton {
+    background: linear-gradient(
+        90deg,
+        rgba(60, 60, 60, 0.3) 0%,
+        rgba(80, 80, 80, 0.4) 50%,
+        rgba(60, 60, 60, 0.3) 100%
+    );
+    background-size: 200% 100%;
+    animation: skeleton-loading 1.5s ease-in-out infinite;
+    border-radius: 22px;
+    position: relative;
+    overflow: hidden;
+}
+
+.skeleton::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(255, 255, 255, 0.05),
+        transparent
+    );
+    animation: skeleton-shimmer 1.5s ease-in-out infinite;
+}
+
+@keyframes skeleton-loading {
+    0% {
+        background-position: 200% 0;
+    }
+    100% {
+        background-position: -200% 0;
+    }
+}
+
+@keyframes skeleton-shimmer {
+    0% {
+        transform: translateX(-100%);
+    }
+    100% {
+        transform: translateX(100%);
+    }
+}
+
+/* Main Image Skeleton */
+.skeleton-main-image {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 90%;
+    max-width: 800px;
+    aspect-ratio: 16 / 9;
+    border-radius: 22px;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    backdrop-filter: blur(10px);
+    z-index: 1;
+    pointer-events: none;
+}
+
+/* Thumbnail Skeleton */
+.skeleton-thumb {
+    width: 6rem;
+    aspect-ratio: 1;
+    border-radius: 22px;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    backdrop-filter: blur(10px);
+}
+
+/* Video Container Skeleton */
+.skeleton-video {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 90%;
+    max-width: 800px;
+    aspect-ratio: 16 / 9;
+    border-radius: 24px;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    backdrop-filter: blur(10px);
+    z-index: 1;
+    pointer-events: none;
+}
+
+/* Skeleton fade out animation */
+.skeleton.fade-out {
+    opacity: 0;
+    transition: opacity 0.3s ease-out;
+    pointer-events: none;
+}
+
+/* Responsive skeleton sizes */
+@media (max-width: 768px) {
+    .skeleton-thumb {
+        width: 5rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .skeleton-thumb {
+        width: 4rem;
+    }
+    
+    .main-image {
+        min-height: 300px;
+    }
+    
+    .video-container {
+        min-height: 300px;
+        height: 300px;
+    }
+    
+    .video-container video {
+        width: 100%;
+    }
+}
+
+/* Video Styles */
+.video-container {
+    position: relative;
+    min-height: 400px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 2rem;
+    text-align: center;
+    width: 100%;
+    /* Maintain fixed height to prevent layout shifts */
+    height: 450px;
+    /* Always visible, even when empty */
+    visibility: visible;
+    opacity: 1;
+}
+
+.video-container video {
+    width: 90%;
+    max-width: 800px;
+    height: auto;
+    aspect-ratio: 16 / 9;
+    border-radius: 24px;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    position: relative;
+    z-index: 2;
+    /* Prevent video from causing layout shifts */
+    object-fit: contain;
+    display: block;
+    /* Maintain dimensions during loading */
+    min-height: 0;
+    flex-shrink: 0;
+}
+
+.video-thumbnails {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-top: 1rem;
+    gap: 0.5rem;
+    position: relative;
+}
+
+.video-thumbnails > * {
+    position: relative;
+}
+
+/* Removing .video-thumb positioning styles */
+
+/* Dropdown Menu Styling */
+.dropdown {
+    position: relative;
+    display: inline-block;
+    z-index: 10001;
+}
+
+/* Click-based dropdown (no hover) - only when NOT expanded */
+.dropdown.click-based:not(.navbar-expanded .dropdown):hover .dropdown-content,
+.dropdown.click-based:not(.navbar-expanded .dropdown):focus-within .dropdown-content {
+    /* Disable hover behavior for click-based dropdowns when collapsed */
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+}
+
+/* Hover-based dropdown - disable default hover behavior completely */
+.dropdown.hover-based:hover .dropdown-content,
+.dropdown.hover-based:focus-within .dropdown-content,
+.navbar:not(.navbar-expanded) .dropdown.hover-based:hover .dropdown-content,
+.navbar:not(.navbar-expanded) .dropdown.hover-based:focus-within .dropdown-content {
+    /* Disable default dropdown hover - we use navbar expansion instead */
+    opacity: 0 !important;
+    visibility: hidden !important;
+    pointer-events: none !important;
+    display: none !important;
+}
+
+/* Dropdown positioning */
+.navbar .dropdown-content {
+    left: 0;
+    right: auto;
+    transform: none;
+    top: calc(100% + 2px);
+}
+
+/* Navbar expanded state - inline menu (Desktop/PC focus) */
+.navbar-expanded {
+    /* Allow horizontal expansion, lock height only */
+    flex-wrap: nowrap;
+    gap: 0.9rem !important; /* Keep same gap as original */
+    padding: 0.65rem 1.15rem !important; /* Keep same padding */
+    justify-content: flex-start;
+    align-items: center;
+    margin: 1.5rem auto !important; /* Keep same margin */
+    border-radius: 20px !important; /* Keep same border radius */
+    overflow: hidden; /* Prevent content from expanding navbar */
+    box-sizing: border-box; /* Include padding in width calculation */
+    /* Allow width to expand, height locked by JavaScript */
+    width: fit-content !important;
+    /* Smooth width transition */
+    transition: width 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94), max-width 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    /* Prevent content below from shifting */
+    contain: layout style;
+    isolation: isolate;
+}
+
+/* Increase navbar width on about and upload pages to fit all options */
+.about-page .navbar-expanded,
+.upload-page .navbar-expanded {
+    max-width: 550px !important;
+    width: fit-content !important;
+    align-items: center !important;
+    position: relative !important;
+    top: auto !important;
+    margin: 1.25rem auto 1rem !important; /* Keep exact same margin as about page */
+    /* Smooth width transition */
+    transition: width 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94), max-width 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    contain: layout style;
+    isolation: isolate;
+}
+
+.about-page .navbar,
+.upload-page .navbar {
+    max-width: 550px;
+    height: fit-content;
+    min-height: fit-content;
+    max-height: fit-content;
+    contain: layout style;
+    will-change: width;
+}
+
+/* Ensure menu items don't cause vertical expansion on about/upload pages */
+.about-page .navbar-expanded .dropdown-content,
+.upload-page .navbar-expanded .dropdown-content {
+    align-items: center !important;
+    height: auto !important;
+    max-height: 100% !important;
+    overflow: hidden;
+}
+
+.about-page .navbar-expanded .dropdown-content a,
+.upload-page .navbar-expanded .dropdown-content a {
+    line-height: 1 !important;
+    height: auto !important;
+    max-height: 100% !important;
+    vertical-align: middle;
+    position: relative !important;
+    color: rgba(255, 255, 255, 0.85) !important;
+    font-weight: 700 !important;
+    letter-spacing: 0.01em;
+    transition: color 0.2s ease;
+}
+
+/* Subtle hover effect for about/upload pages */
+.about-page .navbar-expanded .dropdown-content a:hover,
+.about-page .navbar-expanded .dropdown-content a:focus-visible,
+.upload-page .navbar-expanded .dropdown-content a:hover,
+.upload-page .navbar-expanded .dropdown-content a:focus-visible {
+    color: rgba(255, 255, 255, 1) !important;
+    opacity: 1 !important;
+    transform: none !important;
+}
+
+/* Hide menu button when expanded */
+.navbar-expanded .dropbtn {
+    display: none;
+}
+
+/* Hide social icons when expanded */
+.navbar-expanded .social-icons {
+    display: none;
+}
+
+.navbar-expanded .dropdown {
+    order: 0;
+    width: auto;
+    flex: 0 0 auto;
+    margin: 0;
+    position: static;
+    min-width: 0;
+    max-width: none;
+}
+
+.navbar-expanded .dropdown-content {
+    position: static;
+    display: flex !important;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    gap: 0.35rem; /* Slightly increased for better spacing */
+    opacity: 1 !important;
+    visibility: visible !important;
+    pointer-events: auto !important;
+    transform: none !important;
+    background: transparent;
+    backdrop-filter: none;
+    box-shadow: none;
+    border: none;
+    padding: 0;
+    margin: 0;
+    min-width: 0;
+    width: 100%;
+    max-width: 100%;
+    border-radius: 0;
+    align-items: center;
+    justify-content: flex-start;
+    overflow: hidden; /* Prevent overflow */
+    flex-shrink: 1; /* Allow shrinking if needed */
+    animation: menuContentFadeIn 0.35s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+    /* Ensure it fits within navbar without changing navbar size */
+    box-sizing: border-box;
+    height: 100%;
+    max-height: 100%;
+}
+
+/* Minimal separator between menu items (subtle dot) - All pages */
+.navbar-expanded .dropdown-content a:not(:last-child)::after {
+    content: '·';
+    color: rgba(255, 255, 255, 0.35);
+    margin-left: 0.3rem;
+    margin-right: 0.3rem;
+    font-weight: 300;
+    position: static;
+    pointer-events: none;
+}
+
+/* Minimal menu content fade-in animation */
+@keyframes menuContentFadeIn {
+    from {
+        opacity: 0;
+        transform: scale(0.98);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+/* Ensure menu items stay visible on hover when navbar is expanded */
+.navbar-expanded .dropdown:hover .dropdown-content,
+.navbar-expanded .dropdown:focus-within .dropdown-content,
+.navbar-expanded .dropdown-content:hover {
+    opacity: 1 !important;
+    visibility: visible !important;
+    pointer-events: auto !important;
+    transform: none !important;
+    display: flex !important;
+}
+
+.navbar-expanded .dropdown-content a {
+    display: inline-flex;
+    padding: 0.35rem 0.6rem; /* Slightly increased for better touch targets */
+    margin: 0;
+    white-space: nowrap;
+    background: transparent;
+    backdrop-filter: none;
+    border: none;
+    border-radius: 0;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    flex: 0 0 auto;
+    font-size: 0.85rem;
+    line-height: 1.2;
+    opacity: 0;
+    transform: scale(0.9);
+    animation: menuItemScaleFade 0.35s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+    color: rgba(255, 255, 255, 0.8);
+    font-weight: 700;
+    letter-spacing: 0.01em;
+    position: relative;
+}
+
+/* Subtle staggered animation for each menu item */
+.navbar-expanded .dropdown-content a:nth-child(1) {
+    animation-delay: 0.02s;
+}
+
+.navbar-expanded .dropdown-content a:nth-child(2) {
+    animation-delay: 0.04s;
+}
+
+.navbar-expanded .dropdown-content a:nth-child(3) {
+    animation-delay: 0.06s;
+}
+
+.navbar-expanded .dropdown-content a:nth-child(4) {
+    animation-delay: 0.08s;
+}
+
+.navbar-expanded .dropdown-content a:nth-child(5) {
+    animation-delay: 0.1s;
+}
+
+/* Minimal menu item scale + fade animation with subtle bounce */
+@keyframes menuItemScaleFade {
+    from {
+        opacity: 0;
+        transform: scale(0.9);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+/* Respect reduced motion preference */
+@media (prefers-reduced-motion: reduce) {
+    .navbar-expanded .dropdown-content,
+    .navbar-expanded .dropdown-content a {
+        animation: none;
+        opacity: 1;
+        transform: none;
+    }
+}
+
+.navbar-expanded .dropdown-content a:hover,
+.navbar-expanded .dropdown-content a:focus-visible {
+    background: transparent;
+    border: none;
+    transform: translateY(-1px);
+    box-shadow: none;
+    opacity: 1;
+    color: rgba(255, 255, 255, 1);
+}
+
+/* Subtle underline on hover for all pages */
+.navbar-expanded .dropdown-content a::after,
+.navbar-expanded .dropdown-content a:hover::after,
+.navbar-expanded .dropdown-content a:focus-visible::after {
+    content: none !important;
+}
+
+.navbar-expanded .navbar-center {
+    order: 1;
+    flex: 0 0 auto;
+    margin-left: auto;
+}
+
+/* Hide dropdown bridge when expanded */
+.navbar-expanded .dropdown::after {
+    display: none;
+}
+
+.dropbtn {
+    background-color: rgba(30, 30, 30, 0.82);
+    backdrop-filter: blur(18px);
+    color: #e0e0e0;
+    padding: 0.55rem 1.1rem;
+    font-size: 0.9rem;
+    font-weight: 600;
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    cursor: pointer;
+    transition: background-color var(--hover-speed) var(--hover-ease), color var(--hover-speed) var(--hover-ease), box-shadow var(--hover-speed) var(--hover-ease);
+    border-radius: 18px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    letter-spacing: 0.02em;
+    height: fit-content;
+    min-height: 38px;
+}
+
+.dropbtn:hover,
+.dropbtn:focus-visible {
+    background-color: rgba(50, 50, 50, 0.95);
+    color: #ffffff;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.26), inset 0 0 0 1px rgba(255, 255, 255, 0.12);
+    outline: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .dropbtn {
+        transition: none;
+    }
+}
+
+
+.dropdown-content {
+    position: absolute;
+    left: 0;
+    top: calc(100% + 2px);
+    background: rgba(30, 30, 30, 0.86);
+    backdrop-filter: blur(18px);
+    min-width: 126px;
+    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.24), 0 3px 10px rgba(0, 0, 0, 0.18);
+    z-index: 10002;
+    border-radius: 18px;
+    overflow: hidden;
+    border: 1px solid rgba(255, 255, 255, 0.07);
+    margin-top: 0;
+    padding: 0.2rem 0;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(6px) scale(0.98);
+    pointer-events: none;
+    transition: opacity 0.18s var(--hover-ease), transform 0.18s var(--hover-ease), visibility 0.18s var(--hover-ease);
+}
+
+.dropdown-content a {
+    color: #e0e0e0;
+    padding: 0.42rem 0.85rem;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    font-size: 0.84rem;
+    font-weight: 600;
+    transition: background-color var(--hover-speed) var(--hover-ease), color var(--hover-speed) var(--hover-ease), transform var(--hover-speed) var(--hover-ease), box-shadow var(--hover-speed) var(--hover-ease), border-color var(--hover-speed) var(--hover-ease), opacity var(--hover-speed) var(--hover-ease);
+    letter-spacing: 0.01em;
+    margin: 0.08rem 0.3rem;
+    border-radius: 10px;
+    border: 1px solid transparent;
+    min-height: 40px;
+}
+
+/* Hide the current page link inside the dropdown */
+.dropdown-content a[aria-current="page"] {
+    display: none;
+}
+
+.dropdown-content a:hover,
+.dropdown-content a:focus-visible {
+    background-color: rgba(60, 60, 60, 0.6);
+    color: #ffffff;
+    transform: none;
+    box-shadow: 0 6px 14px rgba(0, 0, 0, 0.16);
+    outline: none;
+    opacity: 1;
+    border-color: transparent;
+}
+
+/* Only apply hover behavior if not click-based AND not hover-based AND not in expanded navbar */
+.navbar:not(.navbar-expanded) .dropdown:not(.click-based):not(.hover-based):hover .dropdown-content,
+.navbar:not(.navbar-expanded) .dropdown:not(.click-based):not(.hover-based):focus-within .dropdown-content,
+.navbar:not(.navbar-expanded) .dropdown:not(.click-based):not(.hover-based) .dropdown-content:hover {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+    transform: translateY(0) scale(1);
+}
+
+/* Hover bridge to prevent accidental close when moving cursor */
+.dropdown::after {
+    content: "";
+    position: absolute;
+    top: 100%;
+    right: 0;
+    width: 100%;
+    height: 10px;
+    background: transparent;
+    pointer-events: auto;
+}
+
+.dropdown:hover .dropbtn {
+    color: #ccc;
+}
+
+/* Fix for dropdown button hover */
+.dropbtn:hover {
+    color: #f0f0f0;
+}
+
+/* Fix for mobile navigation */
+@media (max-width: 600px) {
+    .dropdown-content {
+        position: static;
+        display: block;
+        width: 100%;
+        text-align: center;
+    }
+
+    .dropdown:hover .dropdown-content {
+        display: block;
+    }
+}
+/* Upload Page Styles */
+#uploadForm {
+    margin-top: 2rem;
+    text-align: center;
+}
+
+#uploadForm input[type="file"] {
+    display: none;
+}
+
+#uploadForm label {
+    background-color: rgba(30, 30, 30, 0.7);
+    color: #e0e0e0;
+    padding: 1rem 2rem;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: background-color var(--hover-speed) var(--hover-ease);
+}
+
+#uploadForm label:hover {
+    background-color: rgba(60, 60, 60, 0.7);
+}
+
+#uploadForm button {
+    background-color: rgba(30, 30, 30, 0.7);
+    color: #e0e0e0;
+    padding: 1rem 2rem;
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    margin-top: 1rem;
+    transition: background-color var(--hover-speed) var(--hover-ease), transform var(--hover-speed) var(--hover-ease);
+}
+
+#uploadForm button:hover {
+    background-color: rgba(60, 60, 60, 0.7);
+    transform: translateY(-2px);
+}
+
+#uploadForm button:focus-visible {
+    background-color: rgba(60, 60, 60, 0.7);
+    transform: translateY(-2px);
+    outline: none;
+}
+
+#preview {
+    margin-top: 2rem;
+}
+
+.yoda-favicon {
+    position: fixed;
+    right: 24px;
+    bottom: 24px;
+    z-index: 1000;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    animation: float 3s ease-in-out infinite;
+}
+
+.yoda-speech-bubble {
+    display: grid;
+    grid-template-columns: repeat(10, 8px);
+    grid-template-rows: repeat(5, 8px);
+    gap: 2px;
+    margin-bottom: 8px;
+}
+
+.yoda-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: #fff;
+    opacity: 0.95;
+}
+
+/* Optional: Add a small tail to the bubble */
+.yoda-speech-tail {
+    display: flex;
+    justify-content: center;
+    margin-top: -2px;
+}
+
+.yoda-speech-tail-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: #fff;
+    opacity: 0.95;
+}
+
+@keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-5px); }
+}
+
+.yoda-favicon img {
+    width: 48px;
+    height: 48px;
+    pointer-events: none;
+    user-select: none;
+    filter: drop-shadow(0 2px 4px rgba(34, 34, 34, 0.3))
+           drop-shadow(0 0 8px rgba(180, 220, 255, 0.15));
+    transition: filter 0.3s ease;
+}
+
+.yoda-favicon:hover img {
+    filter: drop-shadow(0 2px 4px rgba(34, 34, 34, 0.3))
+           drop-shadow(0 0 12px rgba(180, 220, 255, 0.25));
+}
+
+.yoda-favicon::after {
+    content: '';
+    display: block;
+    width: 48px;
+    height: 14px;
+    margin-top: 2px;
+    margin-left: auto;
+    margin-right: auto;
+    background: transparent !important;
+    opacity: 0 !important;
+    border-radius: 50%;
+    animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 0.6; transform: scale(1); }
+    50% { opacity: 0.4; transform: scale(0.95); }
+}
+
+.yoda-modern-box {
+    min-width: 38px;
+    min-height: 20px;
+    padding: 6px 14px;
+    font-size: 0.66rem;
+    font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    font-weight: 900;
+    color: #fff;
+    text-shadow: 0 2px 8px #111, 0 1px 2px #000, 0 0 2px #000;
+    letter-spacing: 1.5px;
+    text-align: center;
+    user-select: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 14px;
+    background: rgba(255, 255, 255, 0.18);
+    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.18), 0 1.5px 4px rgba(0,0,0,0.10);
+    border: 1.5px solid rgba(255,255,255,0.35);
+    backdrop-filter: blur(8px) saturate(1.2);
+    position: relative;
+    z-index: 1;
+    transition: box-shadow 0.3s, background 0.3s, border 0.3s;
+}
+
+/* Remove any bottom overlay or bar */
+body > div[style*="position: fixed"],
+body > div[style*="bottom: 0"],
+body > div.bottom-bar, 
+body > .bottom-bar {
+    display: none !important;
+}
+
+/* Remove any dark background at the bottom if present */
+body::after {
+    display: none !important;
+    background: none !important;
+}
+
+body > div:last-child {
+    display: none !important;
+}
+body > div[style*="background"],
+body > div[style*="backdrop-filter"] {
+    display: none !important;
+}
+
+/* ============================================
+   PRINT STYLESHEET
+   Optimized for printing - hides navigation,
+   optimizes layout, ensures readability
+   ============================================ */
+
+@media print {
+    /* Reset page background and colors for printing */
+    * {
+        background: white !important;
+        color: black !important;
+        box-shadow: none !important;
+        text-shadow: none !important;
+    }
+
+    body {
+        background: white !important;
+        color: black !important;
+        font-size: 12pt;
+        line-height: 1.5;
+        padding: 0;
+        margin: 0;
+    }
+
+    /* Hide decorative and interactive elements */
+    .stars,
+    .navbar,
+    .dropdown,
+    .menu-button-separate,
+    .moon-button,
+    .social-icons,
+    .navbar-center,
+    .yoda-favicon,
+    .yoda-modern-box,
+    .bottom-left-text,
+    .resume-modal-overlay,
+    .project-modal-overlay,
+    .lightbox,
+    .toast-container,
+    .custom-tooltip,
+    button,
+    .dropbtn,
+    #slideshowToggle,
+    #addProjectBtn,
+    .filter-btn,
+    .lightbox-close,
+    .project-modal-close,
+    .resume-modal-close,
+    .modern-modal-action,
+    .upload-form button,
+    .back-button,
+    .project-link {
+        display: none !important;
+        visibility: hidden !important;
+    }
+
+    /* Hide background images and decorative elements */
+    body::before,
+    body::after {
+        display: none !important;
+        content: none !important;
+    }
+
+    /* Optimize images for printing */
+    img {
+        max-width: 100% !important;
+        height: auto !important;
+        page-break-inside: avoid;
+        display: block;
+    }
+
+    .main-image img,
+    .thumbnails img,
+    .video-thumbnails img,
+    .gallery-item img,
+    .project-modal-img,
+    .lightbox-img {
+        max-width: 100% !important;
+        height: auto !important;
+        border: 1px solid #ccc !important;
+        page-break-inside: avoid;
+    }
+
+    /* Hide video containers */
+    .video-container,
+    .video-thumbnails,
+    video {
+        display: none !important;
+    }
+
+    /* Optimize containers and layout */
+    .container {
+        width: 100% !important;
+        max-width: 100% !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        page-break-inside: avoid;
+    }
+
+    /* Ensure text is readable */
+    h1, h2, h3, h4, h5, h6 {
+        color: black !important;
+        page-break-after: avoid;
+        margin-top: 1em;
+        margin-bottom: 0.5em;
+    }
+
+    h1 {
+        font-size: 24pt;
+    }
+
+    h2 {
+        font-size: 18pt;
+    }
+
+    h3 {
+        font-size: 14pt;
+    }
+
+    p, li, span {
+        color: black !important;
+        page-break-inside: avoid;
+    }
+
+    /* Show URLs for links */
+    a[href]::after {
+        content: " (" attr(href) ")";
+        font-size: 10pt;
+        color: #666 !important;
+        word-break: break-all;
+    }
+
+    /* Hide decorative links (icons, buttons) */
+    a[aria-label*="Instagram"],
+    a[aria-label*="LinkedIn"],
+    a[aria-label*="Pinterest"],
+    a[aria-label*="Spotify"],
+    a[aria-label*="GitHub"],
+    a[aria-label*="Open menu"],
+    a[aria-label*="Toggle slideshow"] {
+        display: none !important;
+    }
+
+    /* Optimize thumbnails section */
+    .thumbnails {
+        display: none !important;
+    }
+
+    /* Optimize gallery items */
+    .gallery-item {
+        page-break-inside: avoid;
+        border: 1px solid #ccc !important;
+        margin-bottom: 1em;
+        padding: 0.5em;
+    }
+
+    .project-overlay {
+        position: static !important;
+        background: white !important;
+        color: black !important;
+        opacity: 1 !important;
+        padding: 0.5em;
+    }
+
+    .project-name {
+        color: black !important;
+        font-weight: bold;
+        margin-top: 0.5em;
+    }
+
+    .tech-stack span {
+        display: inline-block;
+        margin-right: 0.5em;
+        padding: 0.2em 0.5em;
+        border: 1px solid #ccc !important;
+        background: white !important;
+        color: black !important;
+    }
+
+    /* Optimize about/know-me page */
+    .about-container,
+    .about-bio,
+    .about-extra {
+        color: black !important;
+        background: white !important;
+    }
+
+    .about-list li {
+        color: black !important;
+        margin-bottom: 0.5em;
+    }
+
+    .about-corner-odd-wandering {
+        display: none !important;
+    }
+
+    /* Optimize modals - show content if visible */
+    .resume-modal-content,
+    .project-modal-content {
+        position: static !important;
+        display: block !important;
+        max-width: 100% !important;
+        background: white !important;
+        border: none !important;
+        box-shadow: none !important;
+        padding: 1em;
+    }
+
+    /* Page breaks */
+    .container,
+    .gallery-item,
+    section {
+        page-break-inside: avoid;
+    }
+
+    /* Remove backdrop filters and glass effects */
+    * {
+        backdrop-filter: none !important;
+        -webkit-backdrop-filter: none !important;
+    }
+
+    /* Ensure proper spacing */
+    @page {
+        margin: 2cm;
+    }
+
+    /* Hide empty elements */
+    .gallery-empty,
+    .sr-only {
+        display: none !important;
+    }
+
+    /* Optimize logo */
+    .logo {
+        display: none !important;
+    }
+
+    /* Print-friendly font sizes */
+    body, p, li, span {
+        font-size: 12pt !important;
+    }
+
+    /* Ensure images don't break across pages */
+    img, .gallery-item, .main-image {
+        page-break-inside: avoid;
+        page-break-after: auto;
+    }
+}
+
+/* Service Worker Update Notification */
+.sw-update-notification {
+    position: fixed;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(30, 30, 30, 0.95);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 179, 71, 0.3);
+    border-radius: 16px;
+    padding: 1rem 1.5rem;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    z-index: 10000;
+    font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    animation: slideUp 0.3s ease-out;
+}
+
+@keyframes slideUp {
+    from {
+        transform: translateX(-50%) translateY(100px);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(-50%) translateY(0);
+        opacity: 1;
+    }
+}
+
+.sw-update-content {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    color: #e0e0e0;
+    font-size: 0.9rem;
+}
+
+.sw-update-content button {
+    padding: 0.5rem 1rem;
+    background: rgba(255, 179, 71, 0.2);
+    border: 1px solid rgba(255, 179, 71, 0.3);
+    border-radius: 8px;
+    color: #ffb347;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 0.85rem;
+}
+
+.sw-update-content button:hover {
+    background: rgba(255, 179, 71, 0.3);
+    border-color: rgba(255, 179, 71, 0.5);
+}
+
+.sw-update-content button:last-child {
+    background: rgba(100, 100, 100, 0.2);
+    border-color: rgba(100, 100, 100, 0.3);
+    color: #ccc;
+}
+
+.sw-update-content button:last-child:hover {
+    background: rgba(100, 100, 100, 0.3);
+}
+
+@media (max-width: 768px) {
+    .sw-update-notification {
+        left: 1rem;
+        right: 1rem;
+        transform: none;
+        bottom: 80px;
+    }
+    
+    .sw-update-content {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .sw-update-content button {
+        width: 100%;
+    }
+}
+
+/* Aurora Portal Circle Effect - Subtle, flowing aurora-like light */
+.portal-circle {
+    position: relative;
+    width: 60px;
+    height: 60px;
+    color: #ffffff;
+    text-decoration: none;
+    margin-left: 1rem;
+    align-self: center;
+    font-size: 1.8rem;
+    line-height: 1;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    z-index: 10;
+    cursor: pointer;
+    transition: transform 0.3s ease;
+}
+
+.portal-circle:hover {
+    transform: scale(1);
+}
+
+/* LAYER 1: Aurora-like ribbon - Soft, flowing colors */
+.portal-circle::before {
+    content: '';
+    position: absolute;
+    top: -6px; 
+    left: -6px;
+    right: -6px;
+    bottom: -6px;
+    z-index: -1;
+    transform: scaleX(1.45) scaleY(0.9);
+    
+    /* Aurora colors - base glow + vertical streaks for less perfect circle */
+    background: 
+        /* vertical light streaks (subtle) */
+        repeating-linear-gradient(
+            90deg,
+            transparent 0px,
+            transparent 6px,
+            rgba(180, 230, 255, 0.26) 6px,
+            rgba(180, 230, 255, 0.26) 8px,
+            transparent 7.5px,
+            transparent 11px
+        ),
+        /* irregular blobs for non‑uniform edges */
+        radial-gradient(ellipse 78% 58% at 25% 36%, rgba(0, 255, 150, 0.48) 0%, transparent 60%),
+        radial-gradient(ellipse 68% 78% at 76% 60%, rgba(100, 200, 255, 0.38) 0%, transparent 60%),
+        radial-gradient(ellipse 60% 90% at 50% 54%, rgba(150, 100, 255, 0.34) 0%, transparent 60%),
+        radial-gradient(ellipse 70% 60% at 15% 70%, rgba(0, 200, 200, 0.3) 0%, transparent 60%);
+    
+    /* Subtle wavy border-radius for aurora ribbon effect */
+    border-radius: 48% 52% 45% 55% / 55% 45% 52% 48%;
+    
+    /* Softer blur for aurora-like glow */
+    filter: blur(8px);
+    opacity: 0.7;
+    
+    /* Continuous aurora motion */
+    animation: aurora-flow 12s ease-in-out infinite, aurora-shift 14s linear infinite;
+}
+
+/* LAYER 2: Secondary aurora layer - Complementary flow */
+.portal-circle::after {
+    content: '';
+    position: absolute;
+    top: -5px; 
+    left: -5px;
+    right: -5px;
+    bottom: -5px;
+    z-index: -2;
+    transform: scaleX(1.35) scaleY(0.92);
+    
+    /* Complementary aurora colors + secondary streaks */
+    background: 
+        repeating-linear-gradient(
+            90deg,
+            transparent 0px,
+            transparent 8px,
+            rgba(210, 180, 255, 0.22) 8px,
+            rgba(210, 180, 255, 0.22) 10px,
+            transparent 9.5px,
+            transparent 13px
+        ),
+        radial-gradient(ellipse 68% 64% at 64% 35%, rgba(200, 150, 255, 0.34) 0%, transparent 60%),
+        radial-gradient(ellipse 60% 80% at 40% 68%, rgba(0, 180, 220, 0.28) 0%, transparent 60%),
+        radial-gradient(ellipse 74% 54% at 79% 50%, rgba(100, 255, 200, 0.25) 0%, transparent 60%);
+    
+    /* Different subtle wave pattern */
+    border-radius: 52% 48% 55% 45% / 48% 52% 45% 55%;
+    
+    filter: blur(9px);
+    opacity: 0.5;
+    
+    /* Continuous aurora motion (opposite phase) */
+    animation: aurora-flow 16s ease-in-out infinite reverse, aurora-shift 18s linear infinite reverse;
+}
+
+/* Slow, gentle aurora flow animation - like aurora ribbons */
+@keyframes aurora-flow {
+    0% {
+        border-radius: 48% 52% 45% 55% / 55% 45% 52% 48%;
+        transform: translate(0, 0) scale(1);
+        opacity: 0.7;
+    }
+    33% {
+        border-radius: 52% 48% 50% 50% / 50% 50% 48% 52%;
+        transform: translate(1px, -1.5px) scale(1.02);
+        opacity: 0.75;
+    }
+    66% {
+        border-radius: 45% 55% 52% 48% / 48% 52% 55% 45%;
+        transform: translate(-1px, 1px) scale(0.98);
+        opacity: 0.65;
+    }
+    100% {
+        border-radius: 48% 52% 45% 55% / 55% 45% 52% 48%;
+        transform: translate(0, 0) scale(1);
+        opacity: 0.7;
+    }
+}
+
+@keyframes aurora-shift {
+    0% {
+        background-position: 0 0, 0 0, 0 0, 0 0;
+    }
+    100% {
+        background-position: 60px 0, -40px 0, 30px 0, -30px 0;
+    }
+}
+
+/* ============================================
+   PAGE TRANSITIONS
+   ============================================ */
+
+/* Page transition base styles */
+.page-transition-ready {
+    transition: opacity 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+                transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Page exit animation (fade out and scale down) */
+.page-exit {
+    opacity: 0;
+    transform: scale(0.98);
+    pointer-events: none;
+}
+
+/* Page enter animation (fade in and scale up) */
+.page-enter {
+    animation: pageEnter 0.4s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+@keyframes pageEnter {
+    from {
+        opacity: 0;
+        transform: scale(1.02);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+/* Respect reduced motion preference */
+@media (prefers-reduced-motion: reduce) {
+    .page-transition-ready,
+    .page-exit,
+    .page-enter {
+        transition: none;
+        animation: none;
+    }
+}
+
+/* ============================================
+   MOBILE HAMBURGER MENU
+   ============================================ */
+
+/* Mobile menu toggle button (hamburger) */
+.mobile-menu-toggle {
+    display: none;
+    flex-direction: column;
+    justify-content: space-around;
+    width: 32px;
+    height: 32px;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    z-index: 10003;
+    position: relative;
+    transition: transform 0.3s ease;
+}
+
+.mobile-menu-toggle:focus-visible {
+    outline: 2px solid rgba(255, 255, 255, 0.5);
+    outline-offset: 2px;
+    border-radius: 4px;
+}
+
+/* Hamburger lines */
+.hamburger-line {
+    width: 100%;
+    height: 3px;
+    background-color: #e0e0e0;
+    border-radius: 2px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    transform-origin: center;
+}
+
+/* Active state (X shape) */
+.mobile-menu-toggle.active .hamburger-line:nth-child(1) {
+    transform: translateY(10px) rotate(45deg);
+}
+
+.mobile-menu-toggle.active .hamburger-line:nth-child(2) {
+    opacity: 0;
+    transform: scaleX(0);
+}
+
+.mobile-menu-toggle.active .hamburger-line:nth-child(3) {
+    transform: translateY(-10px) rotate(-45deg);
+}
+
+/* Mobile menu overlay */
+.mobile-menu-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.85);
+    backdrop-filter: blur(20px);
+    z-index: 10002;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+                visibility 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.mobile-menu-overlay[aria-hidden="false"] {
+    opacity: 1;
+    visibility: visible;
+}
+
+/* Mobile menu content */
+.mobile-menu-content {
+    background: rgba(30, 30, 30, 0.95);
+    backdrop-filter: blur(24px);
+    border-radius: 24px;
+    padding: 2rem 1.5rem;
+    min-width: 280px;
+    max-width: 90%;
+    max-height: 80vh;
+    overflow-y: auto;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+    transform: scale(0.9) translateY(20px);
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.mobile-menu-overlay[aria-hidden="false"] .mobile-menu-content {
+    transform: scale(1) translateY(0);
+}
+
+/* Mobile menu links */
+.mobile-menu-content a {
+    display: block;
+    padding: 1rem 1.25rem;
+    color: #e0e0e0;
+    text-decoration: none;
+    font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    font-size: 1rem;
+    font-weight: 600;
+    border-radius: 12px;
+    margin: 0.5rem 0;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    text-align: center;
+    border: 1px solid transparent;
+}
+
+.mobile-menu-content a:hover,
+.mobile-menu-content a:focus-visible {
+    background: rgba(60, 60, 60, 0.8);
+    color: #ffffff;
+    transform: translateX(4px);
+    border-color: rgba(255, 255, 255, 0.1);
+    outline: none;
+}
+
+/* Hide current page link in mobile menu */
+.mobile-menu-content a[aria-current="page"] {
+    display: none;
+}
+
+/* Prevent body scroll when menu is open */
+body.mobile-menu-open {
+    overflow: hidden;
+}
+
+/* Mobile menu - DISABLED (focusing on desktop/PC development) */
+@media (max-width: 768px) {
+    .mobile-menu-toggle {
+        display: none; /* Disabled for now */
+    }
+
+    .navbar .dropdown {
+        display: block; /* Keep dropdown visible on all screen sizes */
+    }
+}
+
+/* Smaller hamburger on very small screens */
+@media (max-width: 480px) {
+    .mobile-menu-toggle {
+        width: 28px;
+        height: 28px;
+    }
+
+    .hamburger-line {
+        height: 2.5px;
+    }
+
+    .mobile-menu-toggle.active .hamburger-line:nth-child(1) {
+        transform: translateY(9px) rotate(45deg);
+    }
+
+    .mobile-menu-toggle.active .hamburger-line:nth-child(3) {
+        transform: translateY(-9px) rotate(-45deg);
+    }
+
+    .mobile-menu-content {
+        padding: 1.5rem 1rem;
+        min-width: 260px;
+    }
+
+    .mobile-menu-content a {
+        padding: 0.875rem 1rem;
+        font-size: 0.95rem;
+    }
+}
+
+/* Respect reduced motion */
+@media (prefers-reduced-motion: reduce) {
+    .mobile-menu-toggle,
+    .mobile-menu-overlay,
+    .mobile-menu-content,
+    .mobile-menu-content a {
+        transition: none;
+    }
+
+    .mobile-menu-overlay[aria-hidden="false"] .mobile-menu-content {
+        transform: none;
+    }
+}

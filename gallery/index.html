@@ -24,6 +24,40 @@
     <link rel="stylesheet" href="../assets/styles/galaxy.css">
     <link rel="stylesheet" href="../assets/styles/icons.css">
     <link rel="stylesheet" href="../assets/fonts/fonts.css">
+    <link rel="stylesheet" href="../Menu-new/style.css">
+    <style>
+    /* Smaller navbar just for gallery page */
+    body nav.navbar {
+        max-width: 300px;
+        width: fit-content;
+        padding: 0.5rem 0.9rem;
+        margin: 1rem auto 1rem;
+        transition: max-width 0.2s ease, width 0.2s ease;
+    }
+    /* Increase size when expanded (options shown) */
+    body nav.navbar.navbar-expanded {
+        max-width: 380px;
+        width: fit-content;
+    }
+    body .navbar-default { gap: 0.6rem; }
+    body .dropbtn {
+        padding: 0.42rem 0.85rem;
+        font-size: 0.82rem;
+        border-radius: 16px;
+    }
+    body .social-icons { gap: 0.4rem; }
+    body .social-icons .icon {
+        width: 1.3rem;
+        height: 1.3rem;
+    }
+    body .navbar-expanded-content a {
+        font-size: 0.78rem;
+        padding: 0.32rem 0.38rem;
+    }
+    body .navbar-expanded-content .dot {
+        font-size: 0.78rem;
+    }
+    </style>
     <meta name="description" content="Karthik Prasad M's digital museum of moments – a creative portfolio and artistic playground for exploring time, memory, and storytelling through web, images, and videos.">
     <meta name="keywords" content="Karthik Prasad, Portfolio, Web Developer, Creative, Gallery, Digital Museum, Storytelling, Images, Videos, Moments, Memory, Art, Tech, Frontend, JavaScript, HTML, CSS">
     <meta name="author" content="Karthik Prasad M">
@@ -144,40 +178,40 @@
 <body>
 
     <div class="stars"></div>
-    <!-- Unified Navbar -->
+    <!-- Menu-new Navbar -->
     <nav class="navbar" role="navigation" aria-label="Main navigation">
-        <!-- Menu Button (Left) -->
+      <div class="navbar-content">
+        <div class="navbar-default">
         <div class="dropdown">
             <button class="dropbtn" aria-label="Open menu" tabindex="0">Menu</button>
-            <div class="dropdown-content" role="menu">
-                <a href="../know-me/about.html" role="menuitem">About</a>
-                <a href="../image-upload/upload.html" role="menuitem">Upload</a>
-                <a href="../spotify-visualiser/index.html" role="menuitem">Visualizer</a>
-                <a href="/repo" role="menuitem">Repository</a>
-                <a href="./index.html" role="menuitem" aria-current="page">Open gallery</a>
             </div>
-        </div>
-        <!-- Social Icons (Left-Center) -->
         <div class="social-icons" aria-label="Social links">
-            <a href="https://www.instagram.com/kkarthhikk" target="_blank" aria-label="Instagram" data-tooltip="Instagram">
+            <a href="https://www.instagram.com/kkarthhikk" target="_blank" aria-label="Instagram">
                 <span class="icon icon-instagram" aria-hidden="true"></span>
             </a>
-            <a href="https://www.linkedin.com/in/karthik-prasad-m-7673b5356/" target="_blank" aria-label="LinkedIn" data-tooltip="LinkedIn">
+            <a href="https://www.linkedin.com/in/karthik-prasad-m-7673b5356/" target="_blank" aria-label="LinkedIn">
                 <span class="icon icon-linkedin" aria-hidden="true"></span>
             </a>
-            <a href="https://pin.it/70AOzYsfW" target="_blank" aria-label="Pinterest" data-tooltip="Pinterest">
+            <a href="https://pin.it/70AOzYsfW" target="_blank" aria-label="Pinterest">
                 <span class="icon icon-pinterest" aria-hidden="true"></span>
             </a>
-            <a href="https://open.spotify.com/user/31g54rthdkjwc7tk2yzwlkptbbqi" target="_blank" aria-label="Spotify" data-tooltip="Spotify">
+            <a href="https://open.spotify.com/user/31g54rthdkjwc7tk2yzwlkptbbqi" target="_blank" aria-label="Spotify">
                 <span class="icon icon-spotify" aria-hidden="true"></span>
             </a>
-            <a href="https://github.com/Karthikprasadm" target="_blank" aria-label="GitHub" data-tooltip="GitHub">
+            <a href="https://github.com/Karthikprasadm" target="_blank" aria-label="GitHub">
                 <span class="icon icon-github" aria-hidden="true"></span>
             </a>
+          </div>
         </div>
-        <!-- Moon Button (Right) -->
-        <div class="navbar-center">
-            <button id="slideshowToggle" class="moon-button" aria-label="Toggle slideshow mode" data-tooltip="Slideshow">🌙</button>
+        <div class="navbar-expanded-content">
+          <a href="../know-me/about.html">About</a>
+          <span class="dot">·</span>
+          <a href="../image-upload/upload.html">Upload</a>
+          <span class="dot">·</span>
+          <a href="../spotify-visualiser/index.html">Visualizer</a>
+          <span class="dot">·</span>
+          <a href="/repo">Repository</a>
+        </div>
         </div>
     </nav>
 
@@ -237,8 +271,7 @@
     <script src="../assets/scripts/global-error-handler.js"></script>
     <script src="../assets/scripts/script.js" defer></script>
     <script src="../assets/scripts/page-transitions.js" defer></script>
-    <script src="../assets/scripts/mobile-menu.js" defer></script>
-    <script src="../assets/scripts/navbar-expand.js" defer></script>
+    <script src="../Menu-new/script.js" defer></script>
     <script>
     // Lazy load video source
     document.addEventListener('DOMContentLoaded', function() {

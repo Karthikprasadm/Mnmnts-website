@@ -11,6 +11,7 @@ A minimalist, interactive web experience designed as a digital museum of persona
 - **Direct uploads** to ImageKit with secure backend signature
 - **Upload progress bar** and feedback
 - **Responsive, modern UI** with dark theme and glassmorphism design
+- **Unified Navigation** - Consistent navbar component (Menu-new) across all pages
 - **Social links** integration with unified icon system
 - **Resume viewer** with PDF.js integration
 
@@ -67,6 +68,11 @@ A minimalist, interactive web experience designed as a digital museum of persona
 │   ├── pdfjs/                    # PDF.js library
 │   └── resume/                   # Resume PDF
 ├── ElasticGridScroll/            # Extended gallery view (linked from gallery)
+├── Menu-new/                      # Unified navbar component (HTML/CSS/JS)
+│   ├── index.html                 # Navbar demo page
+│   ├── style.css                  # Navbar styles
+│   ├── script.js                  # Navbar hover logic
+│   └── icons/                     # Social media icons
 ├── gallery/                       # Main gallery page (homepage)
 ├── image-upload/                  # Upload page
 ├── know-me/                       # About page

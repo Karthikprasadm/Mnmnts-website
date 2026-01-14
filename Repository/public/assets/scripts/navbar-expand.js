@@ -41,24 +41,25 @@
         // Mark as hover-based
         dropdown.classList.add('hover-based');
 
-        // On main page, initialize navbar to expanded width
+        // On main pages, lock navbar width to expanded width immediately
         if (!document.body.classList.contains('about-page') && !document.body.classList.contains('upload-page')) {
-            // Temporarily expand to measure width
+            requestAnimationFrame(() => {
+                // Temporarily expand to measure full width
             navbar.classList.add('navbar-expanded');
             dropbtn.setAttribute('aria-expanded', 'true');
             
-            // Measure expanded width
             requestAnimationFrame(() => {
                 const expandedWidth = navbar.offsetWidth;
                 if (expandedWidth > 0) {
                     navbar.style.setProperty('width', expandedWidth + 'px', 'important');
                     navbar.style.setProperty('min-width', expandedWidth + 'px', 'important');
+                        navbar.style.setProperty('max-width', expandedWidth + 'px', 'important');
                     navbar.dataset.widthSet = 'true';
                 }
-                
-                // Collapse but keep the width
+                    // Collapse but keep width locked
                 navbar.classList.remove('navbar-expanded');
                 dropbtn.setAttribute('aria-expanded', 'false');
+                });
             });
         }
 
@@ -71,11 +72,6 @@
             navbar.style.setProperty('height', currentHeight + 'px', 'important');
             navbar.style.setProperty('min-height', currentHeight + 'px', 'important');
             navbar.style.setProperty('max-height', currentHeight + 'px', 'important');
-            
-            // Allow width to expand - remove width constraints
-            navbar.style.removeProperty('width');
-            navbar.style.removeProperty('min-width');
-            navbar.style.removeProperty('max-width');
             
             // Reset animation by removing and re-adding class
             navbar.classList.remove('navbar-expanded');
@@ -99,6 +95,7 @@
                         if (expandedWidth > 0 && !navbar.dataset.widthSet) {
                             navbar.style.setProperty('width', expandedWidth + 'px', 'important');
                             navbar.style.setProperty('min-width', expandedWidth + 'px', 'important');
+                        navbar.style.setProperty('max-width', expandedWidth + 'px', 'important');
                             navbar.dataset.widthSet = 'true';
                         }
                     }, 100);

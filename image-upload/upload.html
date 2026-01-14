@@ -18,6 +18,7 @@
     <link rel="preload" href="../assets/scripts/global-error-handler.js" as="script">
     <link rel="stylesheet" href="../assets/styles/galaxy.css">
     <link rel="stylesheet" href="../assets/fonts/fonts.css">
+    <link rel="stylesheet" href="../Menu-new/style.css">
     <link rel="stylesheet" href="upload.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <meta name="description" content="Upload your images and videos to Karthik Prasad M's digital museum of moments. Secure, creative, and easy media uploads for your portfolio.">
@@ -85,43 +86,71 @@
     <link rel="shortcut icon" href="../favicon/favicon.ico" type="image/x-icon">
     <link rel="manifest" href="../manifest.json">
     <meta name="theme-color" content="#ffb347">
-    <link rel="stylesheet" href="../assets/styles/galaxy.css">
-    <link rel="stylesheet" href="../assets/styles/icons.css">
-    <link rel="stylesheet" href="upload.css">
+    <style>
+    /* Smaller navbar just for upload page */
+    body.upload-page nav.navbar {
+        max-width: 300px;
+        width: fit-content;
+        padding: 0.5rem 0.9rem;
+        margin: 1rem auto 1rem;
+    }
+    body.upload-page .navbar-default { gap: 0.6rem; }
+    body.upload-page .dropbtn {
+        padding: 0.42rem 0.85rem;
+        font-size: 0.82rem;
+        border-radius: 16px;
+    }
+    body.upload-page .social-icons { gap: 0.4rem; }
+    body.upload-page .social-icons .icon {
+        width: 1.3rem;
+        height: 1.3rem;
+    }
+    body.upload-page .navbar-expanded-content a {
+        font-size: 0.78rem;
+        padding: 0.32rem 0.38rem;
+    }
+    body.upload-page .navbar-expanded-content .dot {
+        font-size: 0.78rem;
+    }
+    </style>
 </head>
 <body class="upload-page">
     <div class="stars"></div>
     <div class="toast-container" id="toastContainer" aria-live="polite"></div>
-    <!-- Unified Navbar -->
+    <!-- Menu-new Navbar -->
     <nav class="navbar" role="navigation" aria-label="Main navigation">
-        <!-- Menu Button (Left) -->
+      <div class="navbar-content">
+        <div class="navbar-default">
         <div class="dropdown">
             <button class="dropbtn" aria-label="Open menu" tabindex="0">Menu</button>
-            <div class="dropdown-content" role="menu">
-                <a href="../gallery/index.html" role="menuitem">Open gallery</a>
-                <a href="../know-me/about.html" role="menuitem">About</a>
-                <a href="../spotify-visualiser/index.html" role="menuitem">Visualizer</a>
-                <a href="/repo" role="menuitem">Repository</a>
-                <a href="./upload.html" role="menuitem" aria-current="page">Upload</a>
             </div>
-        </div>
-        <!-- Social Icons (Left-Center) -->
         <div class="social-icons" aria-label="Social links">
-            <a href="https://www.instagram.com/kkarthhikk" target="_blank" aria-label="Instagram" data-tooltip="Instagram">
+            <a href="https://www.instagram.com/kkarthhikk" target="_blank" aria-label="Instagram">
                 <span class="icon icon-instagram" aria-hidden="true"></span>
             </a>
-            <a href="https://www.linkedin.com/in/karthik-prasad-m-7673b5356/" target="_blank" aria-label="LinkedIn" data-tooltip="LinkedIn">
+            <a href="https://www.linkedin.com/in/karthik-prasad-m-7673b5356/" target="_blank" aria-label="LinkedIn">
                 <span class="icon icon-linkedin" aria-hidden="true"></span>
             </a>
-            <a href="https://pin.it/70AOzYsfW" target="_blank" aria-label="Pinterest" data-tooltip="Pinterest">
+            <a href="https://pin.it/70AOzYsfW" target="_blank" aria-label="Pinterest">
                 <span class="icon icon-pinterest" aria-hidden="true"></span>
             </a>
-            <a href="https://open.spotify.com/user/31g54rthdkjwc7tk2yzwlkptbbqi" target="_blank" aria-label="Spotify" data-tooltip="Spotify">
+            <a href="https://open.spotify.com/user/31g54rthdkjwc7tk2yzwlkptbbqi" target="_blank" aria-label="Spotify">
                 <span class="icon icon-spotify" aria-hidden="true"></span>
             </a>
-            <a href="https://github.com/Karthikprasadm" target="_blank" aria-label="GitHub" data-tooltip="GitHub">
+            <a href="https://github.com/Karthikprasadm" target="_blank" aria-label="GitHub">
                 <span class="icon icon-github" aria-hidden="true"></span>
             </a>
+          </div>
+        </div>
+        <div class="navbar-expanded-content">
+          <a href="../gallery/index.html">Gallery</a>
+          <span class="dot">·</span>
+          <a href="../know-me/about.html">About</a>
+          <span class="dot">·</span>
+          <a href="../spotify-visualiser/index.html">Visualizer</a>
+          <span class="dot">·</span>
+          <a href="/repo">Repository</a>
+        </div>
         </div>
     </nav>
 
@@ -706,29 +735,7 @@
         });
     </script>
 
-    <script>
-        // Dropdown menu toggle
-        const dropdownBtn = document.querySelector('.dropbtn');
-        const dropdownContent = document.querySelector('.dropdown-content');
-        
-        // Toggle dropdown when clicking the button
-        dropdownBtn.addEventListener('click', function(e) {
-            e.stopPropagation();
-            dropdownContent.classList.toggle('show-dropdown');
-        });
-        
-        // Close dropdown when clicking anywhere else on the page
-        document.addEventListener('click', function(e) {
-            if (!e.target.matches('.dropbtn') && !dropdownContent.contains(e.target)) {
-                dropdownContent.classList.remove('show-dropdown');
-            }
-        });
-        
-        // Prevent dropdown from closing when clicking inside it
-        dropdownContent.addEventListener('click', function(e) {
-            e.stopPropagation();
-        });
-    </script>
+    <script src="../Menu-new/script.js" defer></script>
 
     <style>
     .resume-modal-overlay {

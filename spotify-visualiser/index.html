@@ -11,39 +11,66 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="description" content="Interactive Spotify visualizer with music player" />
     <meta name="theme-color" content="#0a0a0a" />
+    <link rel="stylesheet" href="../Menu-new/style.css" />
+    <style>
+      /* Ensure navbar stays on top of 3D canvas with proper z-index - matches gallery styling */
+      body nav.navbar {
+        position: fixed !important;
+        top: 0.5rem !important;
+        left: 50% !important;
+        transform: translateX(-50%) !important;
+        z-index: 5000 !important;
+        pointer-events: auto !important;
+      }
+      
+      /* Ensure navbar elements are clickable */
+      nav.navbar * {
+        pointer-events: auto !important;
+      }
+      
+      /* Add padding to body to prevent content overlap */
+      body {
+        padding-top: 5rem;
+      }
+    </style>
     <title>Spotify Visualiser | mnmnts</title>
   </head>
   <body>
     <div class="stars"></div>
-    <!-- Unified Navbar -->
+    <!-- Menu-new Navbar -->
     <nav class="navbar" role="navigation" aria-label="Main navigation">
-      <!-- Menu Button (Left) -->
-      <div class="dropdown">
-        <button class="dropbtn" aria-label="Open menu" tabindex="0">Menu</button>
-        <div class="dropdown-content" role="menu">
-          <a href="../../gallery/index.html" role="menuitem">Open gallery</a>
-          <a href="../../know-me/about.html" role="menuitem">About</a>
-          <a href="../../image-upload/upload.html" role="menuitem">Upload</a>
-          <a href="/repo" role="menuitem">Repository</a>
+      <div class="navbar-content">
+        <div class="navbar-default">
+          <div class="dropdown">
+            <button class="dropbtn" aria-label="Open menu" tabindex="0">Menu</button>
+          </div>
+          <div class="social-icons" aria-label="Social links">
+            <a href="https://www.instagram.com/kkarthhikk" target="_blank" aria-label="Instagram">
+              <span class="icon icon-instagram" aria-hidden="true"></span>
+            </a>
+            <a href="https://www.linkedin.com/in/karthik-prasad-m-7673b5356/" target="_blank" aria-label="LinkedIn">
+              <span class="icon icon-linkedin" aria-hidden="true"></span>
+            </a>
+            <a href="https://pin.it/70AOzYsfW" target="_blank" aria-label="Pinterest">
+              <span class="icon icon-pinterest" aria-hidden="true"></span>
+            </a>
+            <a href="https://open.spotify.com/user/31g54rthdkjwc7tk2yzwlkptbbqi" target="_blank" aria-label="Spotify">
+              <span class="icon icon-spotify" aria-hidden="true"></span>
+            </a>
+            <a href="https://github.com/Karthikprasadm" target="_blank" aria-label="GitHub">
+              <span class="icon icon-github" aria-hidden="true"></span>
+            </a>
+          </div>
         </div>
-      </div>
-      <!-- Social Icons (Left-Center) -->
-      <div class="social-icons" aria-label="Social links">
-        <a href="https://www.instagram.com/kkarthhikk" target="_blank" rel="noopener noreferrer" aria-label="Instagram" data-tooltip="Instagram">
-          <span class="icon icon-instagram" aria-hidden="true"></span>
-        </a>
-        <a href="https://www.linkedin.com/in/karthik-prasad-m-7673b5356/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" data-tooltip="LinkedIn">
-          <span class="icon icon-linkedin" aria-hidden="true"></span>
-        </a>
-        <a href="https://pin.it/70AOzYsfW" target="_blank" rel="noopener noreferrer" aria-label="Pinterest" data-tooltip="Pinterest">
-          <span class="icon icon-pinterest" aria-hidden="true"></span>
-        </a>
-        <a href="https://open.spotify.com/user/31g54rthdkjwc7tk2yzwlkptbbqi" target="_blank" rel="noopener noreferrer" aria-label="Spotify" data-tooltip="Spotify">
-          <span class="icon icon-spotify" aria-hidden="true"></span>
-        </a>
-        <a href="https://github.com/Karthikprasadm" target="_blank" rel="noopener noreferrer" aria-label="GitHub" data-tooltip="GitHub">
-          <span class="icon icon-github" aria-hidden="true"></span>
-        </a>
+        <div class="navbar-expanded-content">
+          <a href="../gallery/index.html">Gallery</a>
+          <span class="dot">·</span>
+          <a href="../know-me/about.html">About</a>
+          <span class="dot">·</span>
+          <a href="../image-upload/upload.html">Upload</a>
+          <span class="dot">·</span>
+          <a href="/repo">Repository</a>
+        </div>
       </div>
     </nav>
     <div id="app" class="h-dvh"></div>
@@ -54,10 +81,9 @@
     <script src="https://sdk.scdn.co/spotify-player.js"></script>
     <script type="module" src="/src/main.ts"></script>
     <script type="module" src="/src/MusicPlayerApp.tsx"></script>
-    <!-- Page transitions and mobile menu for navbar -->
+    <!-- Page transitions and navbar script -->
     <link rel="stylesheet" href="../../assets/styles/galaxy.css">
     <script src="../../assets/scripts/page-transitions.js" defer></script>
-    <script src="../../assets/scripts/mobile-menu.js" defer></script>
-    <script src="../../assets/scripts/navbar-expand.js" defer></script>
+    <script src="../Menu-new/script.js" defer></script>
   </body>
 </html>

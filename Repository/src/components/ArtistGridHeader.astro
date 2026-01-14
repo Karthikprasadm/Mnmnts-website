@@ -31,6 +31,15 @@ const { artistsTotal } = Astro.props;
 <Search />
 
 <style>
+  .title-header--initial {
+    padding-bottom: 0;
+    margin-bottom: 0;
+  }
+  
+  .title-header--initial + hr {
+    margin-top: 0;
+  }
+  
   div {
     display: flex;
     list-style: none;

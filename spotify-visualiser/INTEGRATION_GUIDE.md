@@ -26,10 +26,11 @@ The Spotify Visualizer has been added to the navigation menu on all pages:
 ### Menu Structure:
 ```
 Menu Dropdown:
-├── Open gallery
-├── Know me
-├── Open upload
-└── Spotify Visualizer ← NEW
+├── Gallery
+├── About
+├── Upload
+├── Visualizer
+└── Repository
 ```
 
 ## 🗺️ Sitemap
@@ -119,10 +120,12 @@ The `vite.config.js` includes:
 - **Build Optimization**: Minification, tree-shaking
 
 ### Navbar Integration
-The visualizer uses the same navbar component as other pages:
-- Consistent styling (glassmorphism)
-- Same social icons
-- Unified navigation menu
+The visualizer uses the Menu-new navbar component (same as all other pages):
+- Consistent styling (glassmorphism, fixed size)
+- Same social icons (Instagram, LinkedIn, Pinterest, Spotify, GitHub)
+- Unified navigation menu with hover expansion
+- Links: Gallery, About, Upload, Repository
+- Z-index: 1000 (matches gallery/home page)
 
 ## 🚀 Features
 

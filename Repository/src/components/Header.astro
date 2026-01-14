@@ -2,65 +2,121 @@
 ---
 
 <nav class="navbar" role="navigation" aria-label="Main navigation">
-  <!-- Menu Button (Left) -->
+  <div class="navbar-content">
+    <!-- Default state: Menu button + icons -->
+    <div class="navbar-default">
   <div class="dropdown">
     <button class="dropbtn" aria-label="Open menu" tabindex="0">Menu</button>
-    <div class="dropdown-content" role="menu">
-      <a href="/gallery/index.html" role="menuitem">Back to gallery</a>
-      <a href="/know-me/about.html" role="menuitem">About</a>
-      <a href="/image-upload/upload.html" role="menuitem">Upload</a>
-      <a href="/spotify-visualiser/index.html" role="menuitem">Visualizer</a>
-    </div>
   </div>
-  <!-- Social Icons (Left-Center) -->
   <div class="social-icons" aria-label="Social links">
-    <a href="https://www.instagram.com/kkarthhikk" target="_blank" aria-label="Instagram" data-tooltip="Instagram">
+        <a href="https://www.instagram.com/kkarthhikk" target="_blank" aria-label="Instagram">
       <span class="icon icon-instagram" aria-hidden="true"></span>
     </a>
-    <a href="https://www.linkedin.com/in/karthik-prasad-m-7673b5356/" target="_blank" aria-label="LinkedIn" data-tooltip="LinkedIn">
+        <a href="https://www.linkedin.com/in/karthik-prasad-m-7673b5356/" target="_blank" aria-label="LinkedIn">
       <span class="icon icon-linkedin" aria-hidden="true"></span>
     </a>
-    <a href="https://pin.it/70AOzYsfW" target="_blank" aria-label="Pinterest" data-tooltip="Pinterest">
+        <a href="https://pin.it/70AOzYsfW" target="_blank" aria-label="Pinterest">
       <span class="icon icon-pinterest" aria-hidden="true"></span>
     </a>
-    <a href="https://open.spotify.com/user/31g54rthdkjwc7tk2yzwlkptbbqi" target="_blank" aria-label="Spotify" data-tooltip="Spotify">
+        <a href="https://open.spotify.com/user/31g54rthdkjwc7tk2yzwlkptbbqi" target="_blank" aria-label="Spotify">
       <span class="icon icon-spotify" aria-hidden="true"></span>
     </a>
-    <a href="https://github.com/Karthikprasadm" target="_blank" aria-label="GitHub" data-tooltip="GitHub">
+        <a href="https://github.com/Karthikprasadm" target="_blank" aria-label="GitHub">
       <span class="icon icon-github" aria-hidden="true"></span>
     </a>
+      </div>
+    </div>
+    
+    <!-- Expanded state: Menu links (stacked on top, hidden by default) -->
+    <div class="navbar-expanded-content">
+      <a href="/gallery/index.html">Gallery</a>
+      <span class="dot">·</span>
+      <a href="/know-me/about.html">About</a>
+      <span class="dot">·</span>
+      <a href="/image-upload/upload.html">Upload</a>
+      <span class="dot">·</span>
+      <a href="/spotify-visualiser/index.html">Visualizer</a>
+    </div>
   </div>
 </nav>
 
 <style>
-  /* Unified Navbar - Use same styling as main pages */
-  .navbar {
-    position: relative;
+  /* Fixed Navbar */
+  nav.navbar {
+    position: fixed;
+    top: 1rem;
+    left: 50%;
+    transform: translateX(-50%);
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    gap: 0.9rem;
+    justify-content: center;
     padding: 0.65rem 1.15rem;
     background: rgba(30, 30, 30, 0.8);
     backdrop-filter: blur(18px);
-    position: relative;
-    width: fit-content;
-    max-width: 450px;
-    margin: 1.5rem auto;
     border-radius: 20px;
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.16);
     border: 1px solid rgba(255, 255, 255, 0.06);
     font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
     z-index: 1000;
-    height: fit-content;
-    min-height: fit-content;
-    max-height: fit-content;
-    line-height: 1;
-    /* Smooth width transition */
-    transition: width 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94), max-width 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-    /* Prevent layout shifts */
-    contain: layout style;
-    will-change: width;
+  }
+
+  /* Content wrapper - uses grid to stack both states */
+  .navbar-content {
+    display: grid;
+    grid-template-areas: "content";
+  }
+
+  /* Both states occupy the same grid area */
+  .navbar-default,
+  .navbar-expanded-content {
+    grid-area: content;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: opacity 0.15s ease;
+  }
+
+  /* Default state */
+  .navbar-default {
+    gap: 0.9rem;
+    opacity: 1;
+    visibility: visible;
+  }
+
+  /* Expanded content - hidden by default */
+  .navbar-expanded-content {
+    gap: 0.4rem;
+    opacity: 0;
+    visibility: hidden;
+  }
+
+  .navbar-expanded-content a {
+    color: rgba(255, 255, 255, 0.85);
+    text-decoration: none;
+    font-size: 0.85rem;
+    font-weight: 700;
+    padding: 0.4rem 0.5rem;
+    transition: color 0.15s ease;
+  }
+
+  .navbar-expanded-content a:hover {
+    color: #fff;
+  }
+
+  .navbar-expanded-content .dot {
+    color: rgba(255, 255, 255, 0.3);
+    font-size: 0.85rem;
+  }
+
+  /* When expanded: hide default, show expanded content */
+  nav.navbar.navbar-expanded .navbar-default {
+    opacity: 0;
+    visibility: hidden;
+  }
+
+  nav.navbar.navbar-expanded .navbar-expanded-content {
+    opacity: 1;
+    visibility: visible;
   }
 
   /* Social Icons */
@@ -68,7 +124,6 @@
     display: flex;
     gap: 0.6rem;
     align-items: center;
-    flex: 0 0 auto;
   }
 
   .social-icons a {
@@ -76,50 +131,23 @@
     align-items: center;
     justify-content: center;
     padding: 0.25rem;
-    transition: opacity 0.18s cubic-bezier(0.4, 0, 0.2, 1);
-    text-indent: -9999px;
-    overflow: hidden;
-    font-size: 0;
-    line-height: 0;
+    transition: opacity 0.18s ease;
   }
 
   .social-icons a .icon {
     width: 1.65rem;
     height: 1.65rem;
     filter: grayscale(40%) invert(80%);
-    transition: opacity 0.18s cubic-bezier(0.4, 0, 0.2, 1), filter 0.18s cubic-bezier(0.4, 0, 0.2, 1);
-    display: block;
-    text-indent: 0;
+    transition: filter 0.18s ease;
   }
 
-  .social-icons a:hover,
-  .social-icons a:focus-visible {
-    opacity: 0.72;
-    outline: none;
-  }
-
-  .social-icons a:hover .icon,
-  .social-icons a:focus-visible .icon {
+  .social-icons a:hover .icon {
     filter: grayscale(0%) invert(100%);
   }
 
-  /* Logo */
-  .logo {
-    font-size: 1.3rem;
-    font-weight: 700;
-    color: #fff;
-    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
-    letter-spacing: 0.05em;
-    flex: 1;
-    text-align: center;
-    margin: 0;
-  }
-
-  /* Dropdown */
+  /* Dropdown / Menu button */
   .dropdown {
     position: relative;
-    display: inline-block;
-    z-index: 10001;
   }
 
   .dropbtn {
@@ -131,124 +159,15 @@
     font-weight: 600;
     border: 1px solid rgba(255, 255, 255, 0.06);
     cursor: pointer;
-    transition: background-color 0.18s cubic-bezier(0.4, 0, 0.2, 1), color 0.18s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.18s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: all 0.18s ease;
     border-radius: 18px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-    font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-    letter-spacing: 0.02em;
-    height: fit-content;
-    min-height: 38px;
+    font-family: inherit;
   }
 
-  .dropbtn:hover,
-  .dropbtn:focus-visible {
+  .dropbtn:hover {
     background-color: rgba(50, 50, 50, 0.95);
-    color: #ffffff;
-    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.26), inset 0 0 0 1px rgba(255, 255, 255, 0.12);
-    outline: none;
-  }
-
-  /* Dropdown content - base styles, will be overridden by galaxy.css when navbar-expanded */
-  .dropdown-content {
-    position: absolute;
-    left: 0;
-    top: calc(100% + 2px);
-    background: rgba(30, 30, 30, 0.86);
-    backdrop-filter: blur(18px);
-    min-width: 126px;
-    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.24), 0 3px 10px rgba(0, 0, 0, 0.18);
-    z-index: 10002;
-    border-radius: 18px;
-    overflow: hidden;
-    border: 1px solid rgba(255, 255, 255, 0.07);
-    margin-top: 0;
-    padding: 0.2rem 0;
-    opacity: 0;
-    visibility: hidden;
-    transform: translateY(6px) scale(0.98);
-    pointer-events: none;
-    transition: opacity 0.18s cubic-bezier(0.4, 0, 0.2, 1), transform 0.18s cubic-bezier(0.4, 0, 0.2, 1), visibility 0.18s cubic-bezier(0.4, 0, 0.2, 1);
-  }
-
-  /* Hide default dropdown when navbar is expanded - galaxy.css will handle it */
-  .navbar-expanded .dropdown-content {
-    position: static !important;
-    display: flex !important;
-    flex-direction: row !important;
-    opacity: 1 !important;
-    visibility: visible !important;
-    pointer-events: auto !important;
-    transform: none !important;
-    background: transparent !important;
-    backdrop-filter: none !important;
-    box-shadow: none !important;
-    border: none !important;
-    border-radius: 0 !important;
-    padding: 0 !important;
-    margin: 0 !important;
-  }
-
-  .dropdown-content a {
-    color: #e0e0e0;
-    padding: 0.42rem 0.85rem;
-    text-decoration: none;
-    display: flex;
-    align-items: center;
-    gap: 0.35rem;
-    font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-    font-size: 0.84rem;
-    font-weight: 600;
-    transition: background-color 0.18s cubic-bezier(0.4, 0, 0.2, 1), color 0.18s cubic-bezier(0.4, 0, 0.2, 1);
-    letter-spacing: 0.01em;
-    margin: 0.08rem 0.3rem;
-    border-radius: 10px;
-    border: 1px solid transparent;
-    min-height: 40px;
-  }
-
-  .dropdown-content a.current {
-    background-color: rgba(60, 60, 60, 0.6);
-    color: #ffffff;
-  }
-
-  .dropdown-content a:hover,
-  .dropdown-content a:focus-visible {
-    background-color: rgba(60, 60, 60, 0.6);
-    color: #ffffff;
-    outline: none;
-    opacity: 1;
-    border-color: transparent;
-  }
-
-  /* Disable default dropdown hover - navbar-expand.js handles it */
-  .dropdown.hover-based:hover .dropdown-content,
-  .dropdown.hover-based:focus-within .dropdown-content,
-  .navbar:not(.navbar-expanded) .dropdown.hover-based:hover .dropdown-content,
-  .navbar:not(.navbar-expanded) .dropdown.hover-based:focus-within .dropdown-content {
-    opacity: 0 !important;
-    visibility: hidden !important;
-    pointer-events: none !important;
-    display: none !important;
-  }
-
-  /* Ensure galaxy.css navbar-expanded styles work */
-  .navbar-expanded .dropbtn {
-    display: none !important;
-  }
-
-  .navbar-expanded .social-icons {
-    display: none !important;
-  }
-
-  .dropdown::after {
-    content: "";
-    position: absolute;
-    top: 100%;
-    left: 0;
-    width: 100%;
-    height: 10px;
-    background: transparent;
-    pointer-events: auto;
+    color: #fff;
   }
 
   /* Icon styles */
@@ -261,125 +180,51 @@
     background-size: contain;
   }
 
-  .icon-instagram {
-    background-image: url('/repo/images/icons/instagram.png');
-  }
-
-  .icon-linkedin {
-    background-image: url('/repo/images/icons/linkedin.png');
-  }
-
-  .icon-pinterest {
-    background-image: url('/repo/images/icons/pinterest.png');
-  }
-
-  .icon-spotify {
-    background-image: url('/repo/images/icons/spotify.png');
-  }
-
-  .icon-github {
-    background-image: url('/repo/images/icons/github.png');
-  }
-
-  /* Custom Tooltips - Only show on hover */
-  [data-tooltip] {
-    position: relative;
-  }
-
-  .custom-tooltip {
-    position: absolute;
-    bottom: calc(100% + 8px);
-    left: 50%;
-    transform: translateX(-50%) translateY(4px);
-    padding: 0.5rem 0.75rem;
-    background: rgba(30, 30, 30, 0.85);
-    backdrop-filter: blur(18px);
-    border: 1px solid rgba(255, 255, 255, 0.06);
-    border-radius: 12px;
-    color: #e0e0e0;
-    font-size: 0.8rem;
-    font-weight: 500;
-    white-space: nowrap;
-    pointer-events: none;
-    z-index: 10000;
-    opacity: 0;
-    visibility: hidden;
-    display: none;
-    transition: opacity 0.18s cubic-bezier(0.4, 0, 0.2, 1), 
-                transform 0.18s cubic-bezier(0.4, 0, 0.2, 1),
-                visibility 0.18s cubic-bezier(0.4, 0, 0.2, 1);
-    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.24);
-    font-family: 'Instrument Sans Variable', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-  }
-
-  .custom-tooltip::after {
-    content: '';
-    position: absolute;
-    top: 100%;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 0;
-    height: 0;
-    border-left: 6px solid transparent;
-    border-right: 6px solid transparent;
-    border-top: 6px solid rgba(30, 30, 30, 0.85);
-    filter: drop-shadow(0 2px 2px rgba(0, 0, 0, 0.1));
-  }
-
-  [data-tooltip]:hover .custom-tooltip,
-  [data-tooltip]:focus-visible .custom-tooltip {
-    opacity: 1;
-    visibility: visible;
-    display: block;
-    transform: translateX(-50%) translateY(0);
-  }
+  .icon-instagram { background-image: url('/repo/images/icons/instagram.png'); }
+  .icon-linkedin { background-image: url('/repo/images/icons/linkedin.png'); }
+  .icon-pinterest { background-image: url('/repo/images/icons/pinterest.png'); }
+  .icon-spotify { background-image: url('/repo/images/icons/spotify.png'); }
+  .icon-github { background-image: url('/repo/images/icons/github.png'); }
 
   @media (max-width: 768px) {
-    .navbar {
-      width: calc(100% - 2rem);
-      padding: 0.55rem 0.9rem;
-    }
-
-    .logo {
-      font-size: 1.1rem;
-    }
-
-    .social-icons {
-      gap: 0.4rem;
-    }
-
-    .social-icons a .icon {
-      width: 1.5rem;
-      height: 1.5rem;
-    }
-
-    /* Hide dropdown on mobile, show hamburger */
     .dropdown {
       display: none;
     }
   }
 </style>
+
 <script>
-  // Custom tooltip initialization
   (function() {
-    function initTooltips() {
-      const tooltipElements = document.querySelectorAll('[data-tooltip]');
-      tooltipElements.forEach(element => {
-        const tooltipText = element.getAttribute('data-tooltip');
-        if (tooltipText && !element.querySelector('.custom-tooltip')) {
-          const tooltip = document.createElement('span');
-          tooltip.className = 'custom-tooltip';
-          tooltip.textContent = tooltipText;
-          element.appendChild(tooltip);
-          element.removeAttribute('title');
+    function initNavbar() {
+      const navbar = document.querySelector('nav.navbar');
+      const dropbtn = navbar?.querySelector('.dropbtn');
+
+      if (!navbar || !dropbtn) return;
+
+      // Expand on hover over menu button
+      dropbtn.addEventListener('mouseenter', () => {
+        navbar.classList.add('navbar-expanded');
+      });
+
+      // Collapse when mouse leaves navbar
+      navbar.addEventListener('mouseleave', () => {
+        navbar.classList.remove('navbar-expanded');
+      });
+
+      // Escape key to collapse
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+          navbar.classList.remove('navbar-expanded');
         }
       });
     }
 
     if (document.readyState === 'loading') {
-      document.addEventListener('DOMContentLoaded', initTooltips);
+      document.addEventListener('DOMContentLoaded', initNavbar);
     } else {
-      initTooltips();
+      initNavbar();
     }
+
+    document.addEventListener('astro:page-load', initNavbar);
   })();
 </script>

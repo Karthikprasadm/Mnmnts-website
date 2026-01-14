@@ -3,6 +3,32 @@
     --hover-ease: cubic-bezier(0.4, 0, 0.2, 1);
 }
 
+/* Smaller navbar for about page - same as upload page */
+body.about-page nav.navbar {
+    max-width: 300px;
+    width: fit-content;
+    padding: 0.5rem 0.9rem;
+    margin: 1rem auto 1rem;
+}
+body.about-page .navbar-default { gap: 0.6rem; }
+body.about-page .dropbtn {
+    padding: 0.42rem 0.85rem;
+    font-size: 0.82rem;
+    border-radius: 16px;
+}
+body.about-page .social-icons { gap: 0.4rem; }
+body.about-page .social-icons .icon {
+    width: 1.3rem;
+    height: 1.3rem;
+}
+body.about-page .navbar-expanded-content a {
+    font-size: 0.78rem;
+    padding: 0.32rem 0.38rem;
+}
+body.about-page .navbar-expanded-content .dot {
+    font-size: 0.78rem;
+}
+
 * {
     font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
 }
@@ -31,223 +57,7 @@ body.about-page {
     z-index: -1;
 }
 
-.navbar {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.85rem;
-    padding: 0.65rem 1.15rem;
-    background: rgba(30, 30, 30, 0.8);
-    backdrop-filter: blur(18px);
-    position: relative;
-    width: fit-content;
-    max-width: 550px; /* Increased to fit all menu options */
-    margin: 1.25rem auto 1rem;
-    border-radius: 22px;
-    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.18);
-    border: 1px solid rgba(255, 255, 255, 0.06);
-    font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-    z-index: 1000;
-    height: fit-content;
-    min-height: fit-content;
-    max-height: fit-content;
-    line-height: 1;
-    /* Smooth width transition */
-    transition: width 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94), max-width 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-    /* Prevent layout shifts */
-    contain: layout style;
-    will-change: width;
-}
-
-/* Lock navbar height and position when expanded on about page */
-.about-page .navbar-expanded {
-    max-width: 550px !important;
-    width: fit-content !important;
-    align-items: center !important;
-    position: relative !important;
-    top: auto !important;
-    margin: 1.25rem auto 1rem !important; /* Keep exact same margin */
-    /* Smooth width transition */
-    transition: width 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94), max-width 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-    contain: layout style;
-    isolation: isolate;
-}
-
-.navbar .logo {
-    display: none;
-}
-
-.social-icons {
-    display: flex;
-    gap: 0.5rem;
-    align-items: center;
-}
-
-.social-icons a {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 0.25rem;
-    transition: opacity var(--hover-speed) var(--hover-ease);
-}
-
-.social-icons a img {
-    width: 1.75rem;
-    height: 1.75rem;
-    filter: grayscale(40%) invert(80%);
-    transition: opacity var(--hover-speed) var(--hover-ease), filter var(--hover-speed) var(--hover-ease);
-}
-
-.social-icons a:hover,
-.social-icons a:focus-visible {
-    opacity: 0.72;
-    outline: none;
-}
-
-.social-icons a:hover img,
-.social-icons a:focus-visible img {
-    filter: grayscale(0%) invert(100%);
-}
-
-.logo {
-    font-size: 2rem;
-    font-weight: bold;
-    color: #fff;
-    letter-spacing: 2px;
-}
-
-.dropdown {
-    position: relative;
-    display: inline-block;
-    z-index: 1001;
-}
-
-/* Separate Menu Button */
-.menu-button-separate {
-    position: static;
-    margin-left: auto;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    height: fit-content;
-    line-height: 1;
-}
-
-.menu-button-separate .dropdown-content {
-    right: 0;
-    left: auto;
-    transform: none;
-    top: calc(100% + 2px);
-}
-
-@media (max-width: 768px) {
-    .navbar {
-        max-width: 95%;
-        width: auto;
-        padding: 0.6rem 1rem;
-        gap: 0.7rem;
-        margin: 1rem auto;
-    }
-
-    .menu-button-separate {
-        margin-left: auto;
-    }
-}
-
-.dropbtn {
-    background-color: rgba(30, 30, 30, 0.82);
-    backdrop-filter: blur(18px);
-    color: #e0e0e0;
-    padding: 0.55rem 1.1rem;
-    font-size: 0.9rem;
-    font-weight: 600;
-    border: 1px solid rgba(255, 255, 255, 0.06);
-    cursor: pointer;
-    transition: background-color var(--hover-speed) var(--hover-ease), color var(--hover-speed) var(--hover-ease), box-shadow var(--hover-speed) var(--hover-ease);
-    border-radius: 20px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.16);
-    font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-    letter-spacing: 0.02em;
-    height: fit-content;
-    min-height: 40px;
-}
-
-.dropbtn:hover,
-.dropbtn:focus-visible {
-    background-color: rgba(50, 50, 50, 0.95);
-    color: #ffffff;
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.24);
-    outline: none;
-}
-
-.dropdown-content {
-    position: absolute;
-    background: rgba(30, 30, 30, 0.86);
-    backdrop-filter: blur(18px);
-    min-width: 126px;
-    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.24), 0 3px 10px rgba(0, 0, 0, 0.18);
-    border-radius: 18px;
-    z-index: 1002;
-    right: 0;
-    border: 1px solid rgba(255, 255, 255, 0.07);
-    overflow: hidden;
-    padding: 0.2rem 0;
-    opacity: 0;
-    visibility: hidden;
-    transform: translateY(6px) scale(0.98);
-    pointer-events: none;
-    transition: opacity 0.18s var(--hover-ease), transform 0.18s var(--hover-ease), visibility 0.18s var(--hover-ease);
-}
-
-.dropdown-content a {
-    color: #e0e0e0;
-    padding: 0.42rem 0.85rem;
-    text-decoration: none;
-    display: flex;
-    align-items: center;
-    gap: 0.35rem;
-    font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-    font-size: 0.84rem;
-    font-weight: 600;
-    transition: background-color var(--hover-speed) var(--hover-ease), color var(--hover-speed) var(--hover-ease), transform var(--hover-speed) var(--hover-ease), box-shadow var(--hover-speed) var(--hover-ease), border-color var(--hover-speed) var(--hover-ease), opacity var(--hover-speed) var(--hover-ease);
-    letter-spacing: 0.01em;
-    margin: 0.08rem 0.3rem;
-    border-radius: 10px;
-    border: 1px solid transparent;
-    min-height: 40px;
-}
-
-.dropdown-content a:hover,
-.dropdown-content a:focus-visible {
-    background-color: rgba(60, 60, 60, 0.6);
-    color: #ffffff;
-    transform: none;
-    box-shadow: 0 6px 14px rgba(0, 0, 0, 0.16);
-    outline: none;
-    opacity: 1;
-    border-color: transparent;
-}
-
-.dropdown:hover .dropdown-content,
-.dropdown:focus-within .dropdown-content,
-.dropdown-content:hover {
-    opacity: 1;
-    visibility: visible;
-    pointer-events: auto;
-    transform: translateY(0) scale(1);
-}
-
-/* Hover bridge to prevent accidental close when moving cursor */
-.dropdown::after {
-    content: "";
-    position: absolute;
-    top: 100%;
-    right: 0;
-    width: 100%;
-    height: 10px;
-    background: transparent;
-    pointer-events: auto;
-}
+/* Old navbar styles removed - now using Menu-new component */
 
 .about-container {
     max-width: 700px;

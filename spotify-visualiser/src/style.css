@@ -561,10 +561,10 @@ input[type="range"]::-moz-range-track {
 .dropdown:not(.hover-based):hover .dropdown-content,
 .dropdown:not(.hover-based):focus-within .dropdown-content,
 .dropdown-content:hover {
-    opacity: 1;
-    visibility: visible;
-    pointer-events: auto;
-    transform: translateY(0) scale(1);
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+  transform: translateY(0) scale(1);
 }
 
 /* Hover bridge to prevent accidental close when moving cursor */

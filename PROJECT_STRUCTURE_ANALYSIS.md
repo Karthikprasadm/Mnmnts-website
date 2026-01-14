@@ -30,6 +30,13 @@ This is a comprehensive analysis of the entire `Mnmnts-website` project, coverin
 - **`offline.html`** - Service worker offline fallback page (optional; used only if SW enabled)
 - **`manifest.json`** - PWA manifest for mobile app installation
 
+### Component Files
+- **`Menu-new/`** - Unified navbar component used across all pages
+  - `index.html` - Standalone demo page
+  - `style.css` - Navbar styles (glassmorphism, hover effects)
+  - `script.js` - Navbar hover/expand logic
+  - `icons/` - Social media icons (PNG files)
+
 ### Server Files
 - **`server.js`** - Express.js server (port 3000) for local development
   - ImageKit integration for file uploads
@@ -128,11 +135,46 @@ assets/
 
 ---
 
+## 📁 `/Menu-new/` - Unified Navbar Component
+
+### Overview
+Reusable navbar component used across all pages (gallery, about, upload, spotify-visualiser). Provides consistent navigation with hover expansion behavior.
+
+### Files
+- **`index.html`** - Standalone demo page for navbar
+- **`style.css`** - Navbar styles (glassmorphism, fixed size, hover transitions)
+- **`script.js`** - Navbar hover/expand logic (menu button hover shows links)
+- **`icons/`** - Social media icons (Instagram, LinkedIn, Pinterest, Spotify, GitHub)
+
+### Features
+- **Hover Expansion**: Menu button hover reveals navigation links
+- **Fixed Size**: Navbar maintains consistent size (no layout shift)
+- **Consistent Styling**: Glassmorphism design matching site theme
+- **Social Icons**: Five social media links with hover effects
+- **Responsive**: Mobile-friendly (menu button hidden on small screens)
+
+### Usage
+All pages include:
+```html
+<link rel="stylesheet" href="../Menu-new/style.css">
+<script src="../Menu-new/script.js" defer></script>
+```
+
+### Navigation Links
+- Gallery
+- About
+- Upload
+- Visualizer
+- Repository
+
+---
+
 ## 📁 `/gallery/` - Main Gallery Page
 
 ### Files
 - **`index.html`** (597 lines)
   - Main gallery page with image/video display
+  - Uses Menu-new navbar component
   - Preloads critical resources
   - SEO metadata and JSON-LD structured data
   - Service worker registration
@@ -145,6 +187,7 @@ assets/
 ### Files
 - **`about.html`** (520 lines)
   - Personal about page
+  - Uses Menu-new navbar component
   - SEO metadata
   - JSON-LD Person schema
   - Resume viewer integration
@@ -158,6 +201,7 @@ assets/
 ### Files
 - **`upload.html`** (743 lines)
   - ImageKit upload interface
+  - Uses Menu-new navbar component (smaller size variant)
   - Drag & drop functionality
   - Progress indicators
   - Form validation
@@ -165,6 +209,7 @@ assets/
   - Upload page styling
   - Glassmorphism design
   - Responsive layout
+  - Custom navbar sizing (max-width: 300px)
 
 ---
 
@@ -210,7 +255,7 @@ ElasticGridScroll/
 ## 📁 `/spotify-visualiser/` - Three.js Project
 
 ### Overview
-TypeScript + Three.js project for Spotify visualizations using WebGL shaders.
+TypeScript + Three.js project for Spotify visualizations using WebGL shaders. Uses Menu-new navbar component for consistent navigation.
 
 ### Structure
 ```

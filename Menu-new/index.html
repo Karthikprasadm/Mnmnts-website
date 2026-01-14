@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Navbar Copy</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+  <nav class="navbar" role="navigation" aria-label="Main navigation">
+    <div class="navbar-content">
+      <!-- Default state: Menu button + icons -->
+      <div class="navbar-default">
+        <div class="dropdown">
+          <button class="dropbtn" aria-label="Open menu" tabindex="0">Menu</button>
+        </div>
+        <div class="social-icons" aria-label="Social links">
+          <a href="https://www.instagram.com/kkarthhikk" target="_blank" aria-label="Instagram">
+            <span class="icon icon-instagram" aria-hidden="true"></span>
+          </a>
+          <a href="https://www.linkedin.com/in/karthik-prasad-m-7673b5356/" target="_blank" aria-label="LinkedIn">
+            <span class="icon icon-linkedin" aria-hidden="true"></span>
+          </a>
+          <a href="https://pin.it/70AOzYsfW" target="_blank" aria-label="Pinterest">
+            <span class="icon icon-pinterest" aria-hidden="true"></span>
+          </a>
+          <a href="https://open.spotify.com/user/31g54rthdkjwc7tk2yzwlkptbbqi" target="_blank" aria-label="Spotify">
+            <span class="icon icon-spotify" aria-hidden="true"></span>
+          </a>
+          <a href="https://github.com/Karthikprasadm" target="_blank" aria-label="GitHub">
+            <span class="icon icon-github" aria-hidden="true"></span>
+          </a>
+        </div>
+      </div>
+
+      <!-- Expanded state: Menu links (stacked on top, hidden by default) -->
+      <div class="navbar-expanded-content">
+        <a href="/gallery/index.html">Gallery</a>
+        <span class="dot">·</span>
+        <a href="/know-me/about.html">About</a>
+        <span class="dot">·</span>
+        <a href="/image-upload/upload.html">Upload</a>
+        <span class="dot">·</span>
+        <a href="/spotify-visualiser/index.html">Visualizer</a>
+      </div>
+    </div>
+  </nav>
+
+  <script src="./script.js"></script>
+</body>
+</html>
