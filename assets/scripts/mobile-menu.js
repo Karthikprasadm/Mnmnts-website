@@ -25,11 +25,12 @@
         hamburger.className = 'mobile-menu-toggle';
         hamburger.setAttribute('aria-label', 'Toggle mobile menu');
         hamburger.setAttribute('aria-expanded', 'false');
-        hamburger.innerHTML = `
-            <span class="hamburger-line"></span>
-            <span class="hamburger-line"></span>
-            <span class="hamburger-line"></span>
-        `;
+        // Safe DOM creation instead of innerHTML
+        for (let i = 0; i < 3; i++) {
+            const line = document.createElement('span');
+            line.className = 'hamburger-line';
+            hamburger.appendChild(line);
+        }
 
         // Find dropdown menu
         const dropdown = navbar.querySelector('.dropdown');

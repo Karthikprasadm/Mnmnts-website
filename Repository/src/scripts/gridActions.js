@@ -35,7 +35,16 @@ const handleCloseClick = () => {
 const handleSearchClearClick = () => {
   filterGrid('');
   toggleClearButton();
-  searchContent.innerHTML = searchContentOriginal;
+  // Safe: restore original content (stored HTML, not user input)
+  if (searchContent) {
+    searchContent.textContent = '';
+    // Parse and restore original HTML safely
+    const temp = document.createElement('div');
+    temp.innerHTML = searchContentOriginal;
+    while (temp.firstChild) {
+      searchContent.appendChild(temp.firstChild);
+    }
+  }
   searchInput.value = '';
   searchButton.classList.remove('search--active');
 };
@@ -44,7 +53,21 @@ const handleSearchClearClick = () => {
 const handleSearchInput = (e) => {
   const searchTerm = e.target.value;
   filterGrid(searchTerm);
-  searchContent.innerHTML = searchTerm === '' ? searchContentOriginal : searchTerm;
+  // Safe DOM manipulation - use textContent for user input
+  if (searchContent) {
+    searchContent.textContent = '';
+    if (searchTerm === '') {
+      // Restore original content safely
+      const temp = document.createElement('div');
+      temp.innerHTML = searchContentOriginal;
+      while (temp.firstChild) {
+        searchContent.appendChild(temp.firstChild);
+      }
+    } else {
+      // Use textContent for user input (safe from XSS)
+      searchContent.textContent = searchTerm;
+    }
+  }
   toggleClearButton(searchTerm);
   searchButton.classList.toggle('search--active', searchTerm !== '');
 };

@@ -3,12 +3,21 @@ const { v4: uuidv4 } = require('uuid');
 const ImageKit = require('imagekit');
 const { setCORSHeaders, handleOptions } = require('./utils/cors');
 const { setSecurityHeaders } = require('./utils/response');
+const { signatureRateLimiter } = require('./utils/rateLimit');
 
 module.exports = async (req, res) => {
   setCORSHeaders(req, res);
 
   if (req.method === 'OPTIONS') {
     handleOptions(req, res);
+    return;
+  }
+
+  // Apply rate limiting
+  signatureRateLimiter(req, res, () => {});
+  
+  // Check if rate limit was exceeded (429 status set)
+  if (res.statusCode === 429) {
     return;
   }
 
@@ -36,7 +45,9 @@ module.exports = async (req, res) => {
       setSecurityHeaders(res);
       res.status(500).json({
         success: false,
-        error: 'ImageKit configuration is missing. Please check environment variables.'
+        error: process.env.NODE_ENV === 'production' 
+          ? 'Service configuration is unavailable. Please contact support.'
+          : 'ImageKit configuration is missing. Please check environment variables.'
       });
       return;
     }

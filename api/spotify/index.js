@@ -43,12 +43,18 @@ module.exports = async (req, res) => {
     const data = await spotifyResponse.json();
 
     if (!spotifyResponse.ok) {
-      return errorResponse(res, data.error?.message || 'Spotify API request failed', spotifyResponse.status);
+      // Sanitize Spotify API error messages to avoid leaking details
+      const isProduction = process.env.NODE_ENV === 'production';
+      const errorMsg = isProduction 
+        ? 'External service request failed. Please try again later.'
+        : (data.error?.message || 'Spotify API request failed');
+      return errorResponse(res, errorMsg, spotifyResponse.status >= 500 ? 500 : spotifyResponse.status);
     }
 
     return successResponse(res, data);
   } catch (error) {
     console.error('Spotify API proxy error:', error);
+    // errorResponse will automatically sanitize the message in production
     return errorResponse(res, `Internal server error: ${error.message}`, 500);
   }
 };

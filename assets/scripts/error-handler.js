@@ -47,19 +47,56 @@ class ErrorHandler {
     showError(message, details = null, retryCallback = null) {
         if (!this.errorContainer) this.init();
 
-        const errorHTML = `
-            <div style="display: flex; align-items: flex-start; gap: 12px;">
-                <span style="font-size: 1.2rem;">⚠️</span>
-                <div style="flex: 1;">
-                    <strong style="display: block; margin-bottom: 4px;">${message}</strong>
-                    ${details ? `<small style="opacity: 0.9;">${details}</small>` : ''}
-                    ${retryCallback ? `<button onclick="window.errorHandler.retry()" style="margin-top: 8px; padding: 6px 12px; background: white; color: #f44336; border: none; border-radius: 6px; cursor: pointer; font-weight: 600;">Retry</button>` : ''}
-                </div>
-                <button onclick="this.parentElement.parentElement.style.display='none'" style="background: transparent; border: none; color: white; font-size: 1.2rem; cursor: pointer; padding: 0; line-height: 1;">&times;</button>
-            </div>
-        `;
-
-        this.errorContainer.innerHTML = errorHTML;
+        // Safe DOM creation instead of innerHTML
+        this.errorContainer.textContent = "";
+        
+        const errorDiv = document.createElement("div");
+        errorDiv.style.cssText = "display: flex; align-items: flex-start; gap: 12px;";
+        
+        const icon = document.createElement("span");
+        icon.style.fontSize = "1.2rem";
+        icon.textContent = "⚠️";
+        
+        const contentDiv = document.createElement("div");
+        contentDiv.style.flex = "1";
+        
+        const strong = document.createElement("strong");
+        strong.style.cssText = "display: block; margin-bottom: 4px;";
+        strong.textContent = message;
+        contentDiv.appendChild(strong);
+        
+        if (details) {
+            const small = document.createElement("small");
+            small.style.opacity = "0.9";
+            small.textContent = details;
+            contentDiv.appendChild(small);
+        }
+        
+        if (retryCallback) {
+            const retryBtn = document.createElement("button");
+            retryBtn.textContent = "Retry";
+            retryBtn.style.cssText = "margin-top: 8px; padding: 6px 12px; background: white; color: #f44336; border: none; border-radius: 6px; cursor: pointer; font-weight: 600;";
+            retryBtn.addEventListener("click", () => {
+                if (window.errorHandler && window.errorHandler.retry) {
+                    window.errorHandler.retry();
+                }
+            });
+            contentDiv.appendChild(retryBtn);
+        }
+        
+        const closeBtn = document.createElement("button");
+        closeBtn.textContent = "×";
+        closeBtn.style.cssText = "background: transparent; border: none; color: white; font-size: 1.2rem; cursor: pointer; padding: 0; line-height: 1;";
+        closeBtn.addEventListener("click", () => {
+            if (errorDiv.parentElement) {
+                errorDiv.parentElement.style.display = 'none';
+            }
+        });
+        
+        errorDiv.appendChild(icon);
+        errorDiv.appendChild(contentDiv);
+        errorDiv.appendChild(closeBtn);
+        this.errorContainer.appendChild(errorDiv);
         this.errorContainer.style.display = 'block';
 
         // Auto-hide after 5 seconds

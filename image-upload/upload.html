@@ -256,7 +256,16 @@
             const row = document.createElement("div");
             row.className = "upload-status-item status-pending";
             row.dataset.fileName = fileName;
-            row.innerHTML = `<span class="status-dot"></span><span class="status-text">${fileName} – pending</span>`;
+            
+            // Safe DOM creation instead of innerHTML
+            const dot = document.createElement("span");
+            dot.className = "status-dot";
+            const text = document.createElement("span");
+            text.className = "status-text";
+            text.textContent = `${fileName} – pending`;
+            
+            row.appendChild(dot);
+            row.appendChild(text);
             ikStatusBox.appendChild(row);
             return row;
         }
@@ -267,10 +276,43 @@
             const text = row.querySelector(".status-text");
             if (text) text.textContent = `${fileName} – ${message}`;
         }
-        const imagekit = new ImageKit({
-            publicKey: "public_QadH3cW1AFwIaqSz6iRkSiGl6PM=",
-            urlEndpoint: "https://ik.imagekit.io/ijv7nmfqx" 
-        });
+        // ImageKit configuration - will be fetched from server
+        let imagekit = null;
+        let imagekitConfig = null;
+        
+        // Fetch ImageKit configuration from server (public key and endpoint only)
+        async function getImageKitConfig() {
+            if (imagekitConfig) return imagekitConfig;
+            try {
+                const res = await fetch('/api/imagekit-config');
+                if (!res.ok) {
+                    throw new Error(`Config request failed: ${res.status}`);
+                }
+                imagekitConfig = await res.json();
+                return imagekitConfig;
+            } catch (error) {
+                console.error('Failed to fetch ImageKit config:', error);
+                // Fallback: use environment-provided values if available
+                // This should only happen in development
+                throw new Error('ImageKit configuration not available');
+            }
+        }
+        
+        async function initializeImageKit() {
+            if (imagekit) return imagekit;
+            try {
+                const config = await getImageKitConfig();
+                imagekit = new ImageKit({
+                    publicKey: config.publicKey,
+                    urlEndpoint: config.urlEndpoint
+                });
+                return imagekit;
+            } catch (error) {
+                console.error('Failed to initialize ImageKit:', error);
+                throw error;
+            }
+        }
+        
         async function getSignature() {
             try {
                 const res = await fetch(SIGNATURE_ENDPOINT);
@@ -285,14 +327,31 @@
         ikUploadButton.addEventListener("click", async function () {
             const files = ikMediaUpload.files;
             if (files.length === 0) {
-                ikPreview.innerHTML = `<p>Please select a file before uploading.</p>`;
+                // Safe DOM manipulation
+                ikPreview.textContent = "";
+                const p = document.createElement("p");
+                p.textContent = "Please select a file before uploading.";
+                ikPreview.appendChild(p);
                 showToast("Select a file to upload.", "error");
                 return;
             }
+            // Initialize ImageKit before upload
+            try {
+                await initializeImageKit();
+            } catch (error) {
+                ikErrorMessage.textContent = "Failed to initialize upload service. Please try again later.";
+                showToast("Upload service unavailable.", "error");
+                return;
+            }
+            
             ikErrorMessage.textContent = "";
-            ikPreview.innerHTML = `<p>Uploading ${files.length} file(s)...</p>`;
+            // Safe DOM manipulation
+            ikPreview.textContent = "";
+            const p = document.createElement("p");
+            p.textContent = `Uploading ${files.length} file(s)...`;
+            ikPreview.appendChild(p);
             ikProgressBar.style.width = "0%";
-            if (ikStatusBox) ikStatusBox.innerHTML = "";
+            if (ikStatusBox) ikStatusBox.textContent = "";
             let sigData;
             try {
                 sigData = await getSignature();
@@ -301,7 +360,7 @@
                 }
             } catch (err) {
                 ikErrorMessage.textContent = "Failed to get upload signature. Please try again later.";
-                ikPreview.innerHTML = "";
+                ikPreview.textContent = "";
                 showToast("Could not get upload signature.", "error");
                 return;
             }
@@ -332,7 +391,7 @@
                     "application/vnd.ms-excel",
                     "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
                 ];
-                const maxSize = 10 * 1024 * 1024; // 10MB
+                const maxSize = 10 * 1024 * 1024; // 10MB (consistent with server)
                 
                 // Handle files with empty or incorrect MIME types by checking file extension
                 let fileType = file.type;
@@ -439,11 +498,19 @@
                 if (completedUploads + failedUploads === totalFiles) {
                     ikProgressBar.style.width = "100%";
                             if (failedUploads > 0) {
-                                ikPreview.innerHTML = `<p>Completed: ${completedUploads} files uploaded, ${failedUploads} failed.<br>Failed: ${failedFiles.join(", ")}<br>${failedReasons.length ? "<br>Reasons:<br>" + failedReasons.join("<br>") : ""}</p>`;
+                                // Safe DOM manipulation
+                                ikPreview.textContent = "";
+                                const p = document.createElement("p");
+                                p.innerHTML = `Completed: ${completedUploads} files uploaded, ${failedUploads} failed.<br>Failed: ${failedFiles.join(", ")}<br>${failedReasons.length ? "<br>Reasons:<br>" + failedReasons.join("<br>") : ""}`;
+                                ikPreview.appendChild(p);
                                 ikErrorMessage.textContent = "Some files failed to upload. Please check file type, size, or see details below.";
                                 showToast("Some files failed to upload.", "error");
                             } else {
-                                ikPreview.innerHTML = `<p>Success! All ${completedUploads} file(s) uploaded.</p>`;
+                                // Safe DOM manipulation
+                                ikPreview.textContent = "";
+                                const p = document.createElement("p");
+                                p.textContent = `Success! All ${completedUploads} file(s) uploaded.`;
+                                ikPreview.appendChild(p);
                                 ikErrorMessage.textContent = "";
                                 displayUploadedMedia(files);
                                 showToast("Upload complete!", "success");
@@ -475,7 +542,7 @@
         ];
 
         function displayUploadedMedia(files) {
-            uploadedMedia.innerHTML = "";
+            uploadedMedia.textContent = "";
             Array.from(files).forEach(file => {
                 // Handle document files (PDF, PPT, Word, Excel) differently
                 if (file.type.startsWith("application/")) {
@@ -483,11 +550,21 @@
                     docElement.classList.add("gallery-media", "document-file");
                     docElement.style.cursor = "pointer";
                     docElement.setAttribute("data-filename", file.name);
-                    docElement.innerHTML = `
-                        <div class="document-icon">📄</div>
-                        <div class="document-name">${file.name}</div>
-                        <div class="document-type">${getFileTypeLabel(file.type)}</div>
-                    `;
+                    
+                    // Safe DOM creation
+                    const icon = document.createElement("div");
+                    icon.className = "document-icon";
+                    icon.textContent = "📄";
+                    const name = document.createElement("div");
+                    name.className = "document-name";
+                    name.textContent = file.name;
+                    const type = document.createElement("div");
+                    type.className = "document-type";
+                    type.textContent = getFileTypeLabel(file.type);
+                    
+                    docElement.appendChild(icon);
+                    docElement.appendChild(name);
+                    docElement.appendChild(type);
                     
                     // Add click event to open in modal
                     const reader = new FileReader();
@@ -666,7 +743,7 @@
             errorMessage.textContent = "";
 
             if (files.length === 0) {
-                preview.innerHTML = "";
+                preview.textContent = "";
                 return;
             }
 
@@ -706,13 +783,16 @@
             });
 
             if (!isValid) {
-                const errorText = errorDetails.length > 0 ? errorDetails.join('<br>') : "Invalid file type or size (max 10MB).";
-                errorMessage.innerHTML = errorText;
+                const errorText = errorDetails.length > 0 ? errorDetails.join('\n') : "Invalid file type or size (max 10MB).";
+                errorMessage.textContent = errorText;
                 this.value = "";
-                preview.innerHTML = "";
+                preview.textContent = "";
                 showToast("Invalid file type or size (max 10MB).", "error");
             } else {
-                preview.innerHTML = `<p>${files.length} file(s) selected.</p>`;
+                preview.textContent = "";
+                const p = document.createElement("p");
+                p.textContent = `${files.length} file(s) selected.`;
+                preview.appendChild(p);
                 showToast(`${files.length} file(s) ready to upload.`, "success");
             }
         });

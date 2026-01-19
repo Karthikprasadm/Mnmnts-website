@@ -123,15 +123,55 @@ class ServiceWorkerUtils {
 
     const notification = document.createElement('div');
     notification.className = 'sw-update-notification';
-    notification.innerHTML = `
-      <div class="sw-update-content">
-        <div class="sw-update-left">
-          <div class="sw-update-icon">${icon}</div>
-          <div class="sw-update-text">
-            <div class="sw-update-title">${title}</div>
-            <div class="sw-update-message">${message}</div>
-          </div>
-        </div>
+    
+    // Safe DOM creation instead of innerHTML
+    const content = document.createElement('div');
+    content.className = 'sw-update-content';
+    
+    const left = document.createElement('div');
+    left.className = 'sw-update-left';
+    
+    const iconDiv = document.createElement('div');
+    iconDiv.className = 'sw-update-icon';
+    iconDiv.textContent = icon;
+    
+    const textDiv = document.createElement('div');
+    textDiv.className = 'sw-update-text';
+    
+    const titleDiv = document.createElement('div');
+    titleDiv.className = 'sw-update-title';
+    titleDiv.textContent = title;
+    
+    const messageDiv = document.createElement('div');
+    messageDiv.className = 'sw-update-message';
+    messageDiv.textContent = message;
+    
+    textDiv.appendChild(titleDiv);
+    textDiv.appendChild(messageDiv);
+    left.appendChild(iconDiv);
+    left.appendChild(textDiv);
+    content.appendChild(left);
+    
+    const actions = document.createElement('div');
+    actions.className = 'sw-update-actions';
+    
+    const primaryBtn = document.createElement('button');
+    primaryBtn.className = 'sw-update-btn primary';
+    primaryBtn.setAttribute('data-action', primary.action || 'dismiss');
+    primaryBtn.textContent = primary.label || 'OK';
+    
+    actions.appendChild(primaryBtn);
+    
+    if (secondary) {
+        const secondaryBtn = document.createElement('button');
+        secondaryBtn.className = 'sw-update-btn secondary';
+        secondaryBtn.setAttribute('data-action', secondary.action || 'dismiss');
+        secondaryBtn.textContent = secondary.label;
+        actions.appendChild(secondaryBtn);
+    }
+    
+    content.appendChild(actions);
+    notification.appendChild(content);
         <div class="sw-update-actions">
           <button class="sw-update-btn primary" data-action="${primary.action || 'dismiss'}">${primary.label || 'OK'}</button>
           ${secondary ? `<button class="sw-update-btn secondary" data-action="${secondary.action || 'dismiss'}">${secondary.label}</button>` : ''}

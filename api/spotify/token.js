@@ -19,7 +19,12 @@ module.exports = async (req, res) => {
   const { SPOTIFY_CLIENT_ID, SPOTIFY_CLIENT_SECRET } = process.env;
 
   if (!SPOTIFY_CLIENT_ID || !SPOTIFY_CLIENT_SECRET) {
-    return errorResponse(res, 'Spotify credentials not configured. Please set SPOTIFY_CLIENT_ID and SPOTIFY_CLIENT_SECRET environment variables.', 503);
+    return errorResponse(res, 
+      process.env.NODE_ENV === 'production'
+        ? 'Service is temporarily unavailable. Please try again later.'
+        : 'Spotify credentials not configured. Please set SPOTIFY_CLIENT_ID and SPOTIFY_CLIENT_SECRET environment variables.', 
+      503
+    );
   }
 
   try {
@@ -47,7 +52,12 @@ module.exports = async (req, res) => {
       const tokenData = await tokenResponse.json();
 
       if (!tokenResponse.ok) {
-        return errorResponse(res, tokenData.error_description || tokenData.error || 'Failed to exchange authorization code', tokenResponse.status);
+        // Sanitize Spotify API error messages to avoid leaking details
+        const isProduction = process.env.NODE_ENV === 'production';
+        const errorMsg = isProduction 
+          ? 'Authentication failed. Please try again.'
+          : (tokenData.error_description || tokenData.error || 'Failed to exchange authorization code');
+        return errorResponse(res, errorMsg, tokenResponse.status >= 500 ? 500 : tokenResponse.status);
       }
 
       return successResponse(res, {
@@ -79,7 +89,12 @@ module.exports = async (req, res) => {
       const tokenData = await tokenResponse.json();
 
       if (!tokenResponse.ok) {
-        return errorResponse(res, tokenData.error_description || tokenData.error || 'Failed to refresh token', tokenResponse.status);
+        // Sanitize Spotify API error messages to avoid leaking details
+        const isProduction = process.env.NODE_ENV === 'production';
+        const errorMsg = isProduction 
+          ? 'Token refresh failed. Please re-authenticate.'
+          : (tokenData.error_description || tokenData.error || 'Failed to refresh token');
+        return errorResponse(res, errorMsg, tokenResponse.status >= 500 ? 500 : tokenResponse.status);
       }
 
       return successResponse(res, {
@@ -94,6 +109,7 @@ module.exports = async (req, res) => {
     }
   } catch (error) {
     console.error('Spotify token error:', error);
+    // errorResponse will automatically sanitize the message in production
     return errorResponse(res, `Internal server error: ${error.message}`, 500);
   }
 };
