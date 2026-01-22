@@ -40,6 +40,8 @@ class Tooltip {
     this.rowTimelines = {}; // Stores timelines for each row
     this.arrowTimeline = null; // Stores the arrow animation timeline
     this.windowWidth = window.innerWidth; // Cache window width
+    this.isTouch = window.matchMedia('(hover: none)').matches;
+    this.lastTapTarget = null;
 
     // Define smooth animations for moving the tooltip
     // xTo and yTo control the tooltip's horizontal (x) and vertical (y) positions
@@ -60,6 +62,7 @@ class Tooltip {
     [...this.artists].forEach(artist => {
       artist.addEventListener('mouseenter', this.handleMouseEnter);
       artist.addEventListener('mouseleave', this.handleMouseLeave);
+      artist.addEventListener('click', this.handleClick);
     });
   }
 
@@ -138,6 +141,56 @@ class Tooltip {
     this.windowWidth = window.innerWidth;
   };
 
+  positionTooltipForTarget(target) {
+    const rect = target.getBoundingClientRect();
+    const tooltipWidth = this.tooltip.offsetWidth;
+    const targetX = rect.left + rect.width / 2;
+    const targetY = rect.top + rect.height / 2;
+    let tooltipX;
+
+    if (targetX + this.OFFSET_X + tooltipWidth > this.windowWidth) {
+      tooltipX = targetX - this.OFFSET_X - tooltipWidth + window.scrollX;
+    } else {
+      tooltipX = targetX + this.OFFSET_X + window.scrollX;
+    }
+
+    const tooltipY = targetY + this.OFFSET_Y + window.scrollY;
+    gsap.set(this.tooltip, { x: tooltipX, y: tooltipY });
+  }
+
+  handleClick = (e) => {
+    if (!this.isTouch) return;
+
+    const target = e.currentTarget;
+    if (!target?.dataset) return;
+
+    if (this.lastTapTarget !== target) {
+      e.preventDefault();
+      this.lastTapTarget = target;
+      this.hoverTarget = target;
+
+      if (this.scaleDownTimeline) this.scaleDownTimeline.kill();
+      clearTimeout(this.scaleDownTimeout);
+
+      const stageName = target.dataset.stagename;
+      const name = target.dataset.name;
+      const genre = target.dataset.genre;
+
+      const updateTimeline = gsap.timeline();
+      this.updateTooltip(
+        { stagename: stageName, name, genre },
+        updateTimeline,
+        this.isTooltipVisible ? 'none' : 'in',
+      );
+
+      this.positionTooltipForTarget(target);
+      this.isTooltipVisible = true;
+      return;
+    }
+
+    this.lastTapTarget = null;
+  };
+
   initializeEvents() {
     this.grid.addEventListener('mousemove', this.handleMouseMove);
     window.addEventListener('resize', this.handleResize);
@@ -145,6 +198,7 @@ class Tooltip {
     [...this.artists].forEach(artist => {
       artist.addEventListener('mouseenter', this.handleMouseEnter);
       artist.addEventListener('mouseleave', this.handleMouseLeave);
+      artist.addEventListener('click', this.handleClick);
     });
   }
 
@@ -162,6 +216,7 @@ class Tooltip {
     [...this.artists].forEach(artist => {
       artist.removeEventListener('mouseenter', this.handleMouseEnter);
       artist.removeEventListener('mouseleave', this.handleMouseLeave);
+      artist.removeEventListener('click', this.handleClick);
 
     });
   }

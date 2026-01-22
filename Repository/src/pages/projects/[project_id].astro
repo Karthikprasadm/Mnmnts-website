@@ -1,0 +1,119 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import Separator from "../../components/Separator.astro";
+import ProjectGrid from "../../components/ProjectGrid.astro";
+import { fetchGithubRepos, type GitHubRepo } from "../../lib/github";
+
+export const getStaticPaths = async () => {
+  const githubUsername = "Karthikprasadm";
+  const githubToken = import.meta.env.GITHUB_TOKEN ?? process.env.GITHUB_TOKEN;
+  const repos = await fetchGithubRepos(githubUsername, githubToken);
+  return repos.map((repo, index) => {
+    const prevProject = repos[(index - 1 + repos.length) % repos.length];
+    const nextProjects = [
+      repos[(index + 1) % repos.length],
+      repos[(index + 2) % repos.length],
+    ];
+    const nextProject = repos[(index + 1) % repos.length];
+    return {
+      params: { project_id: repo.name },
+      props: { repo, nextProjects, prevProject, nextProject },
+    };
+  });
+};
+
+const { repo, nextProjects, prevProject, nextProject } = Astro.props as {
+  repo: GitHubRepo;
+  nextProjects: GitHubRepo[];
+  prevProject: GitHubRepo;
+  nextProject: GitHubRepo;
+};
+
+const baseUrl = import.meta.env.BASE_URL.endsWith("/")
+  ? import.meta.env.BASE_URL.slice(0, -1)
+  : import.meta.env.BASE_URL;
+
+const imageSrc =
+  repo.owner?.avatar_url ||
+  `https://opengraph.githubassets.com/1/${repo.full_name}`;
+const description =
+  repo.description ||
+  "A GitHub project from the Mnmnts repository collection.";
+const language = repo.language || "Project";
+---
+
+<BaseLayout title={repo.name}>
+  <section>
+    <header class="title-header">
+      <h2>
+        {repo.name}
+        <span class="faded">({repo.full_name})</span>
+      </h2>
+      <div>
+        <a class="back" href={`${baseUrl}/`}>View all</a>
+        <span class="faded">/</span>
+        <a href={repo.html_url} target="_blank" rel="noreferrer">GitHub</a>
+        <span class="faded">/</span>
+        <a
+          class="project-nav"
+          href={`${baseUrl}/projects/${prevProject.name}`}
+          aria-label="Previous project">
+          &lsaquo;
+        </a>
+        <a
+          class="project-nav"
+          href={`${baseUrl}/projects/${nextProject.name}`}
+          aria-label="Next project">
+          &rsaquo;
+        </a>
+      </div>
+    </header>
+    <Separator />
+    <div class="content-wrap">
+      <img class="image fade-in" src={imageSrc} alt={repo.name} />
+      <div class="content">
+        <h3>Overview</h3>
+        <p>{description}</p>
+        <dl>
+          <dt>Language</dt><dd>{language}</dd>
+        </dl>
+      </div>
+      <div class="albums">
+        <h3>Next Projects</h3>
+        <ProjectGrid projects={nextProjects} />
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .content-wrap {
+    grid-template-areas: "img" "content" "albums";
+    grid-template-columns: 100%;
+    @media screen and (min-width: 44em) {
+      grid-template-columns: 1fr auto;
+      grid-template-areas: "img img" "content albums";
+    }
+    @media screen and (min-width: 50em) {
+      grid-template-columns: 30vw 1fr 170px;
+      grid-template-areas: "img content albums";
+    }
+  }
+  .albums {
+    grid-area: albums;
+  }
+  .project-nav {
+    font-weight: 700;
+    font-size: 1.35em;
+  }
+  .image {
+    width: 100%;
+    height: 70vh;
+    object-fit: cover;
+  }
+  .content p:last-child {
+    margin-top: 2.5rem;
+    display: flex;
+  }
+</style>
+

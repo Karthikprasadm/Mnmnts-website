@@ -1,0 +1,58 @@
+---
+type Props = {
+  project: {
+    name: string;
+    full_name: string;
+    language: string | null;
+  };
+};
+
+const { project } = Astro.props;
+const baseUrl = import.meta.env.BASE_URL.endsWith("/")
+  ? import.meta.env.BASE_URL.slice(0, -1)
+  : import.meta.env.BASE_URL;
+const imageSrc = `https://opengraph.githubassets.com/1/${project.full_name}`;
+const language = project.language || "Project";
+---
+
+<a class="album-card" href={`${baseUrl}/projects/${project.name}`}>
+  <div>
+    <img class="fade-in" loading="lazy" src={imageSrc} alt={project.name} />
+  </div>
+  <h3>{project.name}</h3>
+  <p>{language}</p>
+</a>
+
+<style>
+  .album-card {
+    display: flex;
+    gap: 0.5rem;
+    flex-direction: column;
+    align-content: start;
+    max-width: 300px;
+  }
+  div {
+    aspect-ratio: 1;
+    grid-area: img;
+    background: var(--color-placeholder);
+    overflow: hidden;
+  }
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+  h3,
+  p {
+    margin: 0;
+  }
+  h3 {
+    grid-area: title;
+  }
+  p {
+    justify-self: end;
+    grid-area: meta;
+  }
+</style>
+

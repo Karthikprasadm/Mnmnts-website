@@ -4,9 +4,31 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 import ArtistGrid from "../components/ArtistGrid.astro";
 import ArtistGridHeader from "../components/ArtistGridHeader.astro";
 import Preloader from "../components/Preloader.astro";
+import { fetchGithubRepos } from "../lib/github";
 
 const allArtists = await getCollection("artists");
-const artistsTotal = allArtists.length;
+
+const githubUsername = "Karthikprasadm";
+const githubToken = import.meta.env.GITHUB_TOKEN ?? process.env.GITHUB_TOKEN;
+let githubProjects = [];
+
+try {
+  const repos = await fetchGithubRepos(githubUsername, githubToken);
+  githubProjects = repos.map((repo) => ({
+    id: repo.name,
+    name: repo.name,
+    fullName: repo.full_name,
+    description: repo.description ?? "",
+    language: repo.language ?? "Project",
+    url: repo.html_url,
+    image: `https://opengraph.githubassets.com/1/${repo.full_name}`,
+    owner: repo.owner?.login ?? githubUsername,
+  }));
+} catch (error) {
+  githubProjects = [];
+}
+
+const artistsTotal = allArtists.length + githubProjects.length;
 const title = "Mnmnts | Repo";
 ---
 
@@ -17,6 +39,6 @@ const title = "Mnmnts | Repo";
   -->
   <Preloader />
   <ArtistGridHeader artistsTotal={artistsTotal} />
-  <ArtistGrid artists={allArtists} />
+  <ArtistGrid artists={allArtists} projects={githubProjects} />
 </BaseLayout>
 <script src="../scripts/index.js"></script>

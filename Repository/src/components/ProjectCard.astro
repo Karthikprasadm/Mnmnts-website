@@ -1,0 +1,42 @@
+---
+type Props = {
+  project: {
+    id: string;
+    name: string;
+    fullName: string;
+    description: string;
+    language: string;
+    url: string;
+    image: string;
+    owner: string;
+  };
+};
+
+const { project } = Astro.props;
+const stageName = project.name;
+const displayName = project.fullName || project.name;
+const genre = project.language || "Project";
+const baseUrl = import.meta.env.BASE_URL.endsWith('/')
+  ? import.meta.env.BASE_URL.slice(0, -1)
+  : import.meta.env.BASE_URL;
+---
+
+<a
+  href={`${baseUrl}/projects/${project.id}`}
+  class="artist"
+  style={`--image: url('${project.image}');`}
+  data-stagename={stageName}
+  data-name={displayName}
+  data-genre={genre}
+  data-astro-prefetch
+  aria-label={project.name}></a>
+
+<style>
+  a {
+    background-image: var(--image);
+    background-size: cover;
+    background-position: 50% 0%;
+    aspect-ratio: 0.8;
+  }
+</style>
+
