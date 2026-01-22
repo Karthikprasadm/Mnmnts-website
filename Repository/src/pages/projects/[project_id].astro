@@ -79,7 +79,16 @@ const language = repo.language || "Project";
         </dl>
       </div>
       <div class="albums">
-        <h3>Next Projects</h3>
+        <div class="next-projects-title">
+          <h3>Next Projects</h3>
+          <img
+            class="line-favicon"
+            src={`${baseUrl}/heart_favicon/favicon-32x32.png`}
+            alt=""
+            aria-hidden="true"
+            loading="lazy"
+          />
+        </div>
         <ProjectGrid projects={nextProjects} />
       </div>
     </div>
@@ -105,6 +114,22 @@ const language = repo.language || "Project";
   .project-nav {
     font-weight: 700;
     font-size: 1.35em;
+  }
+  .line-favicon {
+    width: 16px;
+    height: 16px;
+    display: inline-block;
+    vertical-align: middle;
+  }
+  .next-projects-title {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    margin-bottom: 1rem;
+  }
+  .next-projects-title h3 {
+    margin: 0;
+    line-height: 1;
   }
   .image {
     width: 100%;
