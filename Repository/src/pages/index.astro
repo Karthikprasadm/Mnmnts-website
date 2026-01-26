@@ -20,6 +20,7 @@ try {
     url: repo.html_url,
     image: `https://opengraph.githubassets.com/1/${repo.full_name}`,
     owner: repo.owner?.login ?? githubUsername,
+    ownerAvatar: repo.owner?.avatar_url ?? "",
   }));
 } catch (error) {
   githubProjects = [];

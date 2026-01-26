@@ -1,0 +1,30 @@
+{
+  "@context": "https://schema.org",
+  "@type": "WebPage",
+  "name": "Upload Media",
+  "description": "Upload your images and videos to Karthik Prasad M's digital museum of moments. Secure, creative, and easy media uploads for your portfolio.",
+  "url": "https://karthikprasadm.github.io/image-upload/upload.html",
+  "author": {
+    "@type": "Person",
+    "name": "Karthik Prasad M",
+    "url": "https://karthikprasadm.github.io/"
+  },
+  "breadcrumb": {
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Home",
+        "item": "https://karthikprasadm.github.io/"
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": "Upload Media",
+        "item": "https://karthikprasadm.github.io/image-upload/upload.html"
+      }
+    ]
+  }
+}
+

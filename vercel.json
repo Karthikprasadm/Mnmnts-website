@@ -115,7 +115,7 @@
         },
         {
           "key": "Content-Security-Policy",
-          "value": "default-src 'self'; base-uri 'self'; object-src 'none'; script-src 'self' 'unsafe-inline'; script-src-attr 'none'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self' data:; connect-src 'self' https://ik.imagekit.io https://api.imagekit.io https://sdk.scdn.co https://accounts.spotify.com https://api.spotify.com; form-action 'self'; frame-ancestors 'none';"
+          "value": "default-src 'self'; base-uri 'self'; object-src 'none'; script-src 'self' https://sdk.scdn.co https://unpkg.com 'sha256-D/44MCKZunkyCl1B6hG7QCUIspIrd0Sr8VbHFPveH/A=' 'sha256-QYOD+yS6q3rymhXIubiL7Gvp/quUFfNBzT+h+sZqpso=' 'sha256-0g/ciPBj3/L9qG0cvi/Pqq0FLLtfAnyUZGdtjU6oQd0='; script-src-attr 'none'; style-src 'self' 'unsafe-inline' https://use.typekit.net https://fonts.googleapis.com https://cdnjs.cloudflare.com; img-src 'self' data: https:; media-src 'self' https://ik.imagekit.io https://ik.imagekit.io/ijv7nmfqx; font-src 'self' data: https://use.typekit.net https://p.typekit.net https://fonts.gstatic.com https://cdnjs.cloudflare.com; connect-src 'self' https://ik.imagekit.io https://api.imagekit.io https://upload.imagekit.io https://sdk.scdn.co https://accounts.spotify.com https://api.spotify.com; form-action 'self'; frame-ancestors 'none';"
         }
       ]
     },

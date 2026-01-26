@@ -101,26 +101,7 @@
         </div>
     </div>
     
-    <script>
-        const retryButton = document.getElementById('offlineRetryButton');
-        if (retryButton) {
-            retryButton.addEventListener('click', () => {
-                window.location.reload();
-            });
-        }
-
-        // Check if back online
-        window.addEventListener('online', () => {
-            window.location.reload();
-        });
-        
-        // Try to reload every 30 seconds if online
-        setInterval(() => {
-            if (navigator.onLine) {
-                window.location.reload();
-            }
-        }, 30000);
-    </script>
+    <script src="assets/scripts/offline.js" defer></script>
 </body>
 </html>
 

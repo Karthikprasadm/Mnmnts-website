@@ -1,0 +1,26 @@
+{
+  "@context": "https://schema.org",
+  "@type": "Person",
+  "name": "Karthik Prasad M",
+  "url": "https://karthikprasadm.github.io/",
+  "description": "Student and web developer passionate about building accessible, pixel-perfect user interfaces where design meets engineering.",
+  "jobTitle": "Web Developer",
+  "knowsAbout": [
+    "Web Development",
+    "Frontend Development",
+    "User Interface Design",
+    "Accessibility",
+    "JavaScript",
+    "HTML",
+    "CSS"
+  ],
+  "sameAs": [
+    "https://www.instagram.com/kkarthhikk",
+    "https://www.linkedin.com/in/karthik-prasad-m-7673b5356/",
+    "https://github.com/Karthikprasadm",
+    "https://pin.it/70AOzYsfW",
+    "https://open.spotify.com/user/31g54rthdkjwc7tk2yzwlkptbbqi"
+  ],
+  "image": "https://ik.imagekit.io/ijv7nmfqx/Website_showcase/875320.jpg?updatedAt=1748107186320&v=2"
+}
+

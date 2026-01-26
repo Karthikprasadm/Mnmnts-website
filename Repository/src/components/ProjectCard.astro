@@ -9,6 +9,7 @@ type Props = {
     url: string;
     image: string;
     owner: string;
+    ownerAvatar?: string;
   };
 };
 
@@ -28,6 +29,7 @@ const baseUrl = import.meta.env.BASE_URL.endsWith('/')
   data-project-id={project.id}
   data-project-image-mode="background"
   data-project-default-image={project.image}
+  data-project-fallback-image={project.ownerAvatar || ""}
   data-stagename={stageName}
   data-name={displayName}
   data-genre={genre}

@@ -83,22 +83,3 @@ const { artistsTotal } = Astro.props;
   }
 </style>
 <script src="../scripts/gridActions.js"></script>
-<script>
-  // Ensure artist count color is set after animations
-  document.addEventListener('DOMContentLoaded', () => {
-    const artistCount = document.querySelector('.artist-count .oh__inner') as HTMLElement;
-    if (artistCount) {
-      artistCount.style.color = '#ffb347';
-    }
-  });
-  
-  // Also set after Astro page load
-  document.addEventListener('astro:page-load', () => {
-    setTimeout(() => {
-      const artistCount = document.querySelector('.artist-count .oh__inner') as HTMLElement;
-      if (artistCount) {
-        artistCount.style.color = '#ffb347';
-      }
-    }, 100);
-  });
-</script>

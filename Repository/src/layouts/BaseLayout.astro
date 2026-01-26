@@ -157,30 +157,7 @@ const baseUrl = import.meta.env.BASE_URL.endsWith('/') ? import.meta.env.BASE_UR
     />
     <ClientRouter />
     <!-- JSON-LD Structured Data -->
-    <script type="application/ld+json" is:inline>
-    {
-      "@context": "https://schema.org",
-      "@type": "WebSite",
-      "name": "Mnmnts | Repo",
-      "alternateName": "Mnmnts Repository",
-      "url": "https://karthikprasadm.github.io/",
-      "description": "A curated collection of music artists and albums. Explore diverse genres, discover new sounds, and experience the digital museum of musical moments.",
-      "author": {
-        "@type": "Person",
-        "name": "Karthik Prasad M",
-        "url": "https://karthikprasadm.github.io/",
-        "sameAs": [
-          "https://www.instagram.com/kkarthhikk",
-          "https://www.linkedin.com/in/karthik-prasad-m-7673b5356/",
-          "https://github.com/Karthikprasadm",
-          "https://pin.it/70AOzYsfW",
-          "https://open.spotify.com/user/31g54rthdkjwc7tk2yzwlkptbbqi"
-        ]
-      },
-      "inLanguage": "en-US",
-      "keywords": "Mnmnts, Museum of Moments, Music Artists, Albums, Portfolio, Karthik Prasad M, Digital Museum, Creative, Gallery, Music, Genres"
-    }
-    </script>
+    <script type="application/ld+json" src="/repo/structured-data/repository.json"></script>
   </head>
   <body>
     <div class="stars"></div>

@@ -12,6 +12,12 @@ let searchInput;
 let closeDialog;
 
 /* Event handler functions */
+const applyArtistCountColor = () => {
+  const artistCount = document.querySelector('.artist-count .oh__inner');
+  if (artistCount instanceof HTMLElement) {
+    artistCount.style.color = '#ffb347';
+  }
+};
 
 // Shuffle grid: trigger grid shuffling.
 const handleShuffleClick = () => shuffleGrid();
@@ -151,6 +157,8 @@ const init = () => {
   searchClearButton?.addEventListener('click', handleSearchClearClick);
   searchInput?.addEventListener('input', handleSearchInput);
   searchDialog?.addEventListener('close', () => toggleDialogPageBlur(false));
+  applyArtistCountColor();
+  setTimeout(applyArtistCountColor, 100);
 };
 
 /* Cleanup event listeners and reset variables */

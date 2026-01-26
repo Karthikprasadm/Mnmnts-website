@@ -29,53 +29,8 @@
     <meta property="og:image" content="https://ik.imagekit.io/ijv7nmfqx/Website_showcase/875320.jpg?updatedAt=1748107186320&v=2">
     <!-- End SEO meta tags -->
     <!-- JSON-LD Structured Data - Person -->
-    <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "Person",
-      "name": "Karthik Prasad M",
-      "url": "https://karthikprasadm.github.io/",
-      "description": "Student and web developer passionate about building accessible, pixel-perfect user interfaces where design meets engineering.",
-      "jobTitle": "Web Developer",
-      "knowsAbout": [
-        "Web Development",
-        "Frontend Development",
-        "User Interface Design",
-        "Accessibility",
-        "JavaScript",
-        "HTML",
-        "CSS"
-      ],
-      "sameAs": [
-        "https://www.instagram.com/kkarthhikk",
-        "https://www.linkedin.com/in/karthik-prasad-m-7673b5356/",
-        "https://github.com/Karthikprasadm",
-        "https://pin.it/70AOzYsfW",
-        "https://open.spotify.com/user/31g54rthdkjwc7tk2yzwlkptbbqi"
-      ],
-      "image": "https://ik.imagekit.io/ijv7nmfqx/Website_showcase/875320.jpg?updatedAt=1748107186320&v=2"
-    }
-    </script>
-    <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "BreadcrumbList",
-      "itemListElement": [
-        {
-          "@type": "ListItem",
-          "position": 1,
-          "name": "Home",
-          "item": "https://karthikprasadm.github.io/"
-        },
-        {
-          "@type": "ListItem",
-          "position": 2,
-          "name": "Know Me",
-          "item": "https://karthikprasadm.github.io/know-me/about.html"
-        }
-      ]
-    }
-    </script>
+    <script type="application/ld+json" src="../assets/structured-data/about-person.json"></script>
+    <script type="application/ld+json" src="../assets/structured-data/about-breadcrumb.json"></script>
     <!-- Favicons for all platforms -->
     <link rel="apple-touch-icon" sizes="57x57" href="../favicon/apple-icon-57x57.png">
     <link rel="apple-touch-icon" sizes="60x60" href="../favicon/apple-icon-60x60.png">
@@ -177,32 +132,6 @@
             ></iframe>
         </div>
     </div>
-    <script>
-    const RESUME_URL = '/assets/resume/karthik_resume.pdf#zoom=page-width';
-
-    document.getElementById('yodaResumeBtn').onclick = function() {
-        var modal = document.getElementById('resumeModal');
-        var frame = document.getElementById('resumeViewerFrame');
-        if (frame) {
-            frame.src = RESUME_URL;
-        }
-        modal.style.display = 'flex';
-        setTimeout(function(){modal.classList.add('show');}, 10);
-    };
-
-    document.getElementById('popOutBtn').onclick = function(e) {
-        e.stopPropagation();
-        window.open(RESUME_URL, '_blank', 'noopener,noreferrer');
-    };
-
-    document.getElementById('resumeModal').onclick = function(e) {
-        if (e.target === this) {
-            this.classList.remove('show');
-            var that = this;
-            setTimeout(function(){that.style.display = 'none';}, 200);
-        }
-    };
-    </script>
     <script src="../Menu-new/script.js" defer></script>
     <style>
     .resume-modal-overlay {
@@ -495,5 +424,6 @@
     <script src="../assets/scripts/page-transitions.js" defer></script>
     <script src="../assets/scripts/mobile-menu.js" defer></script>
     <script src="../assets/scripts/navbar-expand.js" defer></script>
+    <script src="../assets/scripts/resume-modal.js" defer></script>
 </body>
 </html>

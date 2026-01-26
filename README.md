@@ -33,6 +33,7 @@ A minimalist, interactive web experience designed as a digital museum of persona
 
 **Website**: [https://karthikprasadm.github.io](https://karthikprasadm.github.io)  
 **Vercel Preview**: [https://karthikprasadm-github-io-jdbj.vercel.app](https://karthikprasadm-github-io-jdbj.vercel.app)
+**Robots**: `/robots.txt`
 
 ## 📸 How It Works
 

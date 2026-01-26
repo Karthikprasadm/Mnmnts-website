@@ -1,0 +1,12 @@
+{
+  "@context": "https://schema.org",
+  "@type": "ImageGallery",
+  "name": "Gallery of Moments",
+  "description": "A curated collection of images and videos showcasing moments in time",
+  "url": "https://karthikprasadm.github.io/gallery/index.html",
+  "author": {
+    "@type": "Person",
+    "name": "Karthik Prasad M"
+  }
+}
+
