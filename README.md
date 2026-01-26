@@ -16,7 +16,10 @@ A minimalist, interactive web experience designed as a digital museum of persona
 - **Size Consistency** - Navbar maintains size using CSS Grid overlay (no layout shifts)
 - **Page-Specific Behavior** - Gallery expands to 380px when options shown; Upload/About fixed at 300px
 - **Social links** integration with unified icon system
-- **Resume viewer** with PDF.js integration
+- **Resume viewer** with in-page PDF modal
+- **Repository (Archive)** with GitHub project tiles and detail pages
+- **Project edit mode** with password-protected updates stored in Supabase
+- **Spotify visualizer** connected to Spotify API (auth + playback)
 
 ### Advanced Features
 - **Service Worker (legacy/disabled by default)** - Previously offered offline support, background sync, and caching; not registered now.
@@ -42,16 +45,17 @@ A minimalist, interactive web experience designed as a digital museum of persona
 
 - **Frontend:** HTML5, CSS3, JavaScript (ES6+)
 - **Media Hosting:** [ImageKit.io](https://imagekit.io/)
-- **Backend:** 
-  - Vercel serverless functions (ImageKit signature only)
+- **Backend:** Express server + API routes
+- **Database:** Supabase (project edits)
 - **Hosting:** GitHub Pages + Vercel
 - **PWA:** (Legacy) Service Worker & Web App Manifest; SW not registered by default
 
 ## 🏗️ Project Structure
 
 ```
-├── api/                          # Serverless functions (Vercel)
-│   └── signature.js              # ImageKit signature endpoint
+├── api/                          # API routes (ImageKit, Spotify)
+│   ├── signature.js              # ImageKit signature endpoint
+│   └── spotify/                  # Spotify token + proxy
 ├── assets/
 │   ├── images/                   # Gallery image data (JSON)
 │   │   └── gallery-data.json
@@ -79,7 +83,7 @@ A minimalist, interactive web experience designed as a digital museum of persona
 ├── gallery/                       # Main gallery page (homepage)
 ├── image-upload/                  # Upload page
 ├── know-me/                       # About page
-├── spotify-visualiser/            # Audio visualiser project (uses local audio files)
+├── spotify-visualiser/            # Audio visualiser project (Spotify API)
 ├── favicon/                       # Favicon files
 ├── 404_error/                     # Error page assets
 ├── Images_for_icon/               # Social media icons
@@ -175,7 +179,7 @@ npm run dev
 ## 📝 Content Management
 
 ### Gallery Images
-Edit `assets/images/gallery-data.json`:
+Edit `assets/images/gallery-data.json` (served via `/api/gallery-data`):
 ```json
 {
   "images": [
@@ -191,7 +195,7 @@ Edit `assets/images/gallery-data.json`:
 ```
 
 ### Gallery Videos
-Edit `assets/videos/videos-data.json`:
+Edit `assets/videos/videos-data.json` (served via `/api/videos-data`):
 ```json
 {
   "videos": [
@@ -249,11 +253,11 @@ All icons are centralized in `assets/styles/icons.css` and stored in `Images_for
 - **[Security Quick Reference](./README_SECURITY.md)** - Quick security overview
 
 **Note**: 
-- **Portfolio API endpoints removed**: Gallery, about, portfolio, projects, and social API endpoints have been removed. The website loads data directly from JSON files.
-- **WebSocket removed**: WebSocket server and all related functionality have been completely removed.
-- **Spotify API removed**: The Spotify API proxy has been removed. The visualiser now uses only local audio files.
-- **Active API endpoints**: Only utility endpoints remain:
+- **Content is file-based**: Gallery and video data are loaded from JSON files.
+- **Active API endpoints**:
   - `/api/signature` - ImageKit upload signature (used by image-upload page)
+  - `/api/spotify/*` - Spotify auth + proxy for the visualizer
+  - `/api/project-edits/*` - Project edit read/write (Supabase)
 
 ## 🔧 Configuration
 
@@ -264,13 +268,20 @@ All icons are centralized in `assets/styles/icons.css` and stored in `Images_for
 - `IMAGEKIT_PRIVATE_KEY` - ImageKit private key
 - `IMAGEKIT_URL_ENDPOINT` - ImageKit URL endpoint
 
-#### Vercel (Spotify API Proxy - Legacy – No Longer Used)
-- These variables are no longer required. The visualiser uses only local audio files and does not connect to Spotify.
+#### Spotify API (Visualizer)
+- `SPOTIFY_CLIENT_ID`
+- `SPOTIFY_CLIENT_SECRET`
+- `VITE_SPOTIFY_CLIENT_ID` (frontend)
+
+#### Supabase (Project edits)
+- `SUPABASE_URL`
+- `SUPABASE_SERVICE_ROLE_KEY`
+- `PROJECT_EDIT_PASSWORD`
 
 ## 🚀 Deployment
 
 ### GitHub Pages
-1. Push to the `modern-ui` branch (current deployment branch)
+1. Push to the deployment branch
 2. GitHub Pages automatically deploys
 3. Site available at `https://karthikprasadm.github.io`
 

@@ -25,11 +25,12 @@ These endpoints require:
 - `SPOTIFY_CLIENT_ID`
 - `SPOTIFY_CLIENT_SECRET`
 
-## Portfolio API - Removed
+## Gallery Data Endpoints
 
-**Portfolio API endpoints have been removed** as documented in the main README. The website loads data directly from JSON files:
-- `assets/images/gallery-data.json` - Gallery images
-- `assets/videos/videos-data.json` - Gallery videos
+The gallery now reads data via API endpoints (not directly from JSON files):
+
+- `GET /api/gallery-data` - Gallery images + default image
+- `GET /api/videos-data` - Gallery videos
 
 ## Future Implementation
 

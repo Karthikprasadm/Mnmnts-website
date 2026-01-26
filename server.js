@@ -30,6 +30,11 @@ const port = 3000;
 const projectEditPassword = process.env.PROJECT_EDIT_PASSWORD || 'Wingspawn@272815';
 const supabaseUrl = process.env.SUPABASE_URL;
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+if (process.env.VITE_SUPABASE_SERVICE_ROLE_KEY) {
+  console.error('❌ SECURITY ERROR: VITE_SUPABASE_SERVICE_ROLE_KEY must not be set.');
+  console.error('This would expose the service role key to the client bundle.');
+  process.exit(1);
+}
 const supabase = (supabaseUrl && supabaseServiceKey)
   ? createClient(supabaseUrl, supabaseServiceKey, { auth: { persistSession: false } })
   : null;
@@ -271,6 +276,10 @@ const setSecurityHeaders = (req, res, next) => {
   res.setHeader('X-XSS-Protection', '1; mode=block');
   res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
   res.setHeader('Permissions-Policy', 'geolocation=(), microphone=(), camera=()');
+  res.setHeader(
+    'Content-Security-Policy',
+    "default-src 'self'; base-uri 'self'; object-src 'none'; script-src 'self' 'unsafe-inline'; script-src-attr 'none'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self' data:; connect-src 'self' https://ik.imagekit.io https://api.imagekit.io https://sdk.scdn.co https://accounts.spotify.com https://api.spotify.com; form-action 'self'; frame-ancestors 'none';"
+  );
   next();
 };
 
@@ -286,12 +295,12 @@ app.get('/assets/resume/:file', (req, res, next) => {
   if (!fs.existsSync(filePath)) {
     return next();
   }
-  // Allow embedding from localhost dev servers (e.g., 3000 and 4321)
-  res.removeHeader('X-Frame-Options');
-  res.setHeader(
-    'Content-Security-Policy',
-    "frame-ancestors 'self' http://localhost:4321 http://127.0.0.1:4321"
-  );
+  const isProduction = process.env.NODE_ENV === 'production';
+  const frameAncestors = isProduction
+    ? "frame-ancestors 'self' https://mnmntsweb.vercel.app"
+    : "frame-ancestors 'self' http://localhost:4321 http://127.0.0.1:4321";
+  res.setHeader('X-Frame-Options', 'SAMEORIGIN');
+  res.setHeader('Content-Security-Policy', frameAncestors);
   return res.sendFile(filePath);
 });
 
@@ -352,6 +361,13 @@ if (fs.existsSync(spotifyVisualizerDist)) {
 // BUT exclude spotify-visualiser source directory to prevent conflicts
 const staticMiddleware = express.static(__dirname);
 app.use((req, res, next) => {
+  // Block direct access to gallery JSON files (serve via API instead)
+  if (
+    req.path === '/assets/images/gallery-data.json' ||
+    req.path === '/assets/videos/videos-data.json'
+  ) {
+    return res.status(403).send('Forbidden');
+  }
   // Block access to source files in spotify-visualiser
   if (req.path.startsWith('/spotify-visualiser/src')) {
     console.log('🚫 Blocked source file request:', req.path);
@@ -410,6 +426,40 @@ const projectEditsLimiter = createRateLimiter({
   windowMs: 60000,
   max: 60,
   message: 'Too many edit requests. Please try again in a minute.'
+});
+
+const galleryDataLimiter = createRateLimiter({
+  windowMs: 60000,
+  max: 120,
+  message: 'Too many gallery data requests. Please try again in a minute.'
+});
+
+const readJsonFile = (filePath) => {
+  try {
+    const raw = fs.readFileSync(filePath, 'utf-8');
+    return JSON.parse(raw);
+  } catch (error) {
+    console.error('Failed to read JSON file:', filePath, error);
+    return null;
+  }
+};
+
+app.get('/api/gallery-data', galleryDataLimiter, (req, res) => {
+  const filePath = path.join(__dirname, 'assets', 'images', 'gallery-data.json');
+  const data = readJsonFile(filePath);
+  if (!data) {
+    return res.status(500).json({ success: false, error: 'Failed to load gallery data.' });
+  }
+  return res.status(200).json(data);
+});
+
+app.get('/api/videos-data', galleryDataLimiter, (req, res) => {
+  const filePath = path.join(__dirname, 'assets', 'videos', 'videos-data.json');
+  const data = readJsonFile(filePath);
+  if (!data) {
+    return res.status(500).json({ success: false, error: 'Failed to load videos data.' });
+  }
+  return res.status(200).json(data);
 });
 
 app.get('/api/project-edits/:projectId', projectEditsLimiter, async (req, res) => {

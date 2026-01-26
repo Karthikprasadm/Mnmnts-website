@@ -843,11 +843,7 @@ export default function MusicPlayer() {
                 </motion.button>
               )}
             </div>
-          ) : (
-            <div className="mb-4 text-xs text-white/60">
-              Spotify login is disabled. Set <span className="text-white/80">VITE_SPOTIFY_CLIENT_ID</span> to enable it.
-            </div>
-          )}
+          ) : null}
           
           {/* Mnmnts Logo */}
           <div className="flex items-center justify-between mb-4">

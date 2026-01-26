@@ -96,12 +96,19 @@
         </p>
         <div class="offline-actions">
             <a href="/" class="offline-button primary">Go Home</a>
-            <button onclick="window.location.reload()" class="offline-button">Retry</button>
+            <button id="offlineRetryButton" class="offline-button">Retry</button>
             <a href="/gallery/index.html" class="offline-button">View Gallery</a>
         </div>
     </div>
     
     <script>
+        const retryButton = document.getElementById('offlineRetryButton');
+        if (retryButton) {
+            retryButton.addEventListener('click', () => {
+                window.location.reload();
+            });
+        }
+
         // Check if back online
         window.addEventListener('online', () => {
             window.location.reload();

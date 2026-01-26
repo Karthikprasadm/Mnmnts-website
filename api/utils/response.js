@@ -17,7 +17,7 @@ function setSecurityHeaders(res) {
   // For static HTML pages, CSP is configured in vercel.json
   res.setHeader(
     'Content-Security-Policy',
-    "default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data: https:; font-src 'self' data:; connect-src 'self' https://ik.imagekit.io https://api.imagekit.io https://sdk.scdn.co https://accounts.spotify.com; frame-ancestors 'none';"
+    "default-src 'self'; base-uri 'self'; object-src 'none'; script-src 'self'; script-src-attr 'none'; style-src 'self'; img-src 'self' data: https:; font-src 'self' data:; connect-src 'self' https://ik.imagekit.io https://api.imagekit.io https://sdk.scdn.co https://accounts.spotify.com https://api.spotify.com; form-action 'self'; frame-ancestors 'none';"
   );
 }
 

@@ -4,7 +4,7 @@ This folder contains the gallery video data file that controls which videos and 
 
 ## File Structure
 
-- `videos-data.json` - Contains all video data for the gallery
+- `videos-data.json` - Contains all video data for the gallery (served via `/api/videos-data`)
 
 ## How to Edit Videos
 

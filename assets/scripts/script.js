@@ -17,7 +17,7 @@ document.addEventListener("DOMContentLoaded", function () {
     // Load gallery data from JSON file
     async function loadGalleryData() {
         try {
-            const response = await fetch('../assets/images/gallery-data.json');
+            const response = await fetch('/api/gallery-data');
             if (!response.ok) {
                 throw new Error('Failed to load gallery data');
             }
@@ -43,7 +43,7 @@ document.addEventListener("DOMContentLoaded", function () {
     // Load videos data from JSON file
     async function loadVideosData() {
         try {
-            const response = await fetch('../assets/videos/videos-data.json');
+            const response = await fetch('/api/videos-data');
             if (!response.ok) {
                 throw new Error('Failed to load videos data');
             }

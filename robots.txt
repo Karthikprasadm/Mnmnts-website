@@ -1,0 +1,7 @@
+User-agent: *
+Disallow: /api/
+Disallow: /assets/images/
+Disallow: /assets/videos/
+
+Sitemap: /sitemap.xml
+

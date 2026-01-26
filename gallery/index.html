@@ -18,7 +18,7 @@
     <link rel="preload" href="../assets/scripts/error-handler.js" as="script">
     <link rel="preload" href="../assets/scripts/global-error-handler.js" as="script">
     <link rel="preload" href="../assets/scripts/script.js" as="script">
-    <link rel="preload" href="../assets/images/gallery-data.json" as="fetch" crossorigin>
+    <link rel="preload" href="/api/gallery-data" as="fetch" crossorigin>
     
     <!-- Stylesheets -->
     <link rel="stylesheet" href="../assets/styles/galaxy.css">
@@ -222,20 +222,20 @@
         </div>
 
         <div class="thumbnails" id="thumbnailsContainer">
-            <!-- Thumbnails will be dynamically loaded from gallery-data.json -->
+            <!-- Thumbnails will be dynamically loaded from the gallery API -->
         </div>
 
         <!-- Video Section -->
         <div class="video-container"> 
             <div id="videoSkeleton" class="skeleton skeleton-video" aria-hidden="true" style="display: none;"></div>
             <video id="displayedVideo" controls aria-label="Main gallery video" preload="none" poster="" style="opacity: 0; pointer-events: none;">
-                <!-- Video source will be dynamically loaded from gallery-data.json -->
+                <!-- Video source will be dynamically loaded from the gallery API -->
                 Your browser does not support the video tag.
             </video>
         </div>
 
         <div class="video-thumbnails" id="videoThumbnailsContainer">
-            <!-- Video thumbnails will be dynamically loaded from gallery-data.json -->
+            <!-- Video thumbnails will be dynamically loaded from the gallery API -->
         </div>
         
         <!-- ElasticGridScroll Section - Hidden, accessible only via "view more" button -->

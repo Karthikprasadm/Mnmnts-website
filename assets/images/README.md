@@ -6,11 +6,11 @@ This folder contains the gallery image data file that controls which images and 
 
 ## File Structure
 
-- `gallery-data.json` - Contains all image data for the gallery
+- `gallery-data.json` - Contains all image data for the gallery (served via `/api/gallery-data`)
 
 ## How to Edit Images
 
-Edit `gallery-data.json` to add, remove, or modify images and videos.
+Edit `gallery-data.json` to add, remove, or modify images.
 
 ### Image Structure
 
