@@ -267,7 +267,7 @@ const upload = multer({
 // Security headers middleware for all responses
 const setSecurityHeaders = (req, res, next) => {
   res.setHeader('X-Content-Type-Options', 'nosniff');
-  res.setHeader('X-Frame-Options', 'DENY');
+  res.setHeader('X-Frame-Options', 'SAMEORIGIN');
   res.setHeader('X-XSS-Protection', '1; mode=block');
   res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
   res.setHeader('Permissions-Policy', 'geolocation=(), microphone=(), camera=()');
@@ -279,6 +279,21 @@ app.use(setSecurityHeaders);
 
 // Enable JSON parsing for API endpoints
 app.use(express.json({ limit: '10mb' })); // Limit JSON payload size
+
+// Serve resume PDF with iframe-friendly headers (allow embedding on localhost dev)
+app.get('/assets/resume/:file', (req, res, next) => {
+  const filePath = path.join(__dirname, 'assets', 'resume', req.params.file);
+  if (!fs.existsSync(filePath)) {
+    return next();
+  }
+  // Allow embedding from localhost dev servers (e.g., 3000 and 4321)
+  res.removeHeader('X-Frame-Options');
+  res.setHeader(
+    'Content-Security-Policy',
+    "frame-ancestors 'self' http://localhost:4321 http://127.0.0.1:4321"
+  );
+  return res.sendFile(filePath);
+});
 
 const sanitizeProjectId = (projectId) =>
   String(projectId || '').replace(/[^a-zA-Z0-9._-]/g, '');
@@ -851,7 +866,7 @@ app.post('/upload', uploadLimiter, upload.array('media', 10), async (req, res) =
 app.use((err, req, res, next) => {
     // Apply security headers
     res.setHeader('X-Content-Type-Options', 'nosniff');
-    res.setHeader('X-Frame-Options', 'DENY');
+    res.setHeader('X-Frame-Options', 'SAMEORIGIN');
     res.setHeader('X-XSS-Protection', '1; mode=block');
     res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
     

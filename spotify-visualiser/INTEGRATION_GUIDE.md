@@ -4,8 +4,8 @@ This guide explains how the Spotify Visualizer is integrated into the main websi
 
 ## 🎯 Integration Status
 
-✅ **Integrated Visualiser** – The audio visualiser (formerly "Spotify Visualiser") is part of your main website navigation.  
-It no longer connects to the Spotify API and instead plays locally hosted audio files.
+✅ **Integrated Visualiser** – The audio visualiser is part of your main website navigation.  
+It supports **Spotify Mode** (Web API + Web Playback SDK) and **Local Mode** (local audio files).
 
 ## 📍 Location
 
@@ -134,6 +134,8 @@ The visualizer uses the Menu-new navbar component (same as all other pages):
 The integrated Spotify Visualizer includes:
 - ✅ Interactive 3D WebGL visualization
 - ✅ Music player with full controls
+- ✅ Spotify OAuth login + token refresh
+- ✅ Spotify Mode + Local Mode toggle
 - ✅ Lyrics display
 - ✅ Search functionality
 - ✅ Queue management
@@ -159,6 +161,7 @@ The integrated Spotify Visualizer includes:
 
 - **Relative Paths**: All navigation uses relative paths (`../../`) for flexibility
 - **Base Path**: Vite is configured with `base: "/spotify-visualiser/"` for asset paths
+- **Spotify API**: Requires `SPOTIFY_CLIENT_ID`, `SPOTIFY_CLIENT_SECRET`, and `VITE_SPOTIFY_CLIENT_ID`
 - **Consistent Styling**: Uses the same CSS classes as other pages (`navbar`, `stars`, etc.)
 - **SEO**: Included in sitemap for search engine indexing
 

@@ -12,8 +12,18 @@ This directory contains only utility API endpoints, not portfolio data endpoints
    - Method: GET
    - Purpose: Secure ImageKit authentication for direct uploads
 
-> **Note:** The former `/api/spotify/*` endpoints and `api/spotify/` folder have been removed.  
-> The `spotify-visualiser/` project now uses only local audio files and does not call any backend API.
+> **Note:** `/api/spotify/*` endpoints are active and used by the `spotify-visualiser/` app for Spotify Web API access.
+
+## Spotify API Endpoints
+
+### Active Endpoints
+
+- `POST /api/spotify/token` - Exchange auth code or refresh token
+- `GET /api/spotify?endpoint=...` - Proxy requests to Spotify Web API
+
+These endpoints require:
+- `SPOTIFY_CLIENT_ID`
+- `SPOTIFY_CLIENT_SECRET`
 
 ## Portfolio API - Removed
 

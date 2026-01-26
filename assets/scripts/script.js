@@ -162,8 +162,19 @@ document.addEventListener("DOMContentLoaded", function () {
             // Add "view more" link after all thumbnails
             const viewMoreLink = document.createElement('a');
             viewMoreLink.href = '../ElasticGridScroll/index.html';
-            viewMoreLink.textContent = '◯';
             viewMoreLink.className = 'portal-circle';
+            viewMoreLink.setAttribute('aria-label', 'View in');
+
+            const portalSymbol = document.createElement('span');
+            portalSymbol.className = 'portal-symbol';
+            portalSymbol.textContent = '◯';
+
+            const portalLabel = document.createElement('span');
+            portalLabel.textContent = 'View in';
+            portalLabel.className = 'portal-label';
+
+            viewMoreLink.appendChild(portalSymbol);
+            viewMoreLink.appendChild(portalLabel);
             thumbnailsContainer.appendChild(viewMoreLink);
         }
 

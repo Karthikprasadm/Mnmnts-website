@@ -161,7 +161,7 @@
         // ...
     </div>
     <div class="yoda-favicon" id="yodaResumeBtn" style="cursor:pointer;" aria-label="Open resume modal">
-        <div class="yoda-modern-box"> my resume!!</div>
+        <div class="yoda-modern-box"> Career Profile!</div>
         <img src="../icons8-baby-yoda-color-favicons/web/icons8-baby-yoda-color-48.png" alt="Baby Yoda favicon" loading="lazy" />
     </div>
     <div id="resumeModal" class="resume-modal-overlay" style="display:none;">
@@ -178,12 +178,12 @@
         </div>
     </div>
     <script>
-    const RESUME_URL = window.location.origin + '/assets/resume/karthik_resume.pdf#zoom=page-width';
+    const RESUME_URL = '/assets/resume/karthik_resume.pdf#zoom=page-width';
 
     document.getElementById('yodaResumeBtn').onclick = function() {
         var modal = document.getElementById('resumeModal');
         var frame = document.getElementById('resumeViewerFrame');
-        if (frame && !frame.src) {
+        if (frame) {
             frame.src = RESUME_URL;
         }
         modal.style.display = 'flex';

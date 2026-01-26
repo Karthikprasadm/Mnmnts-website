@@ -1,43 +1,27 @@
-> **Note:** The Spotify API integration has been removed.  
-> The visualiser now plays **locally hosted audio files** only and no longer connects to Spotify.
+# Spotify API Setup
 
-# Spotify API Setup (Legacy – No Longer Used)
+This document explains how to connect the visualiser to the Spotify Web API.
 
-This document is kept for historical reference. The current version of the project **does not require any Spotify credentials** and does not make requests to the Spotify Web API.
+## Required Environment Variables
 
-If you ever decide to re‑enable Spotify support in the future, you can refer back to this file and the git history to restore the previous implementation. For now:
+**Backend (serverless / local server):**
+- `SPOTIFY_CLIENT_ID`
+- `SPOTIFY_CLIENT_SECRET`
 
-- You do **not** need a Spotify Developer account.
-- You do **not** need `SPOTIFY_CLIENT_ID` / `SPOTIFY_CLIENT_SECRET`.
-- The `api/spotify/*` endpoints are no longer used by the front‑end.
+**Frontend (visualiser):**
+- `VITE_SPOTIFY_CLIENT_ID`
 
-To configure audio for the visualiser now:
+## Redirect URIs
 
-1. Place your audio files in `spotify-visualiser/public/audio/`.
-2. Open `spotify-visualiser/src/components/MusicPlayer.tsx`.
-3. Update the `playlist` array so each track’s `src` field points to your own audio file, for example:
+Add these in your Spotify Developer app:
+- `http://localhost:5173/spotify-visualiser/`
+- `http://localhost:3000/spotify-visualiser/`
+- `https://yourdomain.com/spotify-visualiser/`
 
-   ```ts
-   const playlist = [
-     {
-       id: 1,
-       title: "My Track",
-       artist: "Me",
-       duration: "3:15",
-       cover: `${BASE_URL}covers/my-track.jpg`,
-       src: `${BASE_URL}audio/my-track.mp3`,
-       hasLyrics: true,
-     },
-     // ...
-   ]
-   ```
+## Local Audio Fallback
 
-4. Run the visualiser as usual:
+If you want to keep local audio:
+1. Place files in `spotify-visualiser/public/audio/`
+2. Update the `playlist` array in `spotify-visualiser/src/components/MusicPlayer.tsx`
 
-   ```bash
-   cd spotify-visualiser
-   npm install
-   npm run dev
-   ```
-
-The player will now load and play your local audio files directly via the browser’s `<audio>` element – no external API keys or OAuth required.
+The visualiser can switch between **Spotify Mode** and **Local Mode**.

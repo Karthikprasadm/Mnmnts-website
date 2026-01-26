@@ -165,6 +165,11 @@ document.addEventListener("DOMContentLoaded", function () {
             viewMoreLink.textContent = '◯';
             viewMoreLink.className = 'portal-circle';
             thumbnailsContainer.appendChild(viewMoreLink);
+
+            const portalLabel = document.createElement('span');
+            portalLabel.textContent = 'View in';
+            portalLabel.className = 'portal-label';
+            thumbnailsContainer.appendChild(portalLabel);
         }
 
         // Create video thumbnails with skeletons

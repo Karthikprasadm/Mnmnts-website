@@ -1596,6 +1596,38 @@ body > div[style*="backdrop-filter"] {
     transform: scale(1);
 }
 
+.portal-symbol {
+    position: relative;
+    z-index: 1;
+}
+
+.portal-label {
+    position: absolute;
+    top: 50%;
+    left: calc(100% + 0.65rem);
+    transform: translateY(calc(-50% + 6px));
+    font-size: 0.68rem;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+    color: rgba(235, 245, 255, 0.9);
+    background: none;
+    border: none;
+    padding: 0;
+    clip-path: none;
+    opacity: 0;
+    transition: opacity 0.2s ease, transform 0.2s ease;
+    pointer-events: none;
+    white-space: nowrap;
+    backdrop-filter: none;
+    box-shadow: none;
+}
+
+.portal-circle:hover .portal-label,
+.portal-circle:focus-visible .portal-label {
+    opacity: 1;
+    transform: translateY(-50%);
+}
+
 /* LAYER 1: Aurora-like ribbon - Soft, flowing colors */
 .portal-circle::before {
     content: '';
