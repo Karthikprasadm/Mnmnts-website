@@ -8,6 +8,7 @@
     "stop": "powershell -Command \"Get-Process -Name node -ErrorAction SilentlyContinue | Where-Object { $_.MainWindowTitle -eq '' } | Stop-Process -Force\""
   },
   "dependencies": {
+    "@supabase/supabase-js": "^2.91.0",
     "cors": "^2.8.5",
     "dotenv": "^16.5.0",
     "express": "^5.1.0",

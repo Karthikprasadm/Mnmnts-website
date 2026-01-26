@@ -1,12 +1,9 @@
 ---
-import { getCollection } from "astro:content";
 import BaseLayout from "../layouts/BaseLayout.astro";
 import ArtistGrid from "../components/ArtistGrid.astro";
 import ArtistGridHeader from "../components/ArtistGridHeader.astro";
 import Preloader from "../components/Preloader.astro";
 import { fetchGithubRepos } from "../lib/github";
-
-const allArtists = await getCollection("artists");
 
 const githubUsername = "Karthikprasadm";
 const githubToken = import.meta.env.GITHUB_TOKEN ?? process.env.GITHUB_TOKEN;
@@ -28,7 +25,7 @@ try {
   githubProjects = [];
 }
 
-const artistsTotal = allArtists.length + githubProjects.length;
+const artistsTotal = githubProjects.length;
 const title = "Mnmnts | Repo";
 ---
 
@@ -39,6 +36,6 @@ const title = "Mnmnts | Repo";
   -->
   <Preloader />
   <ArtistGridHeader artistsTotal={artistsTotal} />
-  <ArtistGrid artists={allArtists} projects={githubProjects} />
+  <ArtistGrid projects={githubProjects} />
 </BaseLayout>
 <script src="../scripts/index.js"></script>

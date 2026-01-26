@@ -10,6 +10,7 @@ const fs = require("fs");
 const ImageKit = require('imagekit');
 const { v4: uuidv4 } = require('uuid');
 const { createProxyMiddleware } = require('http-proxy-middleware');
+const { createClient } = require('@supabase/supabase-js');
 
 // Configure ImageKit (only if env vars are present)
 let imagekit = null;
@@ -26,6 +27,18 @@ if (process.env.IMAGEKIT_PUBLIC_KEY && process.env.IMAGEKIT_PRIVATE_KEY && proce
 
 const app = express();
 const port = 3000;
+const projectEditPassword = process.env.PROJECT_EDIT_PASSWORD || 'Wingspawn@272815';
+const supabaseUrl = process.env.SUPABASE_URL;
+const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+const supabase = (supabaseUrl && supabaseServiceKey)
+  ? createClient(supabaseUrl, supabaseServiceKey, { auth: { persistSession: false } })
+  : null;
+
+if (supabase) {
+  console.log('✅ Supabase configured for project edits');
+} else {
+  console.log('⚠️  Supabase not configured (missing SUPABASE_URL or SUPABASE_SERVICE_ROLE_KEY).');
+}
 
 // Ensure the "uploads" directory exists
 const uploadDir = "uploads";
@@ -267,6 +280,9 @@ app.use(setSecurityHeaders);
 // Enable JSON parsing for API endpoints
 app.use(express.json({ limit: '10mb' })); // Limit JSON payload size
 
+const sanitizeProjectId = (projectId) =>
+  String(projectId || '').replace(/[^a-zA-Z0-9._-]/g, '');
+
 // Serve built Repository (Astro) files from /repo
 const repositoryDist = path.join(__dirname, 'Repository', 'dist');
 if (fs.existsSync(repositoryDist)) {
@@ -373,6 +389,76 @@ const uploadLimiter = createRateLimiter({
   windowMs: 60000, // 1 minute
   max: 10, // 10 upload requests per minute (more restrictive due to file processing)
   message: 'Too many upload requests. Please try again in a minute.'
+});
+
+const projectEditsLimiter = createRateLimiter({
+  windowMs: 60000,
+  max: 60,
+  message: 'Too many edit requests. Please try again in a minute.'
+});
+
+app.get('/api/project-edits/:projectId', projectEditsLimiter, async (req, res) => {
+  const projectId = sanitizeProjectId(req.params.projectId);
+  if (!projectId) {
+    return res.status(400).json({ success: false, error: 'Invalid project id.' });
+  }
+  if (!supabase) {
+    return res.status(503).json({ success: false, error: 'Supabase is not configured.' });
+  }
+  const { data, error } = await supabase
+    .from('project_edits')
+    .select('project_id, overview, language, image')
+    .eq('project_id', projectId)
+    .maybeSingle();
+  if (error) {
+    console.error('Failed to load project edits:', error);
+    return res.status(500).json({ success: false, error: 'Failed to load project edits.' });
+  }
+  return res.status(200).json({ success: true, data: data || null });
+});
+
+app.post('/api/project-edits/:projectId/verify', projectEditsLimiter, (req, res) => {
+  const projectId = sanitizeProjectId(req.params.projectId);
+  if (!projectId) {
+    return res.status(400).json({ success: false, error: 'Invalid project id.' });
+  }
+  if (req.body?.password !== projectEditPassword) {
+    return res.status(401).json({ success: false, error: 'Invalid password.' });
+  }
+  return res.status(200).json({ success: true });
+});
+
+app.put('/api/project-edits/:projectId', projectEditsLimiter, async (req, res) => {
+  const projectId = sanitizeProjectId(req.params.projectId);
+  if (!projectId) {
+    return res.status(400).json({ success: false, error: 'Invalid project id.' });
+  }
+  if (req.body?.password !== projectEditPassword) {
+    return res.status(401).json({ success: false, error: 'Invalid password.' });
+  }
+  if (!supabase) {
+    return res.status(503).json({ success: false, error: 'Supabase is not configured.' });
+  }
+  const { overview, language, image } = req.body || {};
+  const updates = {};
+  if (typeof overview === 'string') updates.overview = overview;
+  if (typeof language === 'string') updates.language = language;
+  if (typeof image === 'string' && image.length <= 5 * 1024 * 1024) {
+    updates.image = image;
+  }
+  if (Object.keys(updates).length === 0) {
+    return res.status(400).json({ success: false, error: 'No valid fields to update.' });
+  }
+  const { data, error } = await supabase
+    .from('project_edits')
+    .upsert({ project_id: projectId, ...updates }, { onConflict: 'project_id' })
+    .select('project_id, overview, language, image')
+    .single();
+  if (error) {
+    console.error('Failed to save project edits:', error);
+    return res.status(500).json({ success: false, error: 'Failed to save project edits.' });
+  }
+  return res.status(200).json({ success: true, data });
 });
 
 // Local signature endpoint for ImageKit direct upload

@@ -17,7 +17,15 @@ const language = project.language || "Project";
 
 <a class="album-card" href={`${baseUrl}/projects/${project.name}`}>
   <div>
-    <img class="fade-in" loading="lazy" src={imageSrc} alt={project.name} />
+    <img
+      class="fade-in"
+      loading="lazy"
+      src={imageSrc}
+      alt={project.name}
+      data-project-id={project.name}
+      data-project-image-mode="img"
+      data-project-default-image={imageSrc}
+    />
   </div>
   <h3>{project.name}</h3>
   <p>{language}</p>

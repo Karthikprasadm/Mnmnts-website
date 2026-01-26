@@ -1,6 +1,4 @@
 ---
-import type { CollectionEntry } from "astro:content";
-import ArtistCard from "./ArtistCard.astro";
 import ProjectCard from "./ProjectCard.astro";
 import Tooltip from "./Tooltip.astro";
 
@@ -16,16 +14,14 @@ type Project = {
 };
 
 type Props = {
-  artists: CollectionEntry<"artists">[];
   projects?: Project[];
 };
 
-const { artists, projects = [] } = Astro.props;
+const { projects = [] } = Astro.props;
 const grid = "artists";
 ---
 
 <section class="artist-grid" id="grid" data-grid={grid}>
-  {artists.map((artist) => <ArtistCard artist={artist} />)}
   {projects.map((project) => <ProjectCard project={project} />)}
 </section>
 
