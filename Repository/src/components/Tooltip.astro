@@ -26,16 +26,6 @@ const { grid } = Astro.props;
     </TextSlider>
   </div>
 
-  <div class="tooltip__row" data-field="name">
-    <!-- Name -->
-    <div class="tooltip__content">
-      <TextSlider />
-    </div>
-    <div class="tooltip__content">
-      <TextSlider />
-    </div>
-  </div>
-
   <div class="tooltip__row tooltip__row--ra" data-field="genre">
     <!-- Genre -->
     <div class="tooltip__content">
@@ -55,15 +45,19 @@ const { grid } = Astro.props;
     left: 0;
     padding: 1rem;
     width: 240px;
+    max-width: 240px;
     background: #000;
     color: #bababa;
     display: grid;
-    grid-template-columns: 1fr auto;
+    grid-template-columns: minmax(0, 1fr) auto;
     grid-template-rows: auto auto;
     pointer-events: none;
     justify-content: space-between;
     grid-row-gap: 0.25rem;
+    grid-column-gap: 0.5rem;
     will-change: transform;
+    overflow: hidden;
+    box-sizing: border-box;
   }
   .tooltip__row {
     display: grid;
@@ -71,10 +65,14 @@ const { grid } = Astro.props;
     grid-template-rows: 100%;
     grid-template-areas: "tt-content";
     font-size: 12px;
+    min-width: 0;
+    overflow: hidden;
+    max-width: 100%;
   }
   .tooltip__row--ra {
     justify-self: end;
     text-align: right;
+    max-width: fit-content;
   }
   .tooltip__row:first-child {
     text-transform: uppercase;
@@ -84,6 +82,45 @@ const { grid } = Astro.props;
   .tooltip__content {
     grid-area: tt-content;
     white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;
+  }
+  /* Remove ellipsis from genre field - it's short and shouldn't be truncated */
+  .tooltip__row--ra[data-field="genre"] {
+    overflow: hidden;
+  }
+  .tooltip__row--ra[data-field="genre"] .tooltip__content {
+    text-overflow: unset;
+    overflow: hidden;
+    max-width: none;
+  }
+  /* Ensure TextSlider containers properly clip overflow to prevent artifacts */
+  .tooltip__content .oh {
+    overflow: hidden;
+    position: relative;
+    display: inline-block;
+    max-width: 100%;
+    height: 1.2em;
+    line-height: 1.2em;
+  }
+  /* Hide inactive sliders that are positioned off-screen */
+  .tooltip__content .oh__inner {
+    display: inline-block;
+    will-change: transform;
+  }
+  /* Hide sliders that are transformed off-screen */
+  .tooltip__content .oh__inner[style*="yPercent: -100"],
+  .tooltip__content .oh__inner[style*="yPercent: 100"] {
+    opacity: 0;
+    pointer-events: none;
+  }
+  /* Ensure genre field TextSlider containers clip properly */
+  .tooltip__row--ra[data-field="genre"] .tooltip__content .oh {
+    overflow: hidden;
+    max-width: fit-content;
+    height: 1.2em;
+    line-height: 1.2em;
   }
 </style>
 

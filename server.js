@@ -11,6 +11,7 @@ const ImageKit = require('imagekit');
 const { v4: uuidv4 } = require('uuid');
 const { createProxyMiddleware } = require('http-proxy-middleware');
 const { createClient } = require('@supabase/supabase-js');
+const nodemailer = require('nodemailer');
 
 // Configure ImageKit (only if env vars are present)
 let imagekit = null;
@@ -27,7 +28,7 @@ if (process.env.IMAGEKIT_PUBLIC_KEY && process.env.IMAGEKIT_PRIVATE_KEY && proce
 
 const app = express();
 const port = 3000;
-const projectEditPassword = process.env.PROJECT_EDIT_PASSWORD || 'Wingspawn@272815';
+const projectEditPassword = process.env.PROJECT_EDIT_PASSWORD;
 const supabaseUrl = process.env.SUPABASE_URL;
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 if (process.env.VITE_SUPABASE_SERVICE_ROLE_KEY) {
@@ -43,6 +44,31 @@ if (supabase) {
   console.log('✅ Supabase configured for project edits');
 } else {
   console.log('⚠️  Supabase not configured (missing SUPABASE_URL or SUPABASE_SERVICE_ROLE_KEY).');
+}
+
+// Contact form email: create transporter when SMTP env vars are set
+let contactTransporter = null;
+const smtpHost = process.env.SMTP_HOST;
+const smtpPort = process.env.SMTP_PORT;
+const smtpUser = process.env.SMTP_USER;
+const smtpPass = process.env.SMTP_PASS;
+const contactToEmail = process.env.CONTACT_TO_EMAIL || 'prasadmkarthik@gmail.com';
+const contactFromEmail = process.env.CONTACT_FROM_EMAIL || contactToEmail;
+if (smtpHost && smtpPort && smtpUser && smtpPass) {
+  contactTransporter = nodemailer.createTransport({
+    host: smtpHost,
+    port: Number(smtpPort),
+    secure: smtpPort === '465',
+    auth: { user: smtpUser, pass: smtpPass }
+  });
+  console.log('✅ Contact form email configured (SMTP)');
+} else {
+  console.log('⚠️  Contact form email not configured (set SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASS in .env to receive contact form emails).');
+}
+
+function escapeHtml(s) {
+  if (typeof s !== 'string') return '';
+  return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 }
 
 // Ensure the "uploads" directory exists
@@ -428,6 +454,12 @@ const projectEditsLimiter = createRateLimiter({
   message: 'Too many edit requests. Please try again in a minute.'
 });
 
+const contactLimiter = createRateLimiter({
+  windowMs: 60000, // 1 minute
+  max: 5, // 5 contact requests per minute (more restrictive to prevent spam)
+  message: 'Too many contact requests. Please try again in a minute.'
+});
+
 const galleryDataLimiter = createRateLimiter({
   windowMs: 60000,
   max: 120,
@@ -487,6 +519,9 @@ app.post('/api/project-edits/:projectId/verify', projectEditsLimiter, (req, res)
   if (!projectId) {
     return res.status(400).json({ success: false, error: 'Invalid project id.' });
   }
+  if (!projectEditPassword) {
+    return res.status(503).json({ success: false, error: 'Project edit is not configured.' });
+  }
   if (req.body?.password !== projectEditPassword) {
     return res.status(401).json({ success: false, error: 'Invalid password.' });
   }
@@ -497,6 +532,9 @@ app.put('/api/project-edits/:projectId', projectEditsLimiter, async (req, res) =
   const projectId = sanitizeProjectId(req.params.projectId);
   if (!projectId) {
     return res.status(400).json({ success: false, error: 'Invalid project id.' });
+  }
+  if (!projectEditPassword) {
+    return res.status(503).json({ success: false, error: 'Project edit is not configured.' });
   }
   if (req.body?.password !== projectEditPassword) {
     return res.status(401).json({ success: false, error: 'Invalid password.' });
@@ -524,6 +562,105 @@ app.put('/api/project-edits/:projectId', projectEditsLimiter, async (req, res) =
     return res.status(500).json({ success: false, error: 'Failed to save project edits.' });
   }
   return res.status(200).json({ success: true, data });
+});
+
+// Contact form endpoint
+app.post('/api/contact', contactLimiter, async (req, res) => {
+  try {
+    const { name, email, subject, message } = req.body;
+
+    // Validate required fields
+    if (!name || !email || !message) {
+      return res.status(400).json({
+        success: false,
+        error: 'Missing required fields: name, email, and message are required.'
+      });
+    }
+
+    // Validate email format
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      return res.status(400).json({
+        success: false,
+        error: 'Invalid email address format.'
+      });
+    }
+
+    // Validate field lengths
+    if (name.trim().length < 2 || name.trim().length > 100) {
+      return res.status(400).json({
+        success: false,
+        error: 'Name must be between 2 and 100 characters.'
+      });
+    }
+
+    if (message.trim().length < 10 || message.trim().length > 5000) {
+      return res.status(400).json({
+        success: false,
+        error: 'Message must be between 10 and 5000 characters.'
+      });
+    }
+
+    if (subject && subject.trim().length > 200) {
+      return res.status(400).json({
+        success: false,
+        error: 'Subject must be less than 200 characters.'
+      });
+    }
+
+    // Sanitize inputs (basic sanitization)
+    const sanitizedName = name.trim().substring(0, 100);
+    const sanitizedEmail = email.trim().toLowerCase().substring(0, 254);
+    const sanitizedSubject = subject ? subject.trim().substring(0, 200) : '';
+    const sanitizedMessage = message.trim().substring(0, 5000);
+
+    if (!contactTransporter) {
+      return res.status(503).json({
+        success: false,
+        error: 'Contact form is not configured. Please set SMTP_* and CONTACT_* in .env to receive emails.'
+      });
+    }
+
+    const emailSubject = `Contact form: ${sanitizedSubject || '(No subject)'}`;
+    const textBody = [
+      `Name: ${sanitizedName}`,
+      `Email: ${sanitizedEmail}`,
+      `Subject: ${sanitizedSubject || '(No subject)'}`,
+      '',
+      'Message:',
+      sanitizedMessage
+    ].join('\n');
+    const htmlBody = [
+      `<p><strong>Name:</strong> ${escapeHtml(sanitizedName)}</p>`,
+      `<p><strong>Email:</strong> <a href="mailto:${escapeHtml(sanitizedEmail)}">${escapeHtml(sanitizedEmail)}</a></p>`,
+      `<p><strong>Subject:</strong> ${escapeHtml(sanitizedSubject || '(No subject)')}</p>`,
+      '<p><strong>Message:</strong></p>',
+      `<p>${escapeHtml(sanitizedMessage).replace(/\n/g, '<br>')}</p>`
+    ].join('');
+
+    await contactTransporter.sendMail({
+      from: contactFromEmail,
+      to: contactToEmail,
+      replyTo: sanitizedEmail,
+      subject: emailSubject,
+      text: textBody,
+      html: htmlBody
+    });
+
+    res.status(200).json({
+      success: true,
+      message: 'Message sent successfully! I\'ll get back to you soon.'
+    });
+
+  } catch (error) {
+    console.error('Contact form error:', error);
+    res.status(500).json({
+      success: false,
+      error: process.env.NODE_ENV === 'production'
+        ? 'Failed to send message. Please try again later.'
+        : `Internal server error: ${error.message}`
+    });
+  }
 });
 
 // Local signature endpoint for ImageKit direct upload

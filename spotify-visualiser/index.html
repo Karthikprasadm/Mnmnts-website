@@ -21,6 +21,17 @@
         transform: translateX(-50%) !important;
         z-index: 5000 !important;
         pointer-events: auto !important;
+        max-width: 340px; /* Normal state: slightly wider */
+        width: fit-content;
+        padding: 0.5rem 0.9rem;
+        margin: 1rem auto 1rem;
+        transition: max-width 0.2s ease, width 0.2s ease;
+      }
+      
+      /* Increase size when expanded (options shown) */
+      body nav.navbar.navbar-expanded {
+        max-width: 480px; /* Expanded state: wider to fit all links */
+        width: fit-content;
       }
       
       /* Ensure navbar elements are clickable */
@@ -70,6 +81,8 @@
           <a href="../image-upload/upload.html">Upload</a>
           <span class="dot">·</span>
           <a href="/repo">Repository</a>
+          <span class="dot">·</span>
+          <a href="../Connect/connect.html">Connect</a>
         </div>
       </div>
     </nav>

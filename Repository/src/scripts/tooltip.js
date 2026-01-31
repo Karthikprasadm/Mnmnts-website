@@ -49,8 +49,15 @@ class Tooltip {
     this.xTo = gsap.quickTo(this.tooltip, 'x', { duration: 0.6, ease: 'expo' });
     this.yTo = gsap.quickTo(this.tooltip, 'y', { duration: 0.6, ease: 'expo' });
 
-    // Initialize row active states
-    this.tooltip.querySelectorAll('.tooltip__row').forEach(row => row.dataset.active = '0');
+    // Initialize row active states and set initial opacity
+    this.tooltip.querySelectorAll('.tooltip__row').forEach(row => {
+      row.dataset.active = '0';
+      const textSliders = row.querySelectorAll('.oh__inner');
+      if (textSliders.length >= 2) {
+        gsap.set(textSliders[0], { opacity: 1 });
+        gsap.set(textSliders[1], { opacity: 0 });
+      }
+    });
 
     this.initializeEvents();
   }
@@ -100,7 +107,7 @@ class Tooltip {
     this.scaleDownTimeout = setTimeout(() => {
       if (!this.hoverTarget) {
         this.scaleDownTimeline = gsap.timeline();
-        this.updateTooltip({ stagename: '', name: '', genre: '' }, this.scaleDownTimeline, 'out');
+        this.updateTooltip({ stagename: '', genre: '' }, this.scaleDownTimeline, 'out');
         this.scaleDownTimeline.to(
           this.tooltip,
           { ...this.animationConfig.tooltip, scale: 0 },
@@ -119,11 +126,10 @@ class Tooltip {
     clearTimeout(this.scaleDownTimeout);
 
     const stageName = this.hoverTarget.dataset.stagename;
-    const name = this.hoverTarget.dataset.name;
     const genre = this.hoverTarget.dataset.genre;
 
     const updateTimeline = gsap.timeline();
-    this.updateTooltip({ stagename: stageName, name, genre }, updateTimeline, this.isTooltipVisible ? 'none' : 'in');
+    this.updateTooltip({ stagename: stageName, genre }, updateTimeline, this.isTooltipVisible ? 'none' : 'in');
   };
 
   handleMouseLeave = () => {
@@ -173,12 +179,11 @@ class Tooltip {
       clearTimeout(this.scaleDownTimeout);
 
       const stageName = target.dataset.stagename;
-      const name = target.dataset.name;
       const genre = target.dataset.genre;
 
       const updateTimeline = gsap.timeline();
       this.updateTooltip(
-        { stagename: stageName, name, genre },
+        { stagename: stageName, genre },
         updateTimeline,
         this.isTooltipVisible ? 'none' : 'in',
       );
@@ -263,13 +268,14 @@ class Tooltip {
 
     if (direction === 'in') {
       // Reset both sliders to their "out" positions
-      gsap.set(currentSlider, clonedOutDirection);
-      gsap.set(nextSlider, clonedInDirection); // Ensure the next slider is positioned off-screen for the next animation
+      gsap.set(currentSlider, { ...clonedOutDirection, opacity: 0 });
+      gsap.set(nextSlider, { ...clonedInDirection, opacity: 0 }); // Ensure the next slider is positioned off-screen for the next animation
 
       // Slide the current text out (tooltip appearing)
       this.rowTimelines[rowSelector].to(currentSlider, {
         ...this.animationConfig.texts,
         ...clonedOutDirection, // Slide out to the correct direction
+        opacity: 0,
       }, this.animationConfig.textsDelay);
 
       // Slide the next text in
@@ -277,6 +283,7 @@ class Tooltip {
       this.rowTimelines[rowSelector].to(nextSlider, {
         ...this.animationConfig.texts,
         yPercent: 0, // Slide into place
+        opacity: 1,
         onStart: () => {
           nextSlider.textContent = newValue; // Update content
         },
@@ -293,13 +300,15 @@ class Tooltip {
       this.rowTimelines[rowSelector].to(currentSlider, {
         ...this.animationConfig.texts,
         ...transitionOutDirection, // Correct "out" animation for transitions
+        opacity: 0,
       }, 0);
 
       // Slide the next text in
-      gsap.set(nextSlider, clonedInDirection); // Position off-screen
+      gsap.set(nextSlider, { ...clonedInDirection, opacity: 0 }); // Position off-screen
       this.rowTimelines[rowSelector].to(nextSlider, {
         ...this.animationConfig.texts,
         yPercent: 0, // Slide into place
+        opacity: 1,
         onStart: () => {
           nextSlider.textContent = newValue; // Update content
         },
@@ -310,6 +319,7 @@ class Tooltip {
       this.rowTimelines[rowSelector].to(currentSlider, {
         ...clonedOutDirection, // Slide out to the correct direction
         ...this.animationConfig.texts,
+        opacity: 0,
       }, 0);
     }
 

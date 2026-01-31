@@ -1,0 +1,597 @@
+:root {
+    --hover-speed: 0.18s;
+    --hover-ease: cubic-bezier(0.4, 0, 0.2, 1);
+    /* Match site: galaxy / about / navbar vibe */
+    --bento-radius: 18px;
+    --bento-radius-sm: 14px;
+    --bento-gap: 1.125rem;
+    --bento-surface: rgba(30, 30, 30, 0.8);
+    --bento-surface-hover: rgba(34, 34, 38, 0.88);
+    --bento-border: rgba(255, 255, 255, 0.06);
+    --bento-border-hover: rgba(255, 255, 255, 0.1);
+    --bento-accent: #ffb347;
+    --bento-accent-soft: rgba(255, 179, 71, 0.2);
+    --bento-accent-border: rgba(255, 179, 71, 0.3);
+    --bento-shadow: 0 5px 15px rgba(0, 0, 0, 0.16);
+    --bento-shadow-hover: 0 8px 20px rgba(0, 0, 0, 0.35);
+    --bento-blur: 18px;
+}
+
+/* Smaller navbar for connect page - same as gallery page */
+body.connect-page nav.navbar {
+    max-width: 300px;
+    width: fit-content;
+    padding: 0.5rem 0.9rem;
+    margin: 1rem auto 1rem;
+    transition: max-width 0.2s ease, width 0.2s ease;
+}
+/* Increase size when expanded (options shown) */
+body.connect-page nav.navbar.navbar-expanded {
+    max-width: 480px;
+    width: fit-content;
+}
+body.connect-page .navbar-default { gap: 0.6rem; }
+body.connect-page .dropbtn {
+    padding: 0.42rem 0.85rem;
+    font-size: 0.82rem;
+    border-radius: 16px;
+}
+body.connect-page .social-icons { gap: 0.4rem; }
+body.connect-page .social-icons .icon {
+    width: 1.3rem;
+    height: 1.3rem;
+}
+body.connect-page .navbar-expanded-content a {
+    font-size: 0.78rem;
+    padding: 0.32rem 0.38rem;
+}
+body.connect-page .navbar-expanded-content .dot {
+    font-size: 0.78rem;
+}
+
+* {
+    font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+}
+
+body.connect-page {
+    background: #0a0a0a;
+    color: #e0e0e0;
+    font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
+    overflow-x: hidden;
+    font-size: 1rem;
+    line-height: 1.6;
+}
+
+.stars {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: url('https://www.transparenttextures.com/patterns/stardust.png');
+    opacity: 0.8;
+    animation: twinkling 100s linear infinite;
+    z-index: -1;
+}
+
+/* ---------- Bento contact (matches site: galaxy / about / navbar) ---------- */
+.connect-bento {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    grid-template-rows: auto 1fr 1fr;
+    gap: var(--bento-gap);
+    max-width: 920px;
+    margin: 2.5rem auto 3.5rem;
+    padding: 0 1.25rem;
+    position: relative;
+    z-index: 2;
+}
+
+.bento-cell {
+    background: var(--bento-surface);
+    border-radius: var(--bento-radius);
+    padding: 1.4rem 1.6rem;
+    border: 1px solid var(--bento-border);
+    box-shadow: var(--bento-shadow);
+    backdrop-filter: blur(var(--bento-blur));
+    -webkit-backdrop-filter: blur(var(--bento-blur));
+    transition: border-color var(--hover-speed) var(--hover-ease), box-shadow var(--hover-speed) var(--hover-ease), background var(--hover-speed) var(--hover-ease);
+}
+
+.bento-cell:hover {
+    background: var(--bento-surface-hover);
+    border-color: var(--bento-border-hover);
+    box-shadow: var(--bento-shadow-hover);
+}
+
+.bento-hero {
+    grid-column: span 2;
+    grid-row: span 1;
+}
+
+.bento-hero .bento-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(1.85rem, 4vw, 2.4rem);
+    letter-spacing: -0.01em;
+    line-height: 1.25;
+}
+
+.bento-email {
+    grid-column: span 1;
+}
+
+.bento-social {
+    grid-column: span 1;
+}
+
+.bento-social .bento-social-tagline {
+    font-size: 0.85rem;
+    color: rgba(224, 224, 224, 0.85);
+    margin: 0 0 0.5rem;
+    line-height: 1.45;
+}
+
+.bento-form {
+    grid-column: span 2;
+    grid-row: 2 / 4;
+}
+
+.bento-right {
+    grid-column: 3 / span 2;
+    min-height: 0;
+}
+
+.bento-right-1 {
+    grid-row: 2;
+}
+
+.bento-right .bento-right-tagline {
+    font-size: 0.85rem;
+    color: rgba(224, 224, 224, 0.85);
+    margin: 0 0 0.75rem;
+    line-height: 1.45;
+}
+
+.bento-right-list {
+    margin: 1.25rem 0 0;
+    padding-left: 1.25rem;
+    list-style: disc;
+    font-size: 0.9rem;
+    color: #e0e0e0;
+    line-height: 1.8;
+}
+
+.bento-right-note {
+    margin: 1rem 0 0;
+    font-size: 0.8rem;
+    color: rgba(224, 224, 224, 0.6);
+    line-height: 1.4;
+}
+
+.bento-right-2 {
+    grid-row: 3;
+}
+
+.bento-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(1.75rem, 4vw, 2.25rem);
+    color: #fff;
+    margin: 0 0 0.5rem;
+    font-weight: 600;
+}
+
+.bento-tagline {
+    color: #e0e0e0;
+    font-size: 1rem;
+    line-height: 1.6;
+    margin: 0;
+    max-width: 34ch;
+}
+
+.bento-heading {
+    font-size: 0.72rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--bento-accent);
+    margin: 0 0 0.75rem;
+}
+
+.bento-link {
+    color: #e0e0e0;
+    text-decoration: none;
+    font-size: 0.95rem;
+    word-break: break-all;
+    transition: color var(--hover-speed) var(--hover-ease);
+}
+
+.bento-link:hover {
+    color: var(--bento-accent);
+}
+
+.bento-note {
+    font-size: 0.75rem;
+    color: rgba(224, 224, 224, 0.5);
+    margin: 0.5rem 0 0;
+}
+
+.bento-cta-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    margin-top: 0.75rem;
+    color: var(--bento-accent);
+    font-weight: 600;
+    font-size: 0.9rem;
+    text-decoration: none;
+    transition: color var(--hover-speed) var(--hover-ease), gap var(--hover-speed) var(--hover-ease);
+}
+
+.bento-cta-link:hover {
+    color: #fff;
+    gap: 0.5rem;
+}
+
+/* Bento form (matches site form styling) */
+.bento-contact-form .form-row {
+    margin-bottom: 0.85rem;
+}
+
+.bento-contact-form .form-row label {
+    display: block;
+    margin-bottom: 0.4rem;
+    color: #e0e0e0;
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+
+.bento-contact-form input,
+.bento-contact-form textarea {
+    width: 100%;
+    padding: 0.65rem 0.9rem;
+    background: rgba(20, 20, 20, 0.7);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    color: #e0e0e0;
+    font-size: 0.9rem;
+    font-family: inherit;
+    box-sizing: border-box;
+    transition: all var(--hover-speed) var(--hover-ease);
+}
+
+.bento-contact-form input::placeholder,
+.bento-contact-form textarea::placeholder {
+    color: rgba(224, 224, 224, 0.5);
+}
+
+.bento-contact-form input:focus,
+.bento-contact-form textarea:focus {
+    outline: none;
+    border-color: rgba(255, 179, 71, 0.5);
+    background: rgba(25, 25, 25, 0.8);
+    box-shadow: 0 0 0 3px rgba(255, 179, 71, 0.1);
+}
+
+.bento-contact-form textarea {
+    resize: vertical;
+    min-height: 72px;
+}
+
+.bento-contact-form .error-message {
+    font-size: 0.8rem;
+    margin-top: 0.3rem;
+    min-height: 1rem;
+}
+
+/* Submit button – modern, rounded, no hover highlight */
+.bento-submit {
+    margin-top: 0.75rem;
+    width: 100%;
+    min-height: 48px;
+    padding: 0.75rem 1.5rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    border-radius: 999px;
+    color: var(--bento-accent);
+    font-weight: 700;
+    font-size: 0.95rem;
+    letter-spacing: 0.04em;
+    cursor: pointer;
+    font-family: inherit;
+    position: relative;
+    -webkit-tap-highlight-color: transparent;
+    outline: none;
+    transition: transform 0.3s var(--hover-ease), box-shadow 0.3s var(--hover-ease);
+}
+
+.bento-submit:focus {
+    outline: none;
+}
+
+.bento-submit .button-text {
+    position: relative;
+    z-index: 1;
+}
+
+.bento-submit::after {
+    content: '→';
+    position: relative;
+    z-index: 1;
+    font-size: 1.1rem;
+    font-weight: 600;
+    opacity: 0.9;
+    transition: transform 0.3s var(--hover-ease);
+}
+
+.bento-submit:hover:not(:disabled) {
+    transform: scale(1.02);
+    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.08), 0 8px 32px rgba(0, 0, 0, 0.35);
+}
+
+.bento-submit:hover:not(:disabled)::after {
+    transform: translateX(2px);
+}
+
+.bento-submit:active:not(:disabled) {
+    opacity: 0.92;
+}
+
+.bento-submit:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+}
+
+.bento-submit:disabled::after {
+    opacity: 0;
+}
+
+.bento-contact-form .form-status {
+    margin-top: 0.75rem;
+    padding: 0.6rem 0.85rem;
+    border-radius: 12px;
+    font-size: 0.9rem;
+}
+
+@media (max-width: 720px) {
+    .connect-bento {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+        padding: 0 1rem;
+        margin: 2rem auto 3rem;
+    }
+    .bento-hero,
+    .bento-email,
+    .bento-social,
+    .bento-form {
+        grid-column: span 1;
+    }
+    .bento-cell {
+        padding: 1.25rem 1.4rem;
+        border-radius: var(--bento-radius-sm);
+    }
+}
+
+.connect-container {
+    max-width: 700px;
+    margin: 3rem auto 2rem auto;
+    background: rgba(30, 30, 30, 0.8);
+    border-radius: 18px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.5);
+    padding: 3rem 2.4rem;
+    position: relative;
+    z-index: 2;
+    backdrop-filter: blur(18px);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.connect-intro h1 {
+    font-size: 2.4rem;
+    margin-bottom: 1rem;
+    color: #fff;
+    font-family: 'Playfair Display', serif;
+}
+
+.connect-intro p {
+    font-size: 1.1rem;
+    margin-bottom: 1rem;
+    color: #e0e0e0;
+    line-height: 1.7;
+}
+
+.contact-form {
+    margin-top: 2.5rem;
+}
+
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    color: #e0e0e0;
+    font-weight: 600;
+    font-size: 0.95rem;
+}
+
+.required {
+    color: #ff6b6b;
+    margin-left: 0.2rem;
+}
+
+.form-group input,
+.form-group textarea {
+    width: 100%;
+    padding: 0.85rem 1rem;
+    background: rgba(20, 20, 20, 0.7);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    color: #e0e0e0;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 1rem;
+    transition: all var(--hover-speed) var(--hover-ease);
+    box-sizing: border-box;
+}
+
+.form-group input:focus,
+.form-group textarea:focus {
+    outline: none;
+    border-color: rgba(255, 179, 71, 0.5);
+    background: rgba(25, 25, 25, 0.8);
+    box-shadow: 0 0 0 3px rgba(255, 179, 71, 0.1);
+}
+
+.form-group input::placeholder,
+.form-group textarea::placeholder {
+    color: rgba(224, 224, 224, 0.5);
+}
+
+.form-group textarea {
+    resize: vertical;
+    min-height: 120px;
+    font-family: inherit;
+}
+
+.error-message {
+    display: block;
+    color: #ff6b6b;
+    font-size: 0.85rem;
+    margin-top: 0.4rem;
+    min-height: 1.2rem;
+}
+
+.form-group input:invalid:not(:placeholder-shown),
+.form-group textarea:invalid:not(:placeholder-shown) {
+    border-color: rgba(255, 107, 107, 0.5);
+}
+
+.submit-button {
+    width: 100%;
+    padding: 1rem 2rem;
+    background: rgba(255, 179, 71, 0.2);
+    border: 1px solid rgba(255, 179, 71, 0.3);
+    border-radius: 20px;
+    color: #ffb347;
+    font-weight: 700;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all var(--hover-speed) var(--hover-ease);
+    margin-top: 1rem;
+    font-family: 'Montserrat', sans-serif;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+.submit-button:hover:not(:disabled) {
+    background: rgba(255, 179, 71, 0.3);
+    border-color: rgba(255, 179, 71, 0.5);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(255, 179, 71, 0.2);
+}
+
+.submit-button:active:not(:disabled) {
+    transform: translateY(0);
+}
+
+.submit-button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.button-spinner {
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+.form-status {
+    margin-top: 1.5rem;
+    padding: 1rem;
+    border-radius: 12px;
+    font-size: 0.95rem;
+    text-align: center;
+    display: none;
+}
+
+.form-status.success {
+    display: block;
+    background: rgba(76, 175, 80, 0.2);
+    border: 1px solid rgba(76, 175, 80, 0.4);
+    color: #c8f7d1;
+}
+
+.form-status.error {
+    display: block;
+    background: rgba(244, 67, 54, 0.2);
+    border: 1px solid rgba(244, 67, 54, 0.4);
+    color: #ffd5d5;
+}
+
+.form-status.info {
+    display: block;
+    background: rgba(33, 150, 243, 0.2);
+    border: 1px solid rgba(33, 150, 243, 0.4);
+    color: #b3e5fc;
+}
+
+@media (max-width: 600px) {
+    .connect-container {
+        padding: 1.4rem 0.8rem;
+        margin: 1.5rem 0.2rem;
+    }
+    .connect-intro h1 {
+        font-size: 1.8rem;
+    }
+    .connect-intro p {
+        font-size: 1rem;
+    }
+    .form-group input,
+    .form-group textarea {
+        padding: 0.75rem 0.85rem;
+        font-size: 0.95rem;
+    }
+}
+
+html, body {
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none; /* IE 10+ */
+}
+html::-webkit-scrollbar, body::-webkit-scrollbar {
+    display: none; /* Chrome, Safari, Opera */
+}
+
+/* Print styles for connect page */
+@media print {
+    .connect-container {
+        background: white !important;
+        color: black !important;
+        box-shadow: none !important;
+        border: 1px solid #ccc !important;
+    }
+
+    .connect-intro h1 {
+        color: black !important;
+    }
+
+    .connect-intro p,
+    .form-group label {
+        color: black !important;
+    }
+
+    .contact-form,
+    .submit-button {
+        display: none !important;
+    }
+}

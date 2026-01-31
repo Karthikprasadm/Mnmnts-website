@@ -1,0 +1,17 @@
+{
+  "@context": "https://schema.org",
+  "@type": "ContactPage",
+  "name": "Connect | Karthik Prasad M",
+  "description": "Connect with Karthik Prasad M – web developer, creative storyteller, and digital artist. Send a message, collaborate, or just say hello.",
+  "url": "https://karthikprasadm.github.io/Connect/connect.html",
+  "mainEntity": {
+    "@type": "Person",
+    "name": "Karthik Prasad M",
+    "email": "wingspawn28@gmail.com",
+    "sameAs": [
+      "https://www.instagram.com/kkarthhikk",
+      "https://www.linkedin.com/in/karthik-prasad-m-7673b5356/",
+      "https://github.com/Karthikprasadm"
+    ]
+  }
+}
