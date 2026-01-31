@@ -33,6 +33,8 @@
       <span class="dot">·</span>
       <a href="/know-me/about.html">About</a>
       <span class="dot">·</span>
+      <a href="/Connect/connect.html">Connect</a>
+      <span class="dot">·</span>
       <a href="/image-upload/upload.html">Upload</a>
       <span class="dot">·</span>
       <a href="/spotify-visualiser/index.html">Visualizer</a>
@@ -41,16 +43,20 @@
 </nav>
 
 <style>
-  /* Fixed Navbar */
+  /* Fixed Navbar - same sizing as about page: compact collapsed, width fits content */
   nav.navbar {
     position: fixed;
     top: 1rem;
     left: 50%;
     transform: translateX(-50%);
+    width: fit-content;
+    max-width: 300px;
+    min-height: 2.75rem;
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 0.65rem 1.15rem;
+    padding: 0.5rem 0.9rem;
+    box-sizing: border-box;
     background: rgba(30, 30, 30, 0.8);
     backdrop-filter: blur(18px);
     border-radius: 20px;
@@ -60,31 +66,50 @@
     z-index: 1000;
   }
 
-  /* Content wrapper - uses grid to stack both states */
+  /* Expanded state only - larger so all five options fit comfortably inside */
+  nav.navbar.navbar-expanded {
+    padding: 0.65rem 1.4rem;
+    min-height: 3rem;
+    max-width: none;
+  }
+  nav.navbar.navbar-expanded .navbar-expanded-content {
+    gap: 0.5rem;
+  }
+  nav.navbar.navbar-expanded .navbar-expanded-content a {
+    font-size: 0.85rem;
+    padding: 0.38rem 0.5rem;
+  }
+  nav.navbar.navbar-expanded .navbar-expanded-content .dot {
+    font-size: 0.85rem;
+  }
+
+  /* Content wrapper - uses grid to stack both states; same height for collapsed/expanded */
   .navbar-content {
     display: grid;
     grid-template-areas: "content";
+    align-items: center;
   }
 
-  /* Both states occupy the same grid area */
+  /* Both states occupy the same grid area - slower fade when expanding */
   .navbar-default,
   .navbar-expanded-content {
     grid-area: content;
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: opacity 0.15s ease;
+    transition: opacity 0.8s ease;
   }
 
-  /* Default state */
+  /* Default state - same as about page */
   .navbar-default {
-    gap: 0.9rem;
+    gap: 0.6rem;
     opacity: 1;
     visibility: visible;
   }
 
-  /* Expanded content - hidden by default */
+  /* Expanded content - hidden by default; absolute so it doesn't affect navbar width when collapsed */
   .navbar-expanded-content {
+    position: absolute;
     gap: 0.4rem;
     opacity: 0;
     visibility: hidden;
@@ -93,9 +118,9 @@
   .navbar-expanded-content a {
     color: rgba(255, 255, 255, 0.85);
     text-decoration: none;
-    font-size: 0.85rem;
+    font-size: 0.78rem;
     font-weight: 700;
-    padding: 0.4rem 0.5rem;
+    padding: 0.32rem 0.38rem;
     transition: color 0.15s ease;
   }
 
@@ -105,24 +130,26 @@
 
   .navbar-expanded-content .dot {
     color: rgba(255, 255, 255, 0.3);
-    font-size: 0.85rem;
+    font-size: 0.78rem;
   }
 
-  /* When expanded: hide default, show expanded content */
+  /* When expanded: hide default (absolute so it doesn't affect width), show expanded content */
   nav.navbar.navbar-expanded .navbar-default {
+    position: absolute;
     opacity: 0;
     visibility: hidden;
   }
 
   nav.navbar.navbar-expanded .navbar-expanded-content {
+    position: static;
     opacity: 1;
     visibility: visible;
   }
 
-  /* Social Icons */
+  /* Social Icons - same as about page */
   .social-icons {
     display: flex;
-    gap: 0.6rem;
+    gap: 0.4rem;
     align-items: center;
   }
 
@@ -135,8 +162,8 @@
   }
 
   .social-icons a .icon {
-    width: 1.65rem;
-    height: 1.65rem;
+    width: 1.3rem;
+    height: 1.3rem;
     filter: grayscale(40%) invert(80%);
     transition: filter 0.18s ease;
   }
@@ -154,13 +181,13 @@
     background-color: rgba(30, 30, 30, 0.82);
     backdrop-filter: blur(18px);
     color: #e0e0e0;
-    padding: 0.55rem 1.1rem;
-    font-size: 0.9rem;
+    padding: 0.42rem 0.85rem;
+    font-size: 0.82rem;
     font-weight: 600;
     border: 1px solid rgba(255, 255, 255, 0.06);
     cursor: pointer;
     transition: all 0.18s ease;
-    border-radius: 18px;
+    border-radius: 16px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
     font-family: inherit;
   }
@@ -173,8 +200,8 @@
   /* Icon styles */
   .icon {
     display: inline-block;
-    width: 1.65rem;
-    height: 1.65rem;
+    width: 1.3rem;
+    height: 1.3rem;
     background-position: center;
     background-repeat: no-repeat;
     background-size: contain;
@@ -192,5 +219,3 @@
     }
   }
 </style>
-
-<script src="../scripts/navbar.js"></script>
