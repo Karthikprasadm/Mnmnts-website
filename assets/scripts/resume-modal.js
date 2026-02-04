@@ -11,6 +11,7 @@ if (resumeButton && resumeModal) {
       resumeFrame.src = RESUME_URL;
     }
     resumeModal.style.display = 'flex';
+    document.body.classList.add('resume-modal-open');
     setTimeout(() => resumeModal.classList.add('show'), 10);
   });
 }
@@ -26,6 +27,7 @@ if (resumeModal) {
   resumeModal.addEventListener('click', (e) => {
     if (e.target === resumeModal) {
       resumeModal.classList.remove('show');
+      document.body.classList.remove('resume-modal-open');
       setTimeout(() => {
         resumeModal.style.display = 'none';
       }, 200);

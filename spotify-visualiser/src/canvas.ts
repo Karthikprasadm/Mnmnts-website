@@ -85,6 +85,7 @@ export default class Canvas {
       powerPreference: "high-performance", // Prefer GPU
       antialias: false, // Disable antialiasing for better performance
     })
+    this.renderer.setClearColor(0x000000, 0) // Transparent so starry background shows through
     this.renderer.setSize(this.dimensions.width, this.dimensions.height)
     this.renderer.render(this.scene, this.camera)
 

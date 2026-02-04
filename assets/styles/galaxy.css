@@ -114,6 +114,15 @@ body:not(.about-page):not(.upload-page) .navbar {
     width: fit-content;
 }
 
+/* Hide navbar when resume PDF modal is open (including all children so they can't be clicked) */
+body.resume-modal-open .navbar,
+body.resume-modal-open .navbar * {
+    visibility: hidden;
+    opacity: 0;
+    pointer-events: none !important;
+    transition: visibility 0.2s, opacity 0.2s;
+}
+
 /* Slideshow Toggle Button */
 .moon-button {
     font-size: 1.3rem;
