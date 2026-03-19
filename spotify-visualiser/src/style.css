@@ -1,15 +1,16 @@
 @import "tailwindcss";
 
-/* Glass Card Container - Dark Glassmorphism */
+/* Music player shell */
 .glass-card {
-  --bg-color: rgba(30, 30, 30, 0.8);
+  /* revert to lighter, more glassy panel */
+  --bg-color: rgba(30, 30, 30, 0.85);
   --highlight: rgba(255, 255, 255, 0.06);
   --text: #e0e0e0;
   
   position: relative;
   border-radius: 24px;
   overflow: hidden;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4), 
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4),
               inset 0 1px 0 rgba(255, 255, 255, 0.06);
   border: 1px solid rgba(255, 255, 255, 0.06);
   will-change: transform, opacity;
@@ -202,6 +203,16 @@ body {
   align-items: center;
   justify-content: center;
   will-change: transform;
+}
+
+@media (max-width: 768px) {
+  .music-player-overlay {
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) translateZ(0);
+    width: 100%;
+    padding: 0 1rem;
+  }
 }
 
 .music-player-overlay > * {

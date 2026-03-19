@@ -776,7 +776,7 @@ export default function MusicPlayer() {
 
       <motion.div
         ref={modalRef}
-        className="glass-card relative w-full max-w-5xl h-[550px] rounded-3xl overflow-hidden shadow-2xl"
+        className="glass-card relative w-full max-w-5xl h-auto md:h-[550px] rounded-3xl overflow-hidden shadow-2xl"
         initial={{ opacity: 0, scale: 0.9, y: 50 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
         transition={{
@@ -892,12 +892,12 @@ export default function MusicPlayer() {
           </div>
 
           {/* Main Content */}
-          <div className="flex gap-5 flex-1 overflow-hidden">
+          <div className="flex flex-col md:flex-row gap-4 md:gap-5 flex-1 overflow-hidden">
             {/* Left Side - Album Art and Controls */}
-            <div className="flex flex-col justify-between w-[280px]">
+            <div className="flex flex-col justify-between w-full md:w-[280px] mb-4 md:mb-0">
               {/* Album Art */}
               <motion.div
-                className="bg-black/60 rounded-2xl p-2.5 backdrop-blur-md w-[260px] mx-auto border border-white/5"
+                className="bg-black/60 rounded-2xl p-2.5 backdrop-blur-md w-full max-w-xs md:w-[260px] mx-auto border border-white/5"
                 initial={{ opacity: 0, scale: 0.8, rotateY: -15 }}
                 animate={{ opacity: 1, scale: 1, rotateY: 0 }}
                 transition={{
@@ -1168,81 +1168,102 @@ export default function MusicPlayer() {
               {/* Playlist (hidden when lyrics are shown) */}
               {!showLyrics && (
                 <>
-                  {/* Search Bar */}
-                  <div className="mb-3 relative">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#e0e0e0]/60" />
-                <input
-                  type="text"
-                  id="search-input"
-                  name="search"
-                  placeholder="Search tracks or artists..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full bg-black/40 backdrop-blur-md border border-white/5 rounded-xl pl-10 pr-4 py-2 text-[#e0e0e0] text-sm placeholder:text-[#e0e0e0]/40 focus:outline-none focus:border-white/20 transition-colors"
-                />
-                {searchQuery && (
-                  <button
-                    onClick={() => setSearchQuery("")}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-[#e0e0e0]/60 hover:text-[#e0e0e0] transition-colors"
-                    aria-label="Clear search"
-                  >
-                    <X className="w-4 h-4" />
-                  </button>
-                )}
-                  </div>
-
-                  {/* Queue Toggle */}
-                  <div className="flex items-center justify-between mb-2">
-                    <span className="text-[#e0e0e0] text-sm font-medium">
-                      {searchQuery 
-                        ? `Search Results (${filteredPlaylist.length})` 
-                        : `Playlist (${useSpotify ? spotifyPlaylist.length : playlist.length})`}
-                    </span>
-                    <button
-                      onClick={() => setShowQueue(!showQueue)}
-                      className="text-[#e0e0e0]/60 hover:text-[#e0e0e0] text-xs transition-colors flex items-center gap-1"
-                      title={`Queue (${queue.length})`}
-                    >
-                      Queue {queue.length > 0 && <span className="bg-white/20 px-1.5 py-0.5 rounded text-[10px]">{queue.length}</span>}
-                    </button>
-                  </div>
-
-                  {/* Queue Display */}
-                  {showQueue && queue.length > 0 && (
-                    <motion.div
-                      className="mb-4 p-3 bg-black/30 backdrop-blur-sm rounded-xl border border-white/5"
-                      initial={{ opacity: 0, height: 0 }}
-                      animate={{ opacity: 1, height: "auto" }}
-                      exit={{ opacity: 0, height: 0 }}
-                    >
-                      <div className="text-[#e0e0e0] text-xs font-semibold mb-2">Up Next ({queue.length})</div>
-                      <div className="space-y-1 max-h-32 overflow-y-auto scrollbar-thin">
-                        {queue.map((song, idx) => (
-                          <div
-                            key={`queue-${song.id}-${idx}`}
-                            className="flex items-center gap-2 p-2 rounded-lg hover:bg-white/5 transition-colors group"
+                  <div className="flex-1 overflow-hidden rounded-2xl border border-white/5 bg-black/25 backdrop-blur-md">
+                    {/* Sticky header */}
+                    <div className="sticky top-0 z-10 border-b border-white/5 bg-black/35 backdrop-blur-md p-3">
+                      {/* Search Bar */}
+                      <div className="relative">
+                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#e0e0e0]/55" />
+                        <input
+                          type="text"
+                          id="search-input"
+                          name="search"
+                          placeholder="Search tracks or artists…"
+                          value={searchQuery}
+                          onChange={(e) => setSearchQuery(e.target.value)}
+                          className="w-full rounded-xl bg-black/35 border border-white/5 pl-10 pr-10 py-2 text-[#e0e0e0] text-sm placeholder:text-[#e0e0e0]/35 focus:outline-none focus:border-white/15 focus:bg-black/45 transition-colors"
+                        />
+                        {searchQuery && (
+                          <button
+                            onClick={() => setSearchQuery("")}
+                            className="absolute right-2.5 top-1/2 -translate-y-1/2 grid place-items-center w-7 h-7 rounded-lg text-[#e0e0e0]/60 hover:text-[#e0e0e0] hover:bg-white/5 transition-colors"
+                            aria-label="Clear search"
                           >
-                            <span className="text-[#e0e0e0]/40 text-[10px] w-4">{idx + 1}</span>
-                            <span className="text-[#e0e0e0] text-xs flex-1 truncate">{song.title}</span>
-                            <button
-                              onClick={() => removeFromQueue(idx)}
-                              className="opacity-0 group-hover:opacity-100 text-[#e0e0e0]/60 hover:text-red-400 transition-all"
-                              aria-label="Remove from queue"
-                            >
-                              <X className="w-3 h-3" />
-                            </button>
-                          </div>
-                        ))}
+                            <X className="w-4 h-4" />
+                          </button>
+                        )}
                       </div>
-                    </motion.div>
-                  )}
 
-                  <div
-                    className="flex-1 overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-white/20 scrollbar-track-transparent"
-                    onWheel={(e) => e.stopPropagation()}
-                    onTouchMove={(e) => e.stopPropagation()}
-                  >
-                    <div className="space-y-1.5">
+                      {/* Library row */}
+                      <div className="mt-3 flex items-center justify-between gap-3">
+                        <div className="min-w-0">
+                          <div className="text-[#e0e0e0] text-sm font-semibold tracking-tight">
+                            {searchQuery
+                              ? `Results (${filteredPlaylist.length})`
+                              : `Playlist (${useSpotify ? spotifyPlaylist.length : playlist.length})`}
+                          </div>
+                          <div className="text-[#e0e0e0]/55 text-xs truncate">
+                            {useSpotify ? "Spotify top tracks" : "Local demo playlist"}
+                          </div>
+                        </div>
+
+                        <div className="flex items-center gap-2">
+                          <button
+                            onClick={() => setShowQueue(!showQueue)}
+                            className={`text-xs font-medium px-2.5 py-1.5 rounded-lg border transition-colors ${
+                              showQueue
+                                ? "bg-white/10 text-[#e0e0e0] border-white/10"
+                                : "bg-transparent text-[#e0e0e0]/60 border-white/5 hover:text-[#e0e0e0] hover:bg-white/5"
+                            }`}
+                            title={`Queue (${queue.length})`}
+                          >
+                            Queue{queue.length > 0 ? ` · ${queue.length}` : ""}
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Queue Display */}
+                    {showQueue && queue.length > 0 && (
+                      <motion.div
+                        className="mx-3 mt-3 p-3 rounded-xl border border-white/5 bg-black/30"
+                        initial={{ opacity: 0, height: 0 }}
+                        animate={{ opacity: 1, height: "auto" }}
+                        exit={{ opacity: 0, height: 0 }}
+                      >
+                        <div className="text-[#e0e0e0] text-xs font-semibold mb-2">
+                          Up Next <span className="text-[#e0e0e0]/55">({queue.length})</span>
+                        </div>
+                        <div className="space-y-1 max-h-32 overflow-y-auto scrollbar-thin">
+                          {queue.map((song, idx) => (
+                            <div
+                              key={`queue-${song.id}-${idx}`}
+                              className="flex items-center gap-2 p-2 rounded-lg hover:bg-white/5 transition-colors group"
+                            >
+                              <span className="text-[#e0e0e0]/40 text-[10px] w-4 tabular-nums">
+                                {idx + 1}
+                              </span>
+                              <span className="text-[#e0e0e0] text-xs flex-1 truncate">{song.title}</span>
+                              <button
+                                onClick={() => removeFromQueue(idx)}
+                                className="opacity-0 group-hover:opacity-100 text-[#e0e0e0]/60 hover:text-red-400 transition-all"
+                                aria-label="Remove from queue"
+                              >
+                                <X className="w-3 h-3" />
+                              </button>
+                            </div>
+                          ))}
+                        </div>
+                      </motion.div>
+                    )}
+
+                    {/* Track list */}
+                    <div
+                      className="flex-1 overflow-y-auto p-3 pr-2 scrollbar-thin scrollbar-thumb-white/20 scrollbar-track-transparent"
+                      onWheel={(e) => e.stopPropagation()}
+                      onTouchMove={(e) => e.stopPropagation()}
+                    >
+                      <div className="space-y-1">
                   {filteredPlaylist.length === 0 ? (
                     <div className="text-center py-8 text-[#e0e0e0]/60 text-sm">
                       No tracks found matching "{searchQuery}"
@@ -1258,9 +1279,11 @@ export default function MusicPlayer() {
                       return (
                     <motion.div
                       key={song.id}
-                      className={`flex items-center gap-2.5 p-2 rounded-xl hover:bg-white/5 transition-colors cursor-pointer group border ${
-                        isActive ? "border-white/20 bg-white/5" : "border-transparent"
-                      } hover:border-white/5`}
+                      className={`relative flex items-center gap-3 p-2.5 rounded-xl transition-colors cursor-pointer group border ${
+                        isActive
+                          ? "border-white/15 bg-white/6"
+                          : "border-transparent hover:border-white/5 hover:bg-white/4"
+                      }`}
                       initial={{ opacity: 0, y: 20 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{
@@ -1294,10 +1317,16 @@ export default function MusicPlayer() {
                         }
                       }}
                     >
+                      <div
+                        className={`absolute left-1 top-1.5 bottom-1.5 w-[3px] rounded-full ${
+                          isActive ? "bg-white/60" : "bg-transparent group-hover:bg-white/20"
+                        }`}
+                        aria-hidden="true"
+                      />
                       <motion.img
                         src={(typeof song.id === 'number' && imageErrors.has(song.id)) ? `${BASE_URL}placeholder.svg` : (song.cover || `${BASE_URL}placeholder.svg`)}
                         alt={song.title}
-                        className="w-10 h-10 rounded-lg object-cover flex-shrink-0"
+                        className="w-10 h-10 rounded-lg object-cover flex-shrink-0 ring-1 ring-white/5"
                         loading="lazy"
                         decoding="async"
                         whileHover={{ scale: 1.1 }}
@@ -1312,7 +1341,7 @@ export default function MusicPlayer() {
                       <div className="flex-1 min-w-0">
                         <MarqueeText 
                           text={song.title} 
-                          className="text-[#e0e0e0] font-medium text-sm mb-0.5"
+                          className="text-[#e0e0e0] font-medium text-sm mb-0.5 tracking-tight"
                         />
                         <MarqueeText 
                           text={song.artist} 
@@ -1325,13 +1354,15 @@ export default function MusicPlayer() {
                             e.stopPropagation()
                             addToQueue(song)
                           }}
-                          className="opacity-0 group-hover:opacity-100 text-[#e0e0e0]/60 hover:text-[#e0e0e0] transition-all"
+                          className="opacity-0 group-hover:opacity-100 text-[#e0e0e0]/60 hover:text-[#e0e0e0] transition-all rounded-lg p-1 hover:bg-white/5"
                           aria-label="Add to queue"
                           title="Add to queue"
                         >
                           <Plus className="w-4 h-4" />
                         </motion.button>
-                        <span className="text-[#e0e0e0]/70 text-sm font-medium">{song.duration}</span>
+                        <span className="text-[#e0e0e0]/65 text-sm font-medium tabular-nums">
+                          {song.duration}
+                        </span>
                       </div>
                     </motion.div>
                       )
@@ -1339,6 +1370,7 @@ export default function MusicPlayer() {
                   )}
                 </div>
               </div>
+                  </div>
                 </>
               )}
             </motion.div>

@@ -336,6 +336,19 @@ const sanitizeProjectId = (projectId) =>
 // Serve built Repository (Astro) files from /repo
 const repositoryDist = path.join(__dirname, 'Repository', 'dist');
 if (fs.existsSync(repositoryDist)) {
+  const isProduction = process.env.NODE_ENV === 'production';
+
+  // In production, serve the built Astro site at the root as well.
+  // Keep /repo as an alias so existing links continue to work.
+  if (isProduction) {
+    app.get('/', (req, res) => {
+      const builtIndex = path.join(repositoryDist, 'index.html');
+      res.sendFile(builtIndex);
+    });
+    app.use(express.static(repositoryDist));
+    console.log('✅ Serving built Repository from / (production)');
+  }
+
   // Explicitly handle index.html routes FIRST (these MUST come before express.static)
   app.get('/repo', (req, res) => {
     const builtIndex = path.join(repositoryDist, 'index.html');
@@ -378,6 +391,13 @@ if (fs.existsSync(spotifyVisualizerDist)) {
   
   // Then serve all other built files from dist folder
   app.use('/spotify-visualiser', express.static(spotifyVisualizerDist));
+
+  // SPA fallback (client-side routing) for the visualiser
+  app.get(/^\/spotify-visualiser\/.*/, (req, res) => {
+    const builtIndex = path.join(spotifyVisualizerDist, 'index.html');
+    res.sendFile(builtIndex);
+  });
+
   console.log('✅ Serving built Spotify Visualizer from dist/');
 } else {
   console.warn('⚠️  Spotify Visualizer dist/ not found. Run: cd spotify-visualiser && npm run build');
@@ -415,7 +435,8 @@ app.use((req, res, next) => {
   staticMiddleware(req, res, next);
 });
 
-// Serve index.html on root request
+// Serve index.html on root request (dev fallback).
+// In production, / is served from Repository/dist above.
 app.get('/', (req, res) => {
   res.sendFile(__dirname + '/index.html');
 });

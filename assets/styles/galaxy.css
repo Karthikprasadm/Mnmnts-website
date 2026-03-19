@@ -418,12 +418,61 @@ h2, .h2 {
         font-size: 0.9rem;
     }
 
-    .main-image img {
-        width: 100%;
+    .container {
+        margin-top: 1.5rem;
+        /* Remove extra horizontal padding so thumbnails/images can span full width */
+        padding: 0 0 2.5rem;
     }
 
-    .thumb {
+    .main-image {
+        min-height: 220px;
+    }
+
+    .main-image img {
+        width: 100%;
+        max-width: 100%;
+    }
+    
+    .thumbnails {
+        margin-top: 0.75rem;
+        gap: 0.45rem;
+        flex-wrap: wrap;
+        justify-content: center;
+        overflow: visible;
+        padding: 0;
+    }
+
+    .thumb,
+    .video-thumb {
         width: 6rem;
+        border-radius: 18px;
+        flex: 0 0 auto;
+    }
+
+    .video-thumbnails {
+        flex-wrap: wrap;
+        justify-content: center;
+        overflow: visible;
+        padding: 0;
+        gap: 0.45rem;
+    }
+
+    .video-container {
+        /* Match spacing used for thumbnails under the main image */
+        margin-top: 0.75rem;
+        /* Avoid reserving extra vertical space on mobile */
+        min-height: 0;
+        height: auto;
+    }
+
+    .video-container video {
+        width: 100%;
+        max-width: 100%;
+    }
+
+    .video-thumbnails {
+        margin-top: 0.05rem;
+        gap: 0.4rem;
     }
 }
 
@@ -555,8 +604,14 @@ h2, .h2 {
     }
     
     .video-container {
-        min-height: 300px;
-        height: 300px;
+        /* Allow the video section to shrink so thumbnails can sit right underneath */
+        min-height: 0;
+        height: auto;
+        margin-top: 0.75rem;
+    }
+
+    .video-thumbnails {
+        margin-top: 0.05rem;
     }
     
     .video-container video {

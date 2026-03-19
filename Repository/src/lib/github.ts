@@ -17,18 +17,23 @@ export async function fetchGithubRepos(
   username: string,
   token?: string,
 ): Promise<GitHubRepo[]> {
-  const githubResponse = await fetch(
-    `https://api.github.com/users/${username}/repos?per_page=100&sort=updated`,
-    {
-      headers: token ? { Authorization: `Bearer ${token}` } : {},
-    },
-  );
+  try {
+    const githubResponse = await fetch(
+      `https://api.github.com/users/${username}/repos?per_page=100&sort=updated`,
+      {
+        headers: token ? { Authorization: `Bearer ${token}` } : {},
+      },
+    );
 
-  if (!githubResponse.ok) {
+    if (!githubResponse.ok) {
+      return [];
+    }
+
+    const repos = (await githubResponse.json()) as GitHubRepo[];
+    // Show all repositories, including forks, but still hide archived ones
+    return repos.filter((repo) => !repo.archived);
+  } catch {
     return [];
   }
-
-  const repos = (await githubResponse.json()) as GitHubRepo[];
-  return repos.filter((repo) => !repo.fork && !repo.archived);
 }
 
