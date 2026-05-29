@@ -32,7 +32,12 @@
         width: fit-content;
         padding: 0.5rem 0.9rem;
         margin: 1rem auto 1rem;
-        transition: max-width 0.2s ease, width 0.2s ease;
+        transition:
+            max-width 0.58s cubic-bezier(0.22, 1, 0.36, 1),
+            width 0.58s cubic-bezier(0.22, 1, 0.36, 1),
+            padding 0.42s cubic-bezier(0.22, 1, 0.36, 1),
+            box-shadow 0.42s cubic-bezier(0.22, 1, 0.36, 1),
+            background-color 0.42s cubic-bezier(0.22, 1, 0.36, 1);
     }
     /* Increase size when expanded (options shown) */
     body nav.navbar.navbar-expanded {
