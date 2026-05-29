@@ -102,7 +102,12 @@ body, button, input, select, textarea {
     max-height: fit-content;
     line-height: 1;
     /* Smooth width transition */
-    transition: width 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94), max-width 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    transition:
+        width 0.58s cubic-bezier(0.22, 1, 0.36, 1),
+        max-width 0.58s cubic-bezier(0.22, 1, 0.36, 1),
+        padding 0.42s cubic-bezier(0.22, 1, 0.36, 1),
+        box-shadow 0.42s cubic-bezier(0.22, 1, 0.36, 1),
+        background-color 0.42s cubic-bezier(0.22, 1, 0.36, 1);
     /* Prevent layout shifts */
     contain: layout style;
     will-change: width;
@@ -656,7 +661,12 @@ h2, .h2 {
     /* Allow width to expand, height locked by JavaScript */
     width: fit-content !important;
     /* Smooth width transition */
-    transition: width 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94), max-width 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    transition:
+        width 0.58s cubic-bezier(0.22, 1, 0.36, 1),
+        max-width 0.58s cubic-bezier(0.22, 1, 0.36, 1),
+        padding 0.42s cubic-bezier(0.22, 1, 0.36, 1),
+        box-shadow 0.42s cubic-bezier(0.22, 1, 0.36, 1),
+        background-color 0.42s cubic-bezier(0.22, 1, 0.36, 1);
     /* Prevent content below from shifting */
     contain: layout style;
     isolation: isolate;
@@ -672,7 +682,12 @@ h2, .h2 {
     top: auto !important;
     margin: 1.25rem auto 1rem !important; /* Keep exact same margin as about page */
     /* Smooth width transition */
-    transition: width 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94), max-width 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    transition:
+        width 0.58s cubic-bezier(0.22, 1, 0.36, 1),
+        max-width 0.58s cubic-bezier(0.22, 1, 0.36, 1),
+        padding 0.42s cubic-bezier(0.22, 1, 0.36, 1),
+        box-shadow 0.42s cubic-bezier(0.22, 1, 0.36, 1),
+        background-color 0.42s cubic-bezier(0.22, 1, 0.36, 1);
     contain: layout style;
     isolation: isolate;
 }
@@ -763,7 +778,7 @@ h2, .h2 {
     justify-content: flex-start;
     overflow: hidden; /* Prevent overflow */
     flex-shrink: 1; /* Allow shrinking if needed */
-    animation: menuContentFadeIn 0.35s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+    animation: menuContentFadeIn 0.44s cubic-bezier(0.22, 1, 0.36, 1) forwards;
     /* Ensure it fits within navbar without changing navbar size */
     box-sizing: border-box;
     height: 100%;
@@ -813,13 +828,13 @@ h2, .h2 {
     backdrop-filter: none;
     border: none;
     border-radius: 0;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: all 0.36s cubic-bezier(0.22, 1, 0.36, 1);
     flex: 0 0 auto;
     font-size: 0.85rem;
     line-height: 1.2;
     opacity: 0;
     transform: scale(0.9);
-    animation: menuItemScaleFade 0.35s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+    animation: menuItemScaleFade 0.42s cubic-bezier(0.22, 1, 0.36, 1) forwards;
     color: rgba(255, 255, 255, 0.8);
     font-weight: 700;
     letter-spacing: 0.01em;
@@ -948,7 +963,10 @@ h2, .h2 {
     visibility: hidden;
     transform: translateY(6px) scale(0.98);
     pointer-events: none;
-    transition: opacity 0.18s var(--hover-ease), transform 0.18s var(--hover-ease), visibility 0.18s var(--hover-ease);
+    transition:
+        opacity 0.32s cubic-bezier(0.22, 1, 0.36, 1),
+        transform 0.32s cubic-bezier(0.22, 1, 0.36, 1),
+        visibility 0s linear 0.32s;
 }
 
 .dropdown-content a {
@@ -1745,7 +1763,7 @@ body > div[style*="backdrop-filter"] {
     height: 3px;
     background-color: #e0e0e0;
     border-radius: 2px;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: all 0.36s cubic-bezier(0.22, 1, 0.36, 1);
     transform-origin: center;
 }
 

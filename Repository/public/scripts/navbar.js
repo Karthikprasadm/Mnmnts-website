@@ -1,23 +1,33 @@
 (function() {
   function initNavbar() {
     const navbar = document.querySelector('nav.navbar');
-    const dropbtn = navbar ? navbar.querySelector('.dropbtn') : null;
+    const dropbtn = navbar?.querySelector('.dropbtn');
 
     if (!navbar || !dropbtn) return;
 
+    let closeTimer;
+
     // Expand on hover over menu button (same as about page)
-    dropbtn.addEventListener('mouseenter', function() {
+    dropbtn.addEventListener('mouseenter', () => {
+      clearTimeout(closeTimer);
       navbar.classList.add('navbar-expanded');
     });
 
+    navbar.addEventListener('mouseenter', () => {
+      clearTimeout(closeTimer);
+    });
+
     // Collapse when mouse leaves navbar
-    navbar.addEventListener('mouseleave', function() {
-      navbar.classList.remove('navbar-expanded');
+    navbar.addEventListener('mouseleave', () => {
+      closeTimer = setTimeout(() => {
+        navbar.classList.remove('navbar-expanded');
+      }, 110);
     });
 
     // Escape key to collapse
-    document.addEventListener('keydown', function(e) {
+    document.addEventListener('keydown', (e) => {
       if (e.key === 'Escape') {
+        clearTimeout(closeTimer);
         navbar.classList.remove('navbar-expanded');
       }
     });

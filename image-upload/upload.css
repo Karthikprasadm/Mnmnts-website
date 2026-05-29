@@ -448,7 +448,12 @@ main {
     max-height: fit-content;
     line-height: 1;
     /* Smooth width transition */
-    transition: width 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94), max-width 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    transition:
+        width 0.58s cubic-bezier(0.22, 1, 0.36, 1),
+        max-width 0.58s cubic-bezier(0.22, 1, 0.36, 1),
+        padding 0.42s cubic-bezier(0.22, 1, 0.36, 1),
+        box-shadow 0.42s cubic-bezier(0.22, 1, 0.36, 1),
+        background-color 0.42s cubic-bezier(0.22, 1, 0.36, 1);
     /* Prevent layout shifts */
     contain: layout style;
     will-change: width;
@@ -531,7 +536,10 @@ main {
     visibility: hidden;
     transform: translateY(6px) scale(0.98);
     pointer-events: none;
-    transition: opacity 0.18s var(--hover-ease), transform 0.18s var(--hover-ease), visibility 0.18s var(--hover-ease);
+    transition:
+        opacity 0.32s cubic-bezier(0.22, 1, 0.36, 1),
+        transform 0.32s cubic-bezier(0.22, 1, 0.36, 1),
+        visibility 0s linear 0.32s;
 }
 
 .dropdown-content a {
@@ -617,7 +625,12 @@ main {
     top: auto !important;
     margin: 1.5rem auto !important; /* Keep exact same margin */
     /* Smooth width transition */
-    transition: width 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94), max-width 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    transition:
+        width 0.58s cubic-bezier(0.22, 1, 0.36, 1),
+        max-width 0.58s cubic-bezier(0.22, 1, 0.36, 1),
+        padding 0.42s cubic-bezier(0.22, 1, 0.36, 1),
+        box-shadow 0.42s cubic-bezier(0.22, 1, 0.36, 1),
+        background-color 0.42s cubic-bezier(0.22, 1, 0.36, 1);
     contain: layout style;
     isolation: isolate;
 }

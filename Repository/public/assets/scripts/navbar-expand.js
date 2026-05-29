@@ -11,6 +11,7 @@
     let retryCount = 0;
     const MAX_RETRIES = 20;
     let eventListenersAttached = false;
+    let closeTimer = null;
 
     /**
      * Initialize navbar expansion
@@ -41,52 +42,61 @@
         // Mark as hover-based
         dropdown.classList.add('hover-based');
 
-        // On main pages, lock navbar width to expanded width immediately
+        // On main page, initialize navbar to expanded width
         if (!document.body.classList.contains('about-page') && !document.body.classList.contains('upload-page')) {
-            requestAnimationFrame(() => {
-                // Temporarily expand to measure full width
+            // Temporarily expand to measure width
             navbar.classList.add('navbar-expanded');
             dropbtn.setAttribute('aria-expanded', 'true');
-            
+
+            // Measure expanded width
             requestAnimationFrame(() => {
                 const expandedWidth = navbar.offsetWidth;
                 if (expandedWidth > 0) {
                     navbar.style.setProperty('width', expandedWidth + 'px', 'important');
                     navbar.style.setProperty('min-width', expandedWidth + 'px', 'important');
-                        navbar.style.setProperty('max-width', expandedWidth + 'px', 'important');
                     navbar.dataset.widthSet = 'true';
                 }
-                    // Collapse but keep width locked
+
+                // Collapse but keep the width
                 navbar.classList.remove('navbar-expanded');
                 dropbtn.setAttribute('aria-expanded', 'false');
-                });
             });
         }
 
         // Expand function
         function expandNavbar() {
+            if (closeTimer) {
+                clearTimeout(closeTimer);
+                closeTimer = null;
+            }
+
             // Lock only height - allow width to expand horizontally
             const currentHeight = navbar.offsetHeight;
-            
+
             // Lock height only - allow width to grow horizontally
             navbar.style.setProperty('height', currentHeight + 'px', 'important');
             navbar.style.setProperty('min-height', currentHeight + 'px', 'important');
             navbar.style.setProperty('max-height', currentHeight + 'px', 'important');
-            
+
+            // Allow width to expand - remove width constraints
+            navbar.style.removeProperty('width');
+            navbar.style.removeProperty('min-width');
+            navbar.style.removeProperty('max-width');
+
             // Reset animation by removing and re-adding class
             navbar.classList.remove('navbar-expanded');
             // Force reflow to reset animation
             void navbar.offsetWidth;
-            
+
             navbar.classList.add('navbar-expanded');
             dropbtn.setAttribute('aria-expanded', 'true');
-            
+
             // Store expanded width and set as default for main page
             requestAnimationFrame(() => {
                 navbar.style.setProperty('height', currentHeight + 'px', 'important');
                 navbar.style.setProperty('min-height', currentHeight + 'px', 'important');
                 navbar.style.setProperty('max-height', currentHeight + 'px', 'important');
-                
+
                 // On main page (not about/upload), measure expanded width and set as default
                 if (!document.body.classList.contains('about-page') && !document.body.classList.contains('upload-page')) {
                     // Wait a bit for layout to settle
@@ -95,13 +105,12 @@
                         if (expandedWidth > 0 && !navbar.dataset.widthSet) {
                             navbar.style.setProperty('width', expandedWidth + 'px', 'important');
                             navbar.style.setProperty('min-width', expandedWidth + 'px', 'important');
-                        navbar.style.setProperty('max-width', expandedWidth + 'px', 'important');
                             navbar.dataset.widthSet = 'true';
                         }
                     }, 100);
                 }
             });
-            
+
             // Double-check height after a short delay
             setTimeout(() => {
                 if (navbar.classList.contains('navbar-expanded')) {
@@ -114,9 +123,13 @@
 
         // Collapse function
         function collapseNavbar() {
+            if (closeTimer) {
+                clearTimeout(closeTimer);
+                closeTimer = null;
+            }
             navbar.classList.remove('navbar-expanded');
             dropbtn.setAttribute('aria-expanded', 'false');
-            
+
             // Remove locked dimensions to allow natural sizing
             navbar.style.removeProperty('height');
             navbar.style.removeProperty('min-height');
@@ -136,7 +149,7 @@
 
         // Collapse when mouse leaves navbar
         navbar.addEventListener('mouseleave', () => {
-            collapseNavbar();
+            closeTimer = setTimeout(collapseNavbar, 110);
         });
 
         // Close on escape key
@@ -175,7 +188,7 @@
             retryCount = 0;
             setTimeout(initialize, 100);
         });
-        
+
         // Also listen for after-swap event
         document.addEventListener('astro:after-swap', () => {
             eventListenersAttached = false;
