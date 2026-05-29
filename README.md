@@ -19,7 +19,7 @@ A minimalist, interactive web experience designed as a digital museum of persona
 - **Resume viewer** with in-page PDF modal
 - **Repository (Archive)** with GitHub project tiles and detail pages
 - **Project edit mode** with password-protected updates stored in Supabase
-- **Spotify visualizer** with local playback and Spotify-powered Streaming Mode (OAuth, Web API, and Web Playback SDK)
+- **Spotify visualizer** powered by Spotify Streaming Mode (OAuth, Web API, and Web Playback SDK)
 
 ### Advanced Features
 - **Service Worker (legacy/disabled by default)** - Previously offered offline support, background sync, and caching; not registered now.
@@ -208,6 +208,7 @@ Notes:
 - `SPOTIFY_CLIENT_SECRET` must stay server-side only and must never be committed.
 - Spotify Web Playback SDK playback requires a Spotify Premium account.
 - Spotify development-mode apps only allow users added in the Spotify Dashboard.
+- The visualizer does not host local song files; playback is handled by Spotify.
 
 ## 📝 Content Management
 
@@ -351,7 +352,7 @@ https://your-vercel-domain.vercel.app/spotify-visualiser/
 - Streaming Mode shows Spotify attribution and links tracks back to Spotify.
 - Spotify metadata is limited to 20 tracks and is not cached by the PWA runtime cache.
 - Spotify artwork is displayed without cropping in Streaming Mode.
-- Local demo audio/artwork must be owned or properly licensed.
+- The app does not include or serve local copies of Spotify audio.
 
 ### Test Offline Mode
 1. Open DevTools → Application → Service Workers

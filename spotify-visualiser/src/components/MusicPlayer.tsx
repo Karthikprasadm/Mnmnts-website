@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect, useCallback, useMemo, memo } from "react"
-import { Play, Pause, SkipBack, SkipForward, Repeat, Star, MoreHorizontal, Keyboard, Search, Volume2, VolumeX, X, Plus, FileText, Music, ExternalLink } from "lucide-react"
+import { Play, Pause, SkipBack, SkipForward, Keyboard, Search, X, Music, ExternalLink } from "lucide-react"
 import { motion } from "framer-motion"
 import SpotifyAuth from "./SpotifyAuth"
 import { useSpotifyPlayer } from "../hooks/useSpotifyPlayer"
@@ -63,219 +63,48 @@ const MarqueeText = memo(({ text, className = "" }: { text: string; className?: 
 
 MarqueeText.displayName = 'MarqueeText'
 
-// Lyrics data for tracks
-const lyricsData: Record<number, string[]> = {
-  1: [
-    "I see you standing there",
-    "With that look in your eyes",
-    "And I know you're scared",
-    "But you're trying to hide",
-    "",
-    "We've been through the fire",
-    "And we've walked through the rain",
-    "But I'll be by your side",
-    "Until the end of days",
-    "",
-    "So die with a smile",
-    "Knowing I was here",
-    "Die with a smile",
-    "There's nothing left to fear",
-  ],
-  2: [
-    "In the depths of the water",
-    "Where the shadows lie",
-    "Ophelia's fate",
-    "Was written in the sky",
-    "",
-    "She danced with the current",
-    "And sang with the tide",
-    "In her final moments",
-    "She had nothing to hide",
-    "",
-    "The fate of Ophelia",
-    "Was sealed long ago",
-    "But her story lives on",
-    "In the songs that we know",
-  ],
-  3: [
-    "I'm like espresso",
-    "In the morning light",
-    "Got me feeling right",
-    "All through the night",
-    "",
-    "You're my caffeine",
-    "My daily dose",
-    "Without you here",
-    "I'm feeling lost",
-    "",
-    "Espresso, espresso",
-    "You're all I need",
-    "Espresso, espresso",
-    "You're my everything",
-  ],
-  4: [
-    "I see beautiful things",
-    "When I look at you",
-    "The way you move",
-    "The things you do",
-    "",
-    "You light up my world",
-    "Like the morning sun",
-    "And I know you're the one",
-    "My only one",
-    "",
-    "Beautiful things",
-    "All around me",
-    "Beautiful things",
-    "That's what I see",
-  ],
-  5: [
-    "I'm losing control",
-    "When you're around",
-    "My heart starts to race",
-    "At the slightest sound",
-    "",
-    "You got me feeling",
-    "Like I'm floating high",
-    "And I don't want to",
-    "Come back down",
-    "",
-    "Loose controls",
-    "That's what you do",
-    "Loose controls",
-    "I'm falling for you",
-  ],
-  6: [
-    "Good luck, babe",
-    "You're gonna need it",
-    "When you realize",
-    "What you've been missing",
-    "",
-    "I gave you my heart",
-    "And you threw it away",
-    "But I'm moving on",
-    "Starting a new day",
-    "",
-    "Good luck, babe",
-    "Hope you find what you're looking for",
-    "Good luck, babe",
-    "I won't be waiting anymore",
-  ],
+type SpotifyPlaylistTrack = {
+  id: string
+  title: string
+  artist: string
+  duration: string
+  cover: string
+  uri: string
+  spotifyUrl: string
+  explicit: boolean
+  hasLyrics: boolean
 }
 
-const playlist = [
-  {
-    id: 1,
-    title: "Die With a Smile",
-    artist: "Lady Gaga & Bruno Mars",
-    duration: "3:38",
-    cover: `${BASE_URL}diewithasmile.jpeg`,
-    // TODO: place your audio file in /spotify-visualiser/public/audio and update this path
-    src: `${BASE_URL}audio/die-with-a-smile.mp3`,
-    hasLyrics: true,
-  },
-  {
-    id: 2,
-    title: "The Fate of Ophelia",
-    artist: "Fall Out Boy",
-    duration: "3:45",
-    cover: `${BASE_URL}fateofophelia.jpg`,
-    src: `${BASE_URL}audio/the-fate-of-ophelia.mp3`,
-    hasLyrics: true,
-  },
-  {
-    id: 3,
-    title: "Espresso",
-    artist: "Sabrina Carpenter",
-    duration: "2:55",
-    cover: `${BASE_URL}espresso.jpeg`,
-    src: `${BASE_URL}audio/espresso.mp3`,
-    hasLyrics: true,
-  },
-  {
-    id: 4,
-    title: "Beautiful Things",
-    artist: "Benson Boone",
-    duration: "3:18",
-    cover: `${BASE_URL}beautifulthings.jpg`,
-    src: `${BASE_URL}audio/beautiful-things.mp3`,
-    hasLyrics: true,
-  },
-  {
-    id: 5,
-    title: "Loose Controls",
-    artist: "Teddy Swims",
-    duration: "2:42",
-    cover: `${BASE_URL}loosecontrols.jpg`,
-    src: `${BASE_URL}audio/loose-controls.mp3`,
-    hasLyrics: true,
-  },
-  {
-    id: 6,
-    title: "Good Luck Babe",
-    artist: "Chappell Roan",
-    duration: "3:25",
-    cover: `${BASE_URL}goodluckbabe.jpeg`,
-    src: `${BASE_URL}audio/good-luck-babe.mp3`,
-    hasLyrics: true,
-  },
-]
-
-const LOCAL_AUDIO_MISSING_MESSAGE =
-  "Local audio file missing. Add licensed MP3s in public/audio or connect Spotify."
-
-const verifyLocalAudioSource = async (src?: string) => {
-  if (!src) {
-    throw new Error("No local audio source configured")
-  }
-
-  const response = await fetch(src, { method: "HEAD", cache: "no-store" })
-  if (!response.ok) {
-    throw new Error(`Local audio source not found: ${src}`)
-  }
+const emptySpotifyTrack: SpotifyPlaylistTrack = {
+  id: "spotify-empty",
+  title: "Connect Spotify",
+  artist: "Stream music through Spotify",
+  duration: "0:00",
+  cover: `${BASE_URL}placeholder.svg`,
+  uri: "",
+  spotifyUrl: "https://open.spotify.com/",
+  explicit: false,
+  hasLyrics: false,
 }
 
 export default function MusicPlayer() {
   // Spotify integration
   const spotifyClientId = import.meta.env.VITE_SPOTIFY_CLIENT_ID || ''
-  const [useSpotify, setUseSpotify] = useState(false)
-  const [spotifyPlaylist, setSpotifyPlaylist] = useState<Array<{
-    id: string
-    title: string
-    artist: string
-    duration: string
-    cover: string
-    uri: string
-    spotifyUrl: string
-    explicit: boolean
-    hasLyrics: boolean
-  }>>([])
+  const [spotifyPlaylist, setSpotifyPlaylist] = useState<SpotifyPlaylistTrack[]>([])
   const [spotifyTrackIndex, setSpotifyTrackIndex] = useState(0)
   const [isLoadingSpotify, setIsLoadingSpotify] = useState(false)
   
   const spotifyPlayer = useSpotifyPlayer()
   const isSpotifyAuthenticated = !!getStoredToken()
   
-  // Local audio state
   const [isPlaying, setIsPlaying] = useState(false)
   const [progress, setProgress] = useState(25)
-  const [isDragging, setIsDragging] = useState(false)
-  const [currentTrackIndex, setCurrentTrackIndex] = useState(0)
   const [error, setError] = useState<string | null>(null)
-  const [imageErrors, setImageErrors] = useState<Set<number>>(new Set())
   const [showShortcuts, setShowShortcuts] = useState(false)
   const [searchQuery, setSearchQuery] = useState("")
-  const [queue, setQueue] = useState<typeof playlist>([])
-  const [volume, setVolume] = useState(75)
-  const [isMuted, setIsMuted] = useState(false)
-  const [showQueue, setShowQueue] = useState(false)
-  const [showLyrics, setShowLyrics] = useState(false)
   const [currentTimeSeconds, setCurrentTimeSeconds] = useState(0)
   const [durationSeconds, setDurationSeconds] = useState(0)
-  const audioRef = useRef<HTMLAudioElement | null>(null)
   const modalRef = useRef<HTMLDivElement>(null)
-  const progressRef = useRef<HTMLDivElement>(null)
-  const lyricsRef = useRef<HTMLDivElement>(null)
 
   const formatTime = (seconds: number) => {
     if (!seconds || !isFinite(seconds)) return "0:00"
@@ -284,35 +113,30 @@ export default function MusicPlayer() {
     return `${m}:${s.toString().padStart(2, "0")}`
   }
 
-  // Determine current track based on mode
   const currentTrack = useMemo(() => {
-    if (useSpotify && spotifyPlaylist.length > 0) {
-      return spotifyPlaylist[spotifyTrackIndex]
-    }
-    return playlist[currentTrackIndex]
-  }, [useSpotify, spotifyPlaylist, spotifyTrackIndex, currentTrackIndex])
+    return spotifyPlaylist[spotifyTrackIndex] || emptySpotifyTrack
+  }, [spotifyPlaylist, spotifyTrackIndex])
 
-  const isSpotifyTrack = useSpotify && "uri" in currentTrack
-  const spotifyTrackUrl = isSpotifyTrack ? currentTrack.spotifyUrl : ""
+  const hasSpotifyTracks = spotifyPlaylist.length > 0
+  const spotifyTrackUrl = currentTrack.spotifyUrl
 
   // Sync Spotify player state
   useEffect(() => {
-    if (useSpotify && spotifyPlayer.playbackState) {
+    if (spotifyPlayer.playbackState) {
       const state = spotifyPlayer.playbackState
       setIsPlaying(!state.paused)
       setCurrentTimeSeconds(state.position / 1000)
       setDurationSeconds(state.duration / 1000)
       setProgress((state.position / state.duration) * 100)
-      setVolume(state.volume * 100)
     }
-  }, [useSpotify, spotifyPlayer.playbackState])
+  }, [spotifyPlayer.playbackState])
 
   // Load Spotify playlists when authenticated
   useEffect(() => {
-    if (useSpotify && isSpotifyAuthenticated && spotifyPlaylist.length === 0 && !isLoadingSpotify) {
+    if (isSpotifyAuthenticated && spotifyPlaylist.length === 0 && !isLoadingSpotify) {
       loadSpotifyTracks()
     }
-  }, [useSpotify, isSpotifyAuthenticated])
+  }, [isSpotifyAuthenticated])
 
   const loadSpotifyTracks = async () => {
     setIsLoadingSpotify(true)
@@ -343,16 +167,9 @@ export default function MusicPlayer() {
     ? `-${formatTime(Math.max(durationSeconds - currentTimeSeconds, 0))}`
     : "-0:00"
   
-  // Get lyrics for current track - memoized for performance
-  const currentLyrics = useMemo(() => {
-    if (!currentTrack.hasLyrics) return null
-    const trackId = typeof currentTrack.id === 'number' ? currentTrack.id : null
-    return trackId ? (lyricsData[trackId] || null) : null
-  }, [currentTrack])
-
   // Filter playlist based on search query - memoized for performance
   const filteredPlaylist = useMemo(() => {
-    const activePlaylist = useSpotify ? spotifyPlaylist : playlist
+    const activePlaylist = spotifyPlaylist
     if (!searchQuery.trim()) return activePlaylist
     const query = searchQuery.toLowerCase()
     return activePlaylist.filter(
@@ -360,188 +177,36 @@ export default function MusicPlayer() {
         song.title.toLowerCase().includes(query) ||
         song.artist.toLowerCase().includes(query)
     )
-  }, [searchQuery, useSpotify, spotifyPlaylist])
-
-  // ----- Local audio playback -----
-
-  // Create audio element once
-  useEffect(() => {
-    const audio = new Audio()
-    audioRef.current = audio
-    audio.volume = volume / 100
-
-    const handleTimeUpdate = () => {
-      if (!audio.duration) return
-      setCurrentTimeSeconds(audio.currentTime)
-      setDurationSeconds(audio.duration)
-      setProgress((audio.currentTime / audio.duration) * 100)
-    }
-
-    audio.addEventListener("timeupdate", handleTimeUpdate)
-
-    return () => {
-      audio.pause()
-      audio.removeEventListener("timeupdate", handleTimeUpdate)
-      audioRef.current = null
-    }
-  }, [])
-
-  // Update track source when track index changes
-  useEffect(() => {
-    const audio = audioRef.current
-    if (!audio) return
-    const src = (playlist[currentTrackIndex] as any).src as string | undefined
-    if (!src) return
-    audio.src = src
-    audio.load()
-    setCurrentTimeSeconds(0)
-    setDurationSeconds(0)
-    setProgress(0)
-    if (isPlaying) {
-      verifyLocalAudioSource(src)
-        .then(() => audio.play())
-        .then(() => {
-          setError(null)
-        })
-        .catch((err) => {
-          console.error("Audio play failed", err)
-          setIsPlaying(false)
-          setError(LOCAL_AUDIO_MISSING_MESSAGE)
-        })
-    }
-  }, [currentTrackIndex, isPlaying])
-
-  // Sync volume to audio element
-  useEffect(() => {
-    const audio = audioRef.current
-    if (!audio) return
-    audio.volume = (isMuted ? 0 : volume) / 100
-  }, [volume, isMuted])
-
-  // ----- Progress handling -----
-
-  const updateProgressFromRef = useCallback((ref: React.RefObject<HTMLDivElement | null>, clientX: number) => {
-    if (!ref.current) return
-    const rect = ref.current.getBoundingClientRect()
-    const x = clientX - rect.left
-    const percentage = (x / rect.width) * 100
-    const clampedPercentage = Math.max(0, Math.min(100, percentage))
-    setProgress(clampedPercentage)
-  }, [])
-
-  const handleProgressClick = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
-    e.preventDefault()
-    updateProgressFromRef(progressRef, e.clientX)
-  }, [updateProgressFromRef])
-
-  const handleProgressMouseDown = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
-    e.preventDefault()
-    setIsDragging(true)
-    updateProgressFromRef(progressRef, e.clientX)
-  }, [updateProgressFromRef])
-
-  const handleProgressMouseMove = useCallback((e: MouseEvent) => {
-    if (!isDragging) return
-    e.preventDefault()
-    updateProgressFromRef(progressRef, e.clientX)
-  }, [isDragging, updateProgressFromRef])
-
-  const handleProgressMouseUp = useCallback(
-    (e: MouseEvent) => {
-      if (!isDragging) return
-      e.preventDefault()
-      setIsDragging(false)
-      const audio = audioRef.current
-      const rect = progressRef.current?.getBoundingClientRect()
-      if (audio && rect && audio.duration) {
-        const ratio = (e.clientX - rect.left) / rect.width
-        const clamped = Math.max(0, Math.min(1, ratio))
-        audio.currentTime = clamped * audio.duration
-        setProgress(clamped * 100)
-      }
-    },
-    [isDragging]
-  )
-
-  const handleProgressTouchMove = useCallback((e: TouchEvent) => {
-    if (!isDragging) return
-    e.preventDefault()
-    const touch = e.touches[0]
-    updateProgressFromRef(progressRef, touch.clientX)
-  }, [isDragging, updateProgressFromRef])
-
-  const handleProgressTouchEnd = useCallback(() => {
-    setIsDragging(false)
-  }, [])
-
-  // Global mouse/touch handlers for smooth dragging
-  useEffect(() => {
-    if (isDragging) {
-      document.addEventListener('mousemove', handleProgressMouseMove, { passive: false })
-      document.addEventListener('mouseup', handleProgressMouseUp, { passive: false })
-      document.addEventListener('touchmove', handleProgressTouchMove, { passive: false })
-      document.addEventListener('touchend', handleProgressTouchEnd, { passive: false })
-      return () => {
-        document.removeEventListener('mousemove', handleProgressMouseMove)
-        document.removeEventListener('mouseup', handleProgressMouseUp)
-        document.removeEventListener('touchmove', handleProgressTouchMove)
-        document.removeEventListener('touchend', handleProgressTouchEnd)
-      }
-    }
-  }, [isDragging, handleProgressMouseMove, handleProgressMouseUp, handleProgressTouchMove, handleProgressTouchEnd])
-
-
-  // Error handling functions
-  const handleImageError = (songId: number, fallbackSrc: string = `${BASE_URL}placeholder.svg`) => {
-    setImageErrors((prev) => new Set(prev).add(songId))
-    setError(`Failed to load image for track ${songId}`)
-    // Clear error after 3 seconds
-    setTimeout(() => setError(null), 3000)
-  }
+  }, [searchQuery, spotifyPlaylist])
 
   const handlePlayPause = useCallback(async () => {
-    if (useSpotify && spotifyPlayer.isReady) {
-      try {
-        if (spotifyPlayer.isPlaying) {
-          await spotifyPlayer.pause()
-        } else {
-          if (spotifyPlayer.currentTrack) {
-            await spotifyPlayer.resume()
-          } else if (currentTrack && 'uri' in currentTrack) {
-            await spotifyPlayer.play(currentTrack.uri)
-          }
-        }
-      } catch (err: any) {
-        setError(`Spotify playback error: ${err.message}`)
-        setTimeout(() => setError(null), 3000)
-      }
+    if (!spotifyPlayer.isReady) {
+      setError("Connect Spotify to start playback")
+      setTimeout(() => setError(null), 3000)
       return
     }
 
-    const audio = audioRef.current
-    if (!audio) return
-
-    if (isPlaying) {
-      audio.pause()
-      setIsPlaying(false)
-    } else {
-      const src = (playlist[currentTrackIndex] as any).src as string | undefined
-      verifyLocalAudioSource(src)
-        .then(() => audio.play())
-        .then(() => {
-          setIsPlaying(true)
-          setError(null)
-        })
-        .catch((err) => {
-          console.error("Audio play failed", err)
-          setIsPlaying(false)
-          setError(LOCAL_AUDIO_MISSING_MESSAGE)
-        })
+    try {
+      if (spotifyPlayer.isPlaying) {
+        await spotifyPlayer.pause()
+      } else {
+        if (spotifyPlayer.currentTrack) {
+          await spotifyPlayer.resume()
+        } else if (currentTrack.uri) {
+          await spotifyPlayer.play(currentTrack.uri)
+        } else {
+          setError("Choose a Spotify track to play")
+          setTimeout(() => setError(null), 3000)
+        }
+      }
+    } catch (err: any) {
+      setError(`Spotify playback error: ${err.message}`)
+      setTimeout(() => setError(null), 3000)
     }
-  }, [isPlaying, useSpotify, spotifyPlayer, currentTrack, currentTrackIndex])
+  }, [spotifyPlayer, currentTrack])
 
   const handlePreviousTrack = useCallback(async () => {
-    if (useSpotify && spotifyPlayer.isReady) {
+    if (spotifyPlayer.isReady) {
       try {
         await spotifyPlayer.previousTrack()
       } catch (err: any) {
@@ -551,19 +216,12 @@ export default function MusicPlayer() {
       return
     }
 
-    try {
-      setCurrentTrackIndex((prev) => (prev === 0 ? playlist.length - 1 : prev - 1))
-      setProgress(0)
-      setError(null)
-      setIsPlaying(true)
-    } catch (err) {
-      setError("Failed to load previous track")
-      setTimeout(() => setError(null), 3000)
-    }
-  }, [useSpotify, spotifyPlayer])
+    setError("Connect Spotify to use playback controls")
+    setTimeout(() => setError(null), 3000)
+  }, [spotifyPlayer])
 
   const handleNextTrack = useCallback(async () => {
-    if (useSpotify && spotifyPlayer.isReady) {
+    if (spotifyPlayer.isReady) {
       try {
         await spotifyPlayer.nextTrack()
       } catch (err: any) {
@@ -573,102 +231,9 @@ export default function MusicPlayer() {
       return
     }
 
-    try {
-      // Move to next track, looping at the end
-      setCurrentTrackIndex((prev) => (prev + 1) % playlist.length)
-      setProgress(0)
-      setError(null)
-      setIsPlaying(true)
-    } catch (err) {
-      setError("Failed to load next track")
-      setTimeout(() => setError(null), 3000)
-    }
-  }, [useSpotify, spotifyPlayer])
-
-  const addToQueue = useCallback((song: typeof playlist[0] | typeof spotifyPlaylist[0]) => {
-    try {
-      // Convert Spotify track to local format for queue
-      if ('uri' in song) {
-        const localFormat = {
-          id: parseInt(song.id) || Date.now(),
-          title: song.title,
-          artist: song.artist,
-          duration: song.duration,
-          cover: song.cover,
-          src: song.uri, // Use URI as src for Spotify tracks
-          hasLyrics: song.hasLyrics,
-        }
-        setQueue((prev) => [...prev, localFormat])
-      } else {
-      setQueue((prev) => [...prev, song])
-      }
-      setError(null)
-    } catch (err) {
-      setError("Failed to add track to queue")
-      setTimeout(() => setError(null), 3000)
-    }
-  }, [])
-
-  const removeFromQueue = useCallback((index: number) => {
-    try {
-      setQueue((prev) => prev.filter((_, i) => i !== index))
-      setError(null)
-    } catch (err) {
-      setError("Failed to remove track from queue")
-      setTimeout(() => setError(null), 3000)
-    }
-  }, [])
-
-  const [isVolumeDragging, setIsVolumeDragging] = useState(false)
-
-  const handleVolumeChange = useCallback((newVolume: number) => {
-    try {
-      const clampedVolume = Math.max(0, Math.min(100, newVolume))
-      setVolume(clampedVolume)
-      setIsMuted(clampedVolume === 0)
-      setError(null)
-    } catch (err) {
-      setError("Failed to change volume")
-      setTimeout(() => setError(null), 3000)
-    }
-  }, [])
-
-  const handleVolumeInput = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    handleVolumeChange(Number(e.target.value))
-  }, [handleVolumeChange])
-
-  const handleVolumeMouseDown = useCallback(() => {
-    setIsVolumeDragging(true)
-  }, [])
-
-  const handleVolumeMouseUp = useCallback(() => {
-    setIsVolumeDragging(false)
-  }, [])
-
-  const toggleMute = useCallback(() => {
-    try {
-      setIsMuted((prev) => !prev)
-      setError(null)
-    } catch (err) {
-      setError("Failed to toggle mute")
-      setTimeout(() => setError(null), 3000)
-    }
-  }, [])
-
-  const toggleLyrics = useCallback(() => {
-    try {
-      setShowLyrics((prev) => !prev)
-      setError(null)
-    } catch (err) {
-      setError("Failed to toggle lyrics")
-      setTimeout(() => setError(null), 3000)
-    }
-  }, [])
-
-  // Close lyrics when track changes (optional - remove if you want lyrics to persist)
-  useEffect(() => {
-    setShowLyrics(false)
-  }, [currentTrackIndex])
+    setError("Connect Spotify to use playback controls")
+    setTimeout(() => setError(null), 3000)
+  }, [spotifyPlayer])
 
   // Keyboard shortcuts
   useEffect(() => {
@@ -689,45 +254,12 @@ export default function MusicPlayer() {
           handlePlayPause()
           break
         case "ArrowLeft":
-          if (isSpotifyTrack) return
           e.preventDefault()
-          if (e.shiftKey) {
-            // Shift + Left = seek backward 5%
-            setProgress((prev) => Math.max(0, prev - 5))
-          } else {
-            handlePreviousTrack()
-          }
+          handlePreviousTrack()
           break
         case "ArrowRight":
-          if (isSpotifyTrack) return
           e.preventDefault()
-          if (e.shiftKey) {
-            // Shift + Right = seek forward 5%
-            setProgress((prev) => Math.min(100, prev + 5))
-          } else {
-            handleNextTrack()
-          }
-          break
-        case "ArrowUp":
-          if (isSpotifyTrack) return
-          e.preventDefault()
-          setVolume((prev) => Math.min(100, prev + 5))
-          setIsMuted(false)
-          break
-        case "ArrowDown":
-          if (isSpotifyTrack) return
-          e.preventDefault()
-          setVolume((prev) => Math.max(0, prev - 5))
-          break
-        case "KeyM":
-          if (isSpotifyTrack) return
-          e.preventDefault()
-          setIsMuted((prev) => !prev)
-          break
-        case "KeyR":
-          if (isSpotifyTrack) return
-          e.preventDefault()
-          // Repeat toggle (placeholder for future implementation)
+          handleNextTrack()
           break
       }
     }
@@ -736,7 +268,7 @@ export default function MusicPlayer() {
     return () => {
       document.removeEventListener("keydown", handleKeyDown)
     }
-  }, [handlePlayPause, handlePreviousTrack, handleNextTrack, isSpotifyTrack])
+  }, [handlePlayPause, handlePreviousTrack, handleNextTrack])
 
   // Close shortcuts menu when clicking outside
   useEffect(() => {
@@ -848,7 +380,7 @@ export default function MusicPlayer() {
             </motion.div>
           )}
           
-          {/* Spotify Authentication & Mode Toggle */}
+          {/* Spotify Authentication */}
           {spotifyClientId ? (
             <div className="mb-4 flex items-center justify-between gap-3">
               <SpotifyAuth 
@@ -856,39 +388,23 @@ export default function MusicPlayer() {
                 onAuthSuccess={() => {
                   const hasToken = !!getStoredToken()
                   if (!hasToken) {
-                    setUseSpotify(false)
                     setSpotifyPlaylist([])
                     setSpotifyTrackIndex(0)
-                    return
-                  }
-                  if (!useSpotify) {
-                    setUseSpotify(true)
                   }
                 }}
                 onAuthError={(err) => setError(err)}
               />
               {isSpotifyAuthenticated && (
-                <motion.button
-                  onClick={() => setUseSpotify(!useSpotify)}
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${
-                    useSpotify
-                      ? 'bg-green-500/20 text-green-300 border border-green-500/30'
-                      : 'bg-white/10 text-white/70 border border-white/10 hover:bg-white/20'
-                  }`}
-                >
+                <div className="flex items-center gap-2 rounded-lg border border-green-500/30 bg-green-500/20 px-3 py-1.5 text-xs font-medium text-green-300">
                   <Music className="w-3 h-3" />
-                  {useSpotify ? 'Streaming Mode' : 'Local Mode'}
-                </motion.button>
+                  Streaming Mode
+                </div>
               )}
             </div>
           ) : null}
-          {useSpotify && (
-            <p className="mb-3 text-[11px] leading-snug text-[#e0e0e0]/55">
-              Playback uses Spotify Web Playback SDK and requires Spotify Premium.
-            </p>
-          )}
+          <p className="mb-3 text-[11px] leading-snug text-[#e0e0e0]/55">
+            Playback uses Spotify Web Playback SDK and requires Spotify Premium.
+          </p>
           
           {/* Mnmnts Logo */}
           <div className="flex items-center justify-between mb-4">
@@ -903,23 +419,21 @@ export default function MusicPlayer() {
               />
               <span className="text-xl font-bold text-[#e0e0e0] font-sans">Mnmnts</span>
             </div>
-            {useSpotify && (
-              <a
-                href="https://open.spotify.com/"
-                target="_blank"
-                rel="noopener noreferrer"
-                  className="flex items-center gap-2 rounded-lg border border-white/10 bg-black/80 px-3 py-1.5 text-xs font-medium text-[#e0e0e0]/85 transition-colors hover:bg-white/5 hover:text-white"
-                  aria-label="Open Spotify"
-                >
-                  <img
-                    src={`${BASE_URL}icons/spotify.png`}
-                    alt=""
-                    className="h-[21px] w-[21px]"
-                    aria-hidden="true"
-                  />
-                  <span>Content from Spotify</span>
-              </a>
-            )}
+            <a
+              href="https://open.spotify.com/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-2 rounded-lg border border-white/10 bg-black/80 px-3 py-1.5 text-xs font-medium text-[#e0e0e0]/85 transition-colors hover:bg-white/5 hover:text-white"
+              aria-label="Open Spotify"
+            >
+              <img
+                src={`${BASE_URL}icons/spotify.png`}
+                alt=""
+                className="h-[21px] w-[21px]"
+                aria-hidden="true"
+              />
+              <span>Content from Spotify</span>
+            </a>
             {/* Keyboard Shortcuts Help */}
             <div className="relative">
               <button
@@ -944,8 +458,6 @@ export default function MusicPlayer() {
                     <div><kbd className="bg-white/10 px-1.5 py-0.5 rounded">→</kbd> Next</div>
                     <div><kbd className="bg-white/10 px-1.5 py-0.5 rounded">Shift</kbd> + <kbd className="bg-white/10 px-1.5 py-0.5 rounded">←</kbd> Seek -5%</div>
                     <div><kbd className="bg-white/10 px-1.5 py-0.5 rounded">Shift</kbd> + <kbd className="bg-white/10 px-1.5 py-0.5 rounded">→</kbd> Seek +5%</div>
-                    <div><kbd className="bg-white/10 px-1.5 py-0.5 rounded">↑</kbd> Volume +5%</div>
-                    <div><kbd className="bg-white/10 px-1.5 py-0.5 rounded">↓</kbd> Volume -5%</div>
                     <div><kbd className="bg-white/10 px-1.5 py-0.5 rounded">M</kbd> Mute</div>
                   </div>
                 </motion.div>
@@ -972,7 +484,7 @@ export default function MusicPlayer() {
                 <motion.img
                   src={currentTrack.cover || `${BASE_URL}music-1.jpg`}
                   alt={`${currentTrack.title} - ${currentTrack.artist}`}
-                  className={`w-full aspect-square rounded-lg bg-black ${isSpotifyTrack ? "object-contain" : "object-cover"}`}
+                  className="w-full aspect-square rounded-lg bg-black object-contain"
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   transition={{ delay: 0.4, duration: 0.5 }}
@@ -980,9 +492,6 @@ export default function MusicPlayer() {
                   decoding="async"
                   onError={(e) => {
                     e.currentTarget.src = `${BASE_URL}placeholder.svg`
-                    if (typeof currentTrack.id === 'number') {
-                    handleImageError(currentTrack.id)
-                    }
                   }}
                 />
               </motion.div>
@@ -1019,135 +528,30 @@ export default function MusicPlayer() {
                 <div className="flex items-center gap-2 mb-3">
                   <span className="text-[#e0e0e0] text-xs font-medium select-none">{currentTime}</span>
                   <div
-                    ref={progressRef}
-                    className={`flex-1 h-1.5 bg-white/20 rounded-full relative group touch-none select-none ${isSpotifyTrack ? "cursor-default" : "cursor-pointer"}`}
-                    onClick={isSpotifyTrack ? undefined : handleProgressClick}
-                    onMouseDown={isSpotifyTrack ? undefined : handleProgressMouseDown}
-                    onTouchStart={isSpotifyTrack ? undefined : (e) => {
-                      e.preventDefault()
-                      const touch = e.touches[0]
-                      setIsDragging(true)
-                      updateProgressFromRef(progressRef, touch.clientX)
-                    }}
-                    aria-label={isSpotifyTrack ? "Spotify playback progress" : "Playback progress"}
+                    className="flex-1 h-1.5 bg-white/20 rounded-full relative touch-none select-none cursor-default"
+                    aria-label="Spotify playback progress"
                   >
                     <motion.div 
                       className="h-full bg-white rounded-full"
                       style={{ width: `${progress}%` }}
-                      transition={{ 
-                        duration: isDragging ? 0 : 0.1,
-                        ease: "easeOut"
-                      }}
-                    />
-                    <motion.div
-                      className="absolute top-1/2 -translate-y-1/2 w-3 h-3 bg-white rounded-full shadow-lg"
-                      style={{ left: `${progress}%`, transform: "translate(-50%, -50%)" }}
-                      animate={{ 
-                        opacity: isDragging && !isSpotifyTrack ? 1 : 0,
-                        scale: isDragging ? 1.2 : 1
-                      }}
-                      transition={{ duration: 0.15 }}
+                      transition={{ duration: 0.1, ease: "easeOut" }}
                     />
                   </div>
                   <span className="text-[#e0e0e0] text-xs font-medium select-none">{remainingTime}</span>
                 </div>
 
-                {/* Volume Control */}
-                {!isSpotifyTrack && (
-                  <div className="flex items-center gap-2 mb-3">
-                    <motion.button
-                      onClick={toggleMute}
-                      className="text-[#e0e0e0] touch-none"
-                      whileHover={{ scale: 1.1 }}
-                      whileTap={{ scale: 0.9 }}
-                      transition={{ type: "spring", stiffness: 300, damping: 20 }}
-                      aria-label={isMuted ? "Unmute" : "Mute"}
-                    >
-                      {isMuted || volume === 0 ? (
-                        <VolumeX className="w-4 h-4" />
-                      ) : (
-                        <Volume2 className="w-4 h-4" />
-                      )}
-                    </motion.button>
-                    <div className="flex-1 h-1.5 bg-white/20 rounded-full cursor-pointer relative group touch-none">
-                      <motion.div
-                        className="h-full bg-white rounded-full"
-                        style={{ width: `${isMuted ? 0 : volume}%` }}
-                        transition={{
-                          duration: isVolumeDragging ? 0 : 0.15,
-                          ease: "easeOut"
-                        }}
-                      />
-                      <motion.div
-                        className="absolute top-1/2 -translate-y-1/2 w-2.5 h-2.5 bg-white rounded-full shadow-md"
-                        style={{ left: `${isMuted ? 0 : volume}%`, transform: "translate(-50%, -50%)" }}
-                        animate={{
-                          opacity: isVolumeDragging ? 1 : 0,
-                          scale: isVolumeDragging ? 1.3 : 1
-                        }}
-                        transition={{ duration: 0.15 }}
-                      />
-                      <input
-                        type="range"
-                        id="volume-control"
-                        name="volume"
-                        min="0"
-                        max="100"
-                        step="1"
-                        value={isMuted ? 0 : volume}
-                        onChange={handleVolumeInput}
-                        onMouseDown={handleVolumeMouseDown}
-                        onMouseUp={handleVolumeMouseUp}
-                        onTouchStart={handleVolumeMouseDown}
-                        onTouchEnd={handleVolumeMouseUp}
-                        className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
-                        aria-label="Volume control"
-                      />
-                    </div>
-                    <span className="text-[#e0e0e0] text-xs font-medium w-8 text-right select-none">
-                      {isMuted ? "0" : volume}%
-                    </span>
-                  </div>
-                )}
-
                 {/* Control Buttons */}
-                <div className={`flex items-center ${isSpotifyTrack ? "justify-center" : "justify-between"}`}>
-                  {!isSpotifyTrack && (
-                    <motion.button
-                      className="text-[#e0e0e0]"
-                      whileHover={{ scale: 1.1, rotate: 15 }}
-                      whileTap={{ scale: 0.9 }}
-                      transition={{ type: "spring", stiffness: 300, damping: 20 }}
-                      aria-label="Favorite track"
-                    >
-                      <Star className="w-5 h-5" />
-                    </motion.button>
-                  )}
-                  {!isSpotifyTrack && currentTrack.hasLyrics && (
-                    <motion.button
-                      onClick={toggleLyrics}
-                      className={`text-[#e0e0e0] ${showLyrics ? "text-white" : ""}`}
-                      whileHover={{ scale: 1.1 }}
-                      whileTap={{ scale: 0.9 }}
-                      transition={{ type: "spring", stiffness: 300, damping: 20 }}
-                      aria-label={showLyrics ? "Hide lyrics" : "Show lyrics"}
-                      title={showLyrics ? "Hide lyrics" : "Show lyrics"}
-                    >
-                      <FileText className="w-5 h-5" />
-                    </motion.button>
-                  )}
-                  {!isSpotifyTrack && (
-                    <motion.button
-                      onClick={handlePreviousTrack}
-                      className="text-[#e0e0e0]"
-                      whileHover={{ scale: 1.1, x: -2 }}
-                      whileTap={{ scale: 0.9 }}
-                      transition={{ type: "spring", stiffness: 300, damping: 20 }}
-                      aria-label="Previous track"
-                    >
-                      <SkipBack className="w-5 h-5" />
-                    </motion.button>
-                  )}
+                <div className="flex items-center justify-center gap-8">
+                  <motion.button
+                    onClick={handlePreviousTrack}
+                    className="text-[#e0e0e0]"
+                    whileHover={{ scale: 1.1, x: -2 }}
+                    whileTap={{ scale: 0.9 }}
+                    transition={{ type: "spring", stiffness: 300, damping: 20 }}
+                    aria-label="Previous track"
+                  >
+                    <SkipBack className="w-5 h-5" />
+                  </motion.button>
                   <motion.button
                     onClick={handlePlayPause}
                     className="bg-white text-black rounded-full p-2"
@@ -1160,34 +564,21 @@ export default function MusicPlayer() {
                       {isPlaying ? <Pause className="w-5 h-5" /> : <Play className="w-5 h-5 ml-0.5" />}
                     </motion.div>
                   </motion.button>
-                  {!isSpotifyTrack && (
-                    <>
-                      <motion.button
-                        onClick={handleNextTrack}
-                        className="text-[#e0e0e0]"
-                        whileHover={{ scale: 1.1, x: 2 }}
-                        whileTap={{ scale: 0.9 }}
-                        transition={{ type: "spring", stiffness: 300, damping: 20 }}
-                        aria-label="Next track"
-                      >
-                        <SkipForward className="w-5 h-5" />
-                      </motion.button>
-                      <motion.button
-                        className="text-[#e0e0e0]"
-                        whileHover={{ scale: 1.1, rotate: -15 }}
-                        whileTap={{ scale: 0.9 }}
-                        transition={{ type: "spring", stiffness: 300, damping: 20 }}
-                        aria-label="Repeat"
-                      >
-                        <Repeat className="w-5 h-5" />
-                      </motion.button>
-                    </>
-                  )}
+                  <motion.button
+                    onClick={handleNextTrack}
+                    className="text-[#e0e0e0]"
+                    whileHover={{ scale: 1.1, x: 2 }}
+                    whileTap={{ scale: 0.9 }}
+                    transition={{ type: "spring", stiffness: 300, damping: 20 }}
+                    aria-label="Next track"
+                  >
+                    <SkipForward className="w-5 h-5" />
+                  </motion.button>
                 </div>
               </motion.div>
             </div>
 
-            {/* Right Side - Playlist or Lyrics */}
+            {/* Right Side - Spotify Playlist */}
             <motion.div
               className="music-panel-column flex-1 min-h-0 overflow-hidden flex flex-col -mt-6 md:-mt-5"
               initial={{ opacity: 0, x: 50 }}
@@ -1199,301 +590,168 @@ export default function MusicPlayer() {
                 delay: 0.4,
               }}
             >
-              {/* Lyrics Display */}
-              {showLyrics && currentLyrics && (
-                <motion.div
-                  ref={lyricsRef}
-                  className="flex-1 overflow-y-auto pr-2 mb-4 bg-black/30 backdrop-blur-sm rounded-xl p-6 border border-white/5 scrollbar-thin scrollbar-thumb-white/20 scrollbar-track-transparent"
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -20 }}
-                  transition={{ duration: 0.3 }}
+              <div className="music-list-panel flex h-[34vh] min-h-[220px] flex-col overflow-hidden rounded-2xl border border-white/5 bg-black/25 backdrop-blur-md md:h-auto md:min-h-0 md:flex-1">
+                <div className="sticky top-0 z-10 border-b border-white/5 bg-black/35 backdrop-blur-md p-3">
+                  <div className="relative">
+                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#e0e0e0]/55" />
+                    <input
+                      type="text"
+                      id="search-input"
+                      name="search"
+                      placeholder="Search Spotify tracks or artists..."
+                      value={searchQuery}
+                      onChange={(e) => setSearchQuery(e.target.value)}
+                      className="w-full rounded-xl bg-black/35 border border-white/5 pl-10 pr-10 py-2 text-[#e0e0e0] text-sm placeholder:text-[#e0e0e0]/35 focus:outline-none focus:border-white/15 focus:bg-black/45 transition-colors"
+                    />
+                    {searchQuery && (
+                      <button
+                        onClick={() => setSearchQuery("")}
+                        className="absolute right-2.5 top-1/2 -translate-y-1/2 grid place-items-center w-7 h-7 rounded-lg text-[#e0e0e0]/60 hover:text-[#e0e0e0] hover:bg-white/5 transition-colors"
+                        aria-label="Clear search"
+                      >
+                        <X className="w-4 h-4" />
+                      </button>
+                    )}
+                  </div>
+
+                  <div className="mt-3">
+                    <div className="text-[#e0e0e0] text-sm font-semibold tracking-tight">
+                      {searchQuery ? `Results (${filteredPlaylist.length})` : `Playlist (${spotifyPlaylist.length})`}
+                    </div>
+                    <div className="text-[#e0e0e0]/55 text-xs truncate">
+                      Your top tracks from Spotify
+                    </div>
+                  </div>
+                </div>
+
+                <div
+                  className="music-list-scroll min-h-0 flex-1 overflow-y-auto p-3 pr-2 scrollbar-thin scrollbar-thumb-white/20 scrollbar-track-transparent"
                   onWheel={(e) => e.stopPropagation()}
                   onTouchMove={(e) => e.stopPropagation()}
                 >
-                  <div className="flex items-center justify-between mb-4">
-                    <h3 className="text-[#e0e0e0] font-semibold text-lg">
-                      Lyrics
-                    </h3>
-                    <motion.button
-                      onClick={toggleLyrics}
-                      className="text-[#e0e0e0]/60 hover:text-[#e0e0e0] transition-colors"
-                      whileHover={{ scale: 1.1 }}
-                      whileTap={{ scale: 0.9 }}
-                      aria-label="Close lyrics"
-                    >
-                      <X className="w-5 h-5" />
-                    </motion.button>
-                  </div>
-                  <div className="space-y-2">
-                    {currentLyrics.map((line: string, index: number) => (
-                      <motion.p
-                        key={index}
-                        className={`text-[#e0e0e0] ${
-                          line.trim() === "" ? "h-4" : "leading-relaxed"
-                        } ${line.trim() === "" ? "" : "text-sm"}`}
-                        initial={{ opacity: 0, x: -10 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        transition={{
-                          delay: index * 0.05,
-                          duration: 0.3,
-                        }}
-                      >
-                        {line || "\u00A0"}
-                      </motion.p>
-                    ))}
-                  </div>
-                  {currentLyrics.length === 0 && (
-                    <div className="text-center py-8 text-[#e0e0e0]/60 text-sm">
-                      No lyrics available for this track
-                    </div>
-                  )}
-                </motion.div>
-              )}
-
-              {/* Playlist (hidden when lyrics are shown) */}
-              {!showLyrics && (
-                <>
-                  <div className="music-list-panel flex h-[34vh] min-h-[220px] flex-col overflow-hidden rounded-2xl border border-white/5 bg-black/25 backdrop-blur-md md:h-auto md:min-h-0 md:flex-1">
-                    {/* Sticky header */}
-                    <div className="sticky top-0 z-10 border-b border-white/5 bg-black/35 backdrop-blur-md p-3">
-                      {/* Search Bar */}
-                      <div className="relative">
-                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#e0e0e0]/55" />
-                        <input
-                          type="text"
-                          id="search-input"
-                          name="search"
-                          placeholder="Search tracks or artists…"
-                          value={searchQuery}
-                          onChange={(e) => setSearchQuery(e.target.value)}
-                          className="w-full rounded-xl bg-black/35 border border-white/5 pl-10 pr-10 py-2 text-[#e0e0e0] text-sm placeholder:text-[#e0e0e0]/35 focus:outline-none focus:border-white/15 focus:bg-black/45 transition-colors"
-                        />
-                        {searchQuery && (
-                          <button
-                            onClick={() => setSearchQuery("")}
-                            className="absolute right-2.5 top-1/2 -translate-y-1/2 grid place-items-center w-7 h-7 rounded-lg text-[#e0e0e0]/60 hover:text-[#e0e0e0] hover:bg-white/5 transition-colors"
-                            aria-label="Clear search"
-                          >
-                            <X className="w-4 h-4" />
-                          </button>
-                        )}
+                  <div className="space-y-1" aria-label="Spotify tracks">
+                    {!isSpotifyAuthenticated ? (
+                      <div className="text-center py-8 text-[#e0e0e0]/60 text-sm">
+                        Connect Spotify to load and play your tracks.
                       </div>
-
-                      {/* Library row */}
-                      <div className="mt-3 flex items-center justify-between gap-3">
-                        <div className="min-w-0">
-                          <div className="text-[#e0e0e0] text-sm font-semibold tracking-tight">
-                            {searchQuery
-                              ? `Results (${filteredPlaylist.length})`
-                              : `Playlist (${useSpotify ? spotifyPlaylist.length : playlist.length})`}
-                          </div>
-                          <div className="text-[#e0e0e0]/55 text-xs truncate">
-                            {useSpotify ? "Your top tracks from Spotify" : "Local demo playlist"}
-                          </div>
-                        </div>
-
-                        {!useSpotify && <div className="flex items-center gap-2">
-                          <button
-                            onClick={() => setShowQueue(!showQueue)}
-                            className={`text-xs font-medium px-2.5 py-1.5 rounded-lg border transition-colors ${
-                              showQueue
-                                ? "bg-white/10 text-[#e0e0e0] border-white/10"
-                                : "bg-transparent text-[#e0e0e0]/60 border-white/5 hover:text-[#e0e0e0] hover:bg-white/5"
+                    ) : isLoadingSpotify ? (
+                      <div className="text-center py-8 text-[#e0e0e0]/60 text-sm">
+                        Loading Spotify tracks...
+                      </div>
+                    ) : filteredPlaylist.length === 0 ? (
+                      <div className="text-center py-8 text-[#e0e0e0]/60 text-sm">
+                        No tracks found matching "{searchQuery}"
+                      </div>
+                    ) : (
+                      filteredPlaylist.map((song, index) => {
+                        const originalIndex = spotifyPlaylist.findIndex((s) => s.id === song.id)
+                        const isActive = spotifyTrackIndex === originalIndex
+                        return (
+                          <motion.div
+                            key={song.id}
+                            role="button"
+                            tabIndex={0}
+                            aria-current={isActive ? "true" : undefined}
+                            aria-label={`${isActive ? "Current track" : "Play"} ${song.title} by ${song.artist}`}
+                            className={`relative flex items-center gap-3 p-2.5 rounded-xl transition-colors cursor-pointer group border ${
+                              isActive
+                                ? "border-white/15 bg-white/6"
+                                : "border-transparent hover:border-white/5 hover:bg-white/4"
                             }`}
-                            title={`Queue (${queue.length})`}
-                          >
-                            Queue{queue.length > 0 ? ` · ${queue.length}` : ""}
-                          </button>
-                        </div>}
-                      </div>
-                    </div>
-
-                    {/* Queue Display */}
-                    {!useSpotify && showQueue && queue.length > 0 && (
-                      <motion.div
-                        className="mx-3 mt-3 p-3 rounded-xl border border-white/5 bg-black/30"
-                        initial={{ opacity: 0, height: 0 }}
-                        animate={{ opacity: 1, height: "auto" }}
-                        exit={{ opacity: 0, height: 0 }}
-                      >
-                        <div className="text-[#e0e0e0] text-xs font-semibold mb-2">
-                          Up Next <span className="text-[#e0e0e0]/55">({queue.length})</span>
-                        </div>
-                        <div className="space-y-1 max-h-32 overflow-y-auto scrollbar-thin">
-                          {queue.map((song, idx) => (
-                            <div
-                              key={`queue-${song.id}-${idx}`}
-                              className="flex items-center gap-2 p-2 rounded-lg hover:bg-white/5 transition-colors group"
-                            >
-                              <span className="text-[#e0e0e0]/40 text-[10px] w-4 tabular-nums">
-                                {idx + 1}
-                              </span>
-                              <span className="text-[#e0e0e0] text-xs flex-1 truncate">{song.title}</span>
-                              <button
-                                onClick={() => removeFromQueue(idx)}
-                                className="opacity-0 group-hover:opacity-100 text-[#e0e0e0]/60 hover:text-red-400 transition-all"
-                                aria-label="Remove from queue"
-                              >
-                                <X className="w-3 h-3" />
-                              </button>
-                            </div>
-                          ))}
-                        </div>
-                      </motion.div>
-                    )}
-
-                    {/* Track list */}
-                    <div
-                      className="music-list-scroll min-h-0 flex-1 overflow-y-auto p-3 pr-2 scrollbar-thin scrollbar-thumb-white/20 scrollbar-track-transparent"
-                      onWheel={(e) => e.stopPropagation()}
-                      onTouchMove={(e) => e.stopPropagation()}
-                    >
-                      <div className="space-y-1" aria-label={useSpotify ? "Spotify tracks" : "Local demo tracks"}>
-                  {filteredPlaylist.length === 0 ? (
-                    <div className="text-center py-8 text-[#e0e0e0]/60 text-sm">
-                      No tracks found matching "{searchQuery}"
-                    </div>
-                  ) : (
-                    filteredPlaylist.map((song, index) => {
-                      const originalIndex = useSpotify 
-                        ? spotifyPlaylist.findIndex((s) => s.id === song.id)
-                        : playlist.findIndex((s) => s.id === song.id)
-                      const isActive = useSpotify
-                        ? spotifyTrackIndex === originalIndex
-                        : currentTrackIndex === originalIndex
-                      return (
-                    <motion.div
-                      key={song.id}
-                      role="button"
-                      tabIndex={0}
-                      aria-current={isActive ? "true" : undefined}
-                      aria-label={`${isActive ? "Current track" : "Play"} ${song.title} by ${song.artist}`}
-                      className={`relative flex items-center gap-3 p-2.5 rounded-xl transition-colors cursor-pointer group border ${
-                        isActive
-                          ? "border-white/15 bg-white/6"
-                          : "border-transparent hover:border-white/5 hover:bg-white/4"
-                      }`}
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{
-                        type: "spring",
-                        stiffness: 100,
-                        damping: 15,
-                        delay: 0.5 + index * 0.1,
-                      }}
-                      whileHover={{ scale: 1.02, x: 5 }}
-                      whileTap={{ scale: 0.98 }}
-                      onKeyDown={(e) => {
-                        if (e.key === "Enter" || e.key === " ") {
-                          e.preventDefault()
-                          e.currentTarget.click()
-                        }
-                      }}
-                      onClick={async () => {
-                        if (useSpotify && spotifyPlayer.isReady && 'uri' in song) {
-                          try {
-                            await spotifyPlayer.play(song.uri)
-                            setSpotifyTrackIndex(originalIndex)
-                            setIsPlaying(true)
-                          } catch (err: any) {
-                            setError(`Failed to play track: ${err.message}`)
-                            setTimeout(() => setError(null), 3000)
-                          }
-                        } else {
-                        try {
-                          setCurrentTrackIndex(originalIndex)
-                            setIsPlaying(true)
-                          setProgress(0)
-                          setError(null)
-                        } catch (err) {
-                          setError("Failed to load track")
-                          setTimeout(() => setError(null), 3000)
-                          }
-                        }
-                      }}
-                    >
-                      <div
-                        className={`absolute left-1 top-1.5 bottom-1.5 w-[3px] rounded-full ${
-                          isActive ? "bg-white/60" : "bg-transparent group-hover:bg-white/20"
-                        }`}
-                        aria-hidden="true"
-                      />
-                      <motion.img
-                        src={(typeof song.id === 'number' && imageErrors.has(song.id)) ? `${BASE_URL}placeholder.svg` : (song.cover || `${BASE_URL}placeholder.svg`)}
-                        alt={song.title}
-                        className={`w-10 h-10 rounded-lg bg-black flex-shrink-0 ring-1 ring-white/5 ${useSpotify ? "object-contain" : "object-cover"}`}
-                        loading="lazy"
-                        decoding="async"
-                        whileHover={{ scale: 1.1 }}
-                        transition={{ type: "spring", stiffness: 300, damping: 20 }}
-                        onError={(e) => {
-                          e.currentTarget.src = `${BASE_URL}placeholder.svg`
-                          if (typeof song.id === 'number') {
-                          handleImageError(song.id)
-                          }
-                        }}
-                      />
-                      <div className="flex-1 min-w-0">
-                        <div className="mb-0.5 flex min-w-0 items-center gap-1.5">
-                          <MarqueeText
-                            text={song.title}
-                            className="text-[#e0e0e0] font-medium text-sm tracking-tight"
-                          />
-                          {"explicit" in song && song.explicit && (
-                            <span
-                              className="inline-flex h-4 min-w-4 items-center justify-center rounded-[3px] bg-[#e0e0e0]/85 px-1 text-[10px] font-bold leading-none text-black"
-                              aria-label="Explicit"
-                              title="Explicit"
-                            >
-                              E
-                            </span>
-                          )}
-                        </div>
-                        <MarqueeText 
-                          text={song.artist} 
-                          className="text-[#e0e0e0]/70 text-xs"
-                        />
-                      </div>
-                      <div className="flex items-center gap-2">
-                        {useSpotify && "spotifyUrl" in song ? (
-                          <motion.a
-                            href={song.spotifyUrl}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            onClick={(e) => e.stopPropagation()}
-                            className="opacity-0 group-hover:opacity-100 text-green-300 hover:text-green-200 transition-all rounded-lg p-1 hover:bg-white/5"
-                            aria-label={`Listen to ${song.title} on Spotify`}
-                            title="Listen on Spotify"
-                          >
-                            <ExternalLink className="w-4 h-4" />
-                          </motion.a>
-                        ) : (
-                          <motion.button
-                            onClick={(e) => {
-                              e.stopPropagation()
-                              addToQueue(song)
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{
+                              type: "spring",
+                              stiffness: 100,
+                              damping: 15,
+                              delay: 0.5 + index * 0.1,
                             }}
-                            className="opacity-0 group-hover:opacity-100 text-[#e0e0e0]/60 hover:text-[#e0e0e0] transition-all rounded-lg p-1 hover:bg-white/5"
-                            aria-label="Add to queue"
-                            title="Add to queue"
+                            whileHover={{ scale: 1.02, x: 5 }}
+                            whileTap={{ scale: 0.98 }}
+                            onKeyDown={(e) => {
+                              if (e.key === "Enter" || e.key === " ") {
+                                e.preventDefault()
+                                e.currentTarget.click()
+                              }
+                            }}
+                            onClick={async () => {
+                              if (!spotifyPlayer.isReady) {
+                                setError("Connect Spotify to start playback")
+                                setTimeout(() => setError(null), 3000)
+                                return
+                              }
+                              try {
+                                await spotifyPlayer.play(song.uri)
+                                setSpotifyTrackIndex(originalIndex)
+                                setIsPlaying(true)
+                              } catch (err: any) {
+                                setError(`Failed to play track: ${err.message}`)
+                                setTimeout(() => setError(null), 3000)
+                              }
+                            }}
                           >
-                            <Plus className="w-4 h-4" />
-                          </motion.button>
-                        )}
-                        <span className="text-[#e0e0e0]/65 text-sm font-medium tabular-nums">
-                          {song.duration}
-                        </span>
-                      </div>
-                    </motion.div>
-                      )
-                    })
-                  )}
+                            <div
+                              className={`absolute left-1 top-1.5 bottom-1.5 w-[3px] rounded-full ${
+                                isActive ? "bg-white/60" : "bg-transparent group-hover:bg-white/20"
+                              }`}
+                              aria-hidden="true"
+                            />
+                            <motion.img
+                              src={song.cover || `${BASE_URL}placeholder.svg`}
+                              alt={song.title}
+                              className="w-10 h-10 rounded-lg bg-black flex-shrink-0 ring-1 ring-white/5 object-contain"
+                              loading="lazy"
+                              decoding="async"
+                              whileHover={{ scale: 1.1 }}
+                              transition={{ type: "spring", stiffness: 300, damping: 20 }}
+                              onError={(e) => {
+                                e.currentTarget.src = `${BASE_URL}placeholder.svg`
+                              }}
+                            />
+                            <div className="flex-1 min-w-0">
+                              <div className="mb-0.5 flex min-w-0 items-center gap-1.5">
+                                <MarqueeText
+                                  text={song.title}
+                                  className="text-[#e0e0e0] font-medium text-sm tracking-tight"
+                                />
+                                {song.explicit && (
+                                  <span
+                                    className="inline-flex h-4 min-w-4 items-center justify-center rounded-[3px] bg-[#e0e0e0]/85 px-1 text-[10px] font-bold leading-none text-black"
+                                    aria-label="Explicit"
+                                    title="Explicit"
+                                  >
+                                    E
+                                  </span>
+                                )}
+                              </div>
+                              <MarqueeText
+                                text={song.artist}
+                                className="text-[#e0e0e0]/70 text-xs"
+                              />
+                            </div>
+                            <div className="flex items-center gap-2">
+                              <motion.a
+                                href={song.spotifyUrl}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                onClick={(e) => e.stopPropagation()}
+                                className="opacity-0 group-hover:opacity-100 text-green-300 hover:text-green-200 transition-all rounded-lg p-1 hover:bg-white/5"
+                                aria-label={`Listen to ${song.title} on Spotify`}
+                                title="Listen on Spotify"
+                              >
+                                <ExternalLink className="w-4 h-4" />
+                              </motion.a>
+                              <span className="text-[#e0e0e0]/65 text-sm font-medium tabular-nums">
+                                {song.duration}
+                              </span>
+                            </div>
+                          </motion.div>
+                        )
+                      })
+                    )}
+                  </div>
                 </div>
               </div>
-                  </div>
-                </>
-              )}
             </motion.div>
           </div>
         </div>
