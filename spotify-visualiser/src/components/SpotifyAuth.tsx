@@ -33,6 +33,8 @@ export default function SpotifyAuth({ clientId, onAuthSuccess, onAuthError }: Sp
     const urlParams = new URLSearchParams(window.location.search);
     const code = urlParams.get('code');
     const error = urlParams.get('error');
+    const state = urlParams.get('state');
+    const storedState = sessionStorage.getItem('spotify_oauth_state');
 
     if (error) {
       setIsLoading(false);
@@ -43,6 +45,14 @@ export default function SpotifyAuth({ clientId, onAuthSuccess, onAuthError }: Sp
     }
 
     if (code) {
+      if (!state || state !== storedState) {
+        sessionStorage.removeItem('spotify_oauth_state');
+        setIsLoading(false);
+        onAuthError?.('Spotify authorization state mismatch. Please try connecting again.');
+        window.history.replaceState({}, document.title, window.location.pathname);
+        return;
+      }
+      sessionStorage.removeItem('spotify_oauth_state');
       handleOAuthCallback(code);
     }
   }, []);
@@ -68,16 +78,13 @@ export default function SpotifyAuth({ clientId, onAuthSuccess, onAuthError }: Sp
 
   const handleLogin = () => {
     const redirectUri = `${window.location.origin}${window.location.pathname}`;
+    const state = crypto.randomUUID();
+    sessionStorage.setItem('spotify_oauth_state', state);
     const scopes = [
-      'user-read-private',
-      'user-read-email',
       'user-read-playback-state',
       'user-modify-playback-state',
       'user-read-currently-playing',
       'streaming',
-      'playlist-read-private',
-      'playlist-read-collaborative',
-      'user-library-read',
       'user-top-read',
     ].join(' ');
 
@@ -86,6 +93,7 @@ export default function SpotifyAuth({ clientId, onAuthSuccess, onAuthError }: Sp
       client_id: clientId,
       scope: scopes,
       redirect_uri: redirectUri,
+      state,
       show_dialog: 'true',
     })}`;
 

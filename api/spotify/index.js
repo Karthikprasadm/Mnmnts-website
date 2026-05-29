@@ -1,7 +1,7 @@
 // Spotify API Proxy Endpoint
 // Proxies requests to Spotify Web API with user's access token
-const { setCORSHeaders, handleOptions } = require('../../utils/cors');
-const { successResponse, errorResponse } = require('../../utils/response');
+const { setCORSHeaders, handleOptions } = require('../utils/cors');
+const { successResponse, errorResponse } = require('../utils/response');
 
 module.exports = async (req, res) => {
   setCORSHeaders(req, res);
@@ -58,4 +58,3 @@ module.exports = async (req, res) => {
     return errorResponse(res, `Internal server error: ${error.message}`, 500);
   }
 };
-

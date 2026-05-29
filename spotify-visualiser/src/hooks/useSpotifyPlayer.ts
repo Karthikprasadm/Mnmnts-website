@@ -28,6 +28,7 @@ declare global {
     pause: () => Promise<void>;
     resume: () => Promise<void>;
     togglePlay: () => Promise<void>;
+    activateElement: () => Promise<void>;
     seek: (positionMs: number) => Promise<void>;
     previousTrack: () => Promise<void>;
     nextTrack: () => Promise<void>;
@@ -120,7 +121,7 @@ export function useSpotifyPlayer(): UseSpotifyPlayerReturn {
       }
 
       const spotifyPlayer = new window.Spotify.Player({
-        name: 'Mnmnts Spotify Visualizer',
+        name: 'Mnmnts Visualiser',
         getOAuthToken: async (cb) => {
           const token = await getValidAccessToken();
           if (token) {
@@ -158,6 +159,12 @@ export function useSpotifyPlayer(): UseSpotifyPlayerReturn {
         setIsReady(false);
       });
 
+      spotifyPlayer.addListener('initialization_error', ({ message }: { message: string }) => {
+        console.error('Spotify initialization error:', message);
+        setError(`Initialization error: ${message}`);
+        setIsReady(false);
+      });
+
       spotifyPlayer.addListener('account_error', ({ message }: { message: string }) => {
         console.error('Spotify account error:', message);
         setError(`Account error: ${message}`);
@@ -167,6 +174,10 @@ export function useSpotifyPlayer(): UseSpotifyPlayerReturn {
       spotifyPlayer.addListener('playback_error', ({ message }: { message: string }) => {
         console.error('Spotify playback error:', message);
         setError(`Playback error: ${message}`);
+      });
+
+      spotifyPlayer.addListener('autoplay_failed', () => {
+        setError('Playback was blocked by the browser. Press play again to start audio.');
       });
 
       // Connect to player
@@ -198,6 +209,7 @@ export function useSpotifyPlayer(): UseSpotifyPlayerReturn {
     }
 
     try {
+      await player.activateElement();
       const response = await fetch(`https://api.spotify.com/v1/me/player/play?device_id=${deviceId}`, {
         method: 'PUT',
         headers: {
@@ -234,6 +246,7 @@ export function useSpotifyPlayer(): UseSpotifyPlayerReturn {
   const resume = useCallback(async () => {
     if (!player) return;
     try {
+      await player.activateElement();
       await player.resume();
     } catch (err: any) {
       console.error('Resume error:', err);

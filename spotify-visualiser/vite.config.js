@@ -20,22 +20,12 @@ export default defineConfig({
         navigateFallbackDenylist: [/chrome-extension:/, /moz-extension:/, /safari-extension:/],
         runtimeCaching: [
           {
-            urlPattern: /\/api\/spotify\/.*/i,
-            handler: "NetworkFirst",
-            options: {
-              cacheName: "spotify-api-cache",
-              expiration: {
-                maxEntries: 50,
-                maxAgeSeconds: 60 * 60 * 24, // 24 hours
-              },
-            },
-          },
-          {
             urlPattern: ({ url }) => {
-              // Only cache HTTP/HTTPS image URLs, exclude chrome-extension and other schemes
+              // Only cache site-owned/static images. Spotify content should stay live.
               const isImage = /\.(?:png|jpg|jpeg|svg|webp|gif)(?:\?.*)?$/i.test(url.pathname)
               const isHttp = url.protocol === 'http:' || url.protocol === 'https:'
-              return isImage && isHttp
+              const isSpotifyAsset = /(^|\.)scdn\.co$/i.test(url.hostname) || /(^|\.)spotify\.com$/i.test(url.hostname)
+              return isImage && isHttp && !isSpotifyAsset
             },
             handler: "CacheFirst",
             options: {
@@ -49,9 +39,9 @@ export default defineConfig({
         ],
       },
       manifest: {
-        name: "Spotify Visualiser | mnmnts",
+        name: "Mnmnts Visualiser",
         short_name: "mnmnts",
-        description: "Interactive Spotify visualizer with music player",
+        description: "Interactive music visualizer with a connected streaming mode",
         theme_color: "#0a0a0a",
         background_color: "#0a0a0a",
         display: "standalone",

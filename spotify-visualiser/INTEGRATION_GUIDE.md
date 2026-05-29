@@ -5,7 +5,7 @@ This guide explains how the Spotify Visualizer is integrated into the main websi
 ## 🎯 Integration Status
 
 ✅ **Integrated Visualiser** – The audio visualiser is part of your main website navigation.  
-It supports **Spotify Mode** (Web API + Web Playback SDK) and **Local Mode** (local audio files).
+It supports **Streaming Mode** (Web API + Web Playback SDK) and **Local Mode** (local audio files).
 
 ## 📍 Location
 
@@ -135,7 +135,7 @@ The integrated Spotify Visualizer includes:
 - ✅ Interactive 3D WebGL visualization
 - ✅ Music player with full controls
 - ✅ Spotify OAuth login + token refresh
-- ✅ Spotify Mode + Local Mode toggle
+- ✅ Streaming Mode + Local Mode toggle
 - ✅ Lyrics display
 - ✅ Search functionality
 - ✅ Queue management

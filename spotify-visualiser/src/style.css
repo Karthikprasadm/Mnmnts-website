@@ -594,6 +594,39 @@ input[type="range"]::-moz-range-track {
   color: #f0f0f0;
 }
 
+.music-panel-column {
+  margin-top: -1.5rem;
+  min-height: 0;
+}
+
+.music-list-panel {
+  display: flex;
+  flex-direction: column;
+  height: 34vh;
+  min-height: 220px;
+  overflow: hidden;
+}
+
+.music-list-scroll {
+  min-height: 0;
+  flex: 1 1 auto;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+}
+
+@media (min-width: 768px) {
+  .music-panel-column {
+    margin-top: -1.25rem;
+  }
+
+  .music-list-panel {
+    height: auto;
+    min-height: 0;
+    flex: 1 1 auto;
+  }
+}
+
 /* Responsive */
 @media (max-width: 600px) {
   .navbar {

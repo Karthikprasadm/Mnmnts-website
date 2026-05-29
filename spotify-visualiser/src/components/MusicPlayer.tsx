@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect, useCallback, useMemo, memo } from "react"
-import { Play, Pause, SkipBack, SkipForward, Repeat, Star, MoreHorizontal, Keyboard, Search, Volume2, VolumeX, X, Plus, FileText, Music } from "lucide-react"
+import { Play, Pause, SkipBack, SkipForward, Repeat, Star, MoreHorizontal, Keyboard, Search, Volume2, VolumeX, X, Plus, FileText, Music, ExternalLink } from "lucide-react"
 import { motion } from "framer-motion"
 import SpotifyAuth from "./SpotifyAuth"
 import { useSpotifyPlayer } from "../hooks/useSpotifyPlayer"
@@ -232,6 +232,8 @@ export default function MusicPlayer() {
     duration: string
     cover: string
     uri: string
+    spotifyUrl: string
+    explicit: boolean
     hasLyrics: boolean
   }>>([])
   const [spotifyTrackIndex, setSpotifyTrackIndex] = useState(0)
@@ -276,6 +278,9 @@ export default function MusicPlayer() {
     return playlist[currentTrackIndex]
   }, [useSpotify, spotifyPlaylist, spotifyTrackIndex, currentTrackIndex])
 
+  const isSpotifyTrack = useSpotify && "uri" in currentTrack
+  const spotifyTrackUrl = isSpotifyTrack ? currentTrack.spotifyUrl : ""
+
   // Sync Spotify player state
   useEffect(() => {
     if (useSpotify && spotifyPlayer.playbackState) {
@@ -298,14 +303,16 @@ export default function MusicPlayer() {
   const loadSpotifyTracks = async () => {
     setIsLoadingSpotify(true)
     try {
-      const tracks = await getTopTracks('medium_term', 50)
-      const formattedTracks = tracks.map((track, index) => ({
+      const tracks = await getTopTracks('medium_term', 20)
+      const formattedTracks = tracks.map((track: SpotifyTrack) => ({
         id: track.id,
         title: track.name,
         artist: track.artists.map(a => a.name).join(', '),
         duration: formatDuration(track.duration_ms),
         cover: track.album.images[0]?.url || `${BASE_URL}placeholder.svg`,
         uri: track.uri,
+        spotifyUrl: track.external_urls?.spotify || `https://open.spotify.com/track/${track.id}`,
+        explicit: Boolean(track.explicit),
         hasLyrics: false,
       }))
       setSpotifyPlaylist(formattedTracks)
@@ -662,6 +669,7 @@ export default function MusicPlayer() {
           handlePlayPause()
           break
         case "ArrowLeft":
+          if (isSpotifyTrack) return
           e.preventDefault()
           if (e.shiftKey) {
             // Shift + Left = seek backward 5%
@@ -671,6 +679,7 @@ export default function MusicPlayer() {
           }
           break
         case "ArrowRight":
+          if (isSpotifyTrack) return
           e.preventDefault()
           if (e.shiftKey) {
             // Shift + Right = seek forward 5%
@@ -680,19 +689,23 @@ export default function MusicPlayer() {
           }
           break
         case "ArrowUp":
+          if (isSpotifyTrack) return
           e.preventDefault()
           setVolume((prev) => Math.min(100, prev + 5))
           setIsMuted(false)
           break
         case "ArrowDown":
+          if (isSpotifyTrack) return
           e.preventDefault()
           setVolume((prev) => Math.max(0, prev - 5))
           break
         case "KeyM":
+          if (isSpotifyTrack) return
           e.preventDefault()
           setIsMuted((prev) => !prev)
           break
         case "KeyR":
+          if (isSpotifyTrack) return
           e.preventDefault()
           // Repeat toggle (placeholder for future implementation)
           break
@@ -703,7 +716,7 @@ export default function MusicPlayer() {
     return () => {
       document.removeEventListener("keydown", handleKeyDown)
     }
-  }, [handlePlayPause, handlePreviousTrack, handleNextTrack])
+  }, [handlePlayPause, handlePreviousTrack, handleNextTrack, isSpotifyTrack])
 
   // Close shortcuts menu when clicking outside
   useEffect(() => {
@@ -821,7 +834,14 @@ export default function MusicPlayer() {
               <SpotifyAuth 
                 clientId={spotifyClientId}
                 onAuthSuccess={() => {
-                  if (isSpotifyAuthenticated && !useSpotify) {
+                  const hasToken = !!getStoredToken()
+                  if (!hasToken) {
+                    setUseSpotify(false)
+                    setSpotifyPlaylist([])
+                    setSpotifyTrackIndex(0)
+                    return
+                  }
+                  if (!useSpotify) {
                     setUseSpotify(true)
                   }
                 }}
@@ -839,11 +859,16 @@ export default function MusicPlayer() {
                   }`}
                 >
                   <Music className="w-3 h-3" />
-                  {useSpotify ? 'Spotify Mode' : 'Local Mode'}
+                  {useSpotify ? 'Streaming Mode' : 'Local Mode'}
                 </motion.button>
               )}
             </div>
           ) : null}
+          {useSpotify && (
+            <p className="mb-3 text-[11px] leading-snug text-[#e0e0e0]/55">
+              Playback uses Spotify Web Playback SDK and requires Spotify Premium.
+            </p>
+          )}
           
           {/* Mnmnts Logo */}
           <div className="flex items-center justify-between mb-4">
@@ -858,6 +883,23 @@ export default function MusicPlayer() {
               />
               <span className="text-xl font-bold text-[#e0e0e0] font-sans">Mnmnts</span>
             </div>
+            {useSpotify && (
+              <a
+                href="https://open.spotify.com/"
+                target="_blank"
+                rel="noopener noreferrer"
+                  className="flex items-center gap-2 rounded-lg border border-white/10 bg-black/80 px-3 py-1.5 text-xs font-medium text-[#e0e0e0]/85 transition-colors hover:bg-white/5 hover:text-white"
+                  aria-label="Open Spotify"
+                >
+                  <img
+                    src={`${BASE_URL}icons/spotify.png`}
+                    alt=""
+                    className="h-[21px] w-[21px]"
+                    aria-hidden="true"
+                  />
+                  <span>Content from Spotify</span>
+              </a>
+            )}
             {/* Keyboard Shortcuts Help */}
             <div className="relative">
               <button
@@ -892,9 +934,9 @@ export default function MusicPlayer() {
           </div>
 
           {/* Main Content */}
-          <div className="flex flex-col md:flex-row gap-4 md:gap-5 flex-1 overflow-hidden">
+          <div className="flex min-h-0 flex-col gap-2 md:flex-row md:gap-5 flex-1 overflow-hidden">
             {/* Left Side - Album Art and Controls */}
-            <div className="flex flex-col justify-between w-full md:w-[280px] mb-4 md:mb-0">
+            <div className="flex flex-col justify-between w-full md:w-[280px] mb-2 md:mb-0">
               {/* Album Art */}
               <motion.div
                 className="bg-black/60 rounded-2xl p-2.5 backdrop-blur-md w-full max-w-xs md:w-[260px] mx-auto border border-white/5"
@@ -910,7 +952,7 @@ export default function MusicPlayer() {
                 <motion.img
                   src={currentTrack.cover || `${BASE_URL}music-1.jpg`}
                   alt={`${currentTrack.title} - ${currentTrack.artist}`}
-                  className="w-full aspect-square object-cover rounded-lg"
+                  className={`w-full aspect-square rounded-lg bg-black ${isSpotifyTrack ? "object-contain" : "object-cover"}`}
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   transition={{ delay: 0.4, duration: 0.5 }}
@@ -940,6 +982,17 @@ export default function MusicPlayer() {
                 {/* Song Info */}
                 <div className="text-[#e0e0e0] mb-2.5">
                   <h3 className="font-semibold text-xs leading-tight line-clamp-2">{currentTrack.title} - {currentTrack.artist}</h3>
+                  {spotifyTrackUrl && (
+                    <a
+                      href={spotifyTrackUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="mt-1.5 inline-flex items-center gap-1 text-[11px] font-semibold uppercase tracking-wide text-green-300 hover:text-green-200"
+                    >
+                      Listen on Spotify
+                      <ExternalLink className="h-3 w-3" />
+                    </a>
+                  )}
                 </div>
 
                 {/* Progress Bar */}
@@ -947,15 +1000,16 @@ export default function MusicPlayer() {
                   <span className="text-[#e0e0e0] text-xs font-medium select-none">{currentTime}</span>
                   <div
                     ref={progressRef}
-                    className="flex-1 h-1.5 bg-white/20 rounded-full cursor-pointer relative group touch-none select-none"
-                    onClick={handleProgressClick}
-                    onMouseDown={handleProgressMouseDown}
-                    onTouchStart={(e) => {
+                    className={`flex-1 h-1.5 bg-white/20 rounded-full relative group touch-none select-none ${isSpotifyTrack ? "cursor-default" : "cursor-pointer"}`}
+                    onClick={isSpotifyTrack ? undefined : handleProgressClick}
+                    onMouseDown={isSpotifyTrack ? undefined : handleProgressMouseDown}
+                    onTouchStart={isSpotifyTrack ? undefined : (e) => {
                       e.preventDefault()
                       const touch = e.touches[0]
                       setIsDragging(true)
                       updateProgressFromRef(progressRef, touch.clientX)
                     }}
+                    aria-label={isSpotifyTrack ? "Spotify playback progress" : "Playback progress"}
                   >
                     <motion.div 
                       className="h-full bg-white rounded-full"
@@ -969,7 +1023,7 @@ export default function MusicPlayer() {
                       className="absolute top-1/2 -translate-y-1/2 w-3 h-3 bg-white rounded-full shadow-lg"
                       style={{ left: `${progress}%`, transform: "translate(-50%, -50%)" }}
                       animate={{ 
-                        opacity: isDragging ? 1 : 0,
+                        opacity: isDragging && !isSpotifyTrack ? 1 : 0,
                         scale: isDragging ? 1.2 : 1
                       }}
                       transition={{ duration: 0.15 }}
@@ -979,72 +1033,77 @@ export default function MusicPlayer() {
                 </div>
 
                 {/* Volume Control */}
-                <div className="flex items-center gap-2 mb-3">
-                  <motion.button
-                    onClick={toggleMute}
-                    className="text-[#e0e0e0] touch-none"
-                    whileHover={{ scale: 1.1 }}
-                    whileTap={{ scale: 0.9 }}
-                    transition={{ type: "spring", stiffness: 300, damping: 20 }}
-                    aria-label={isMuted ? "Unmute" : "Mute"}
-                  >
-                    {isMuted || volume === 0 ? (
-                      <VolumeX className="w-4 h-4" />
-                    ) : (
-                      <Volume2 className="w-4 h-4" />
-                    )}
-                  </motion.button>
-                  <div className="flex-1 h-1.5 bg-white/20 rounded-full cursor-pointer relative group touch-none">
-                    <motion.div
-                      className="h-full bg-white rounded-full"
-                      style={{ width: `${isMuted ? 0 : volume}%` }}
-                      transition={{ 
-                        duration: isVolumeDragging ? 0 : 0.15,
-                        ease: "easeOut"
-                      }}
-                    />
-                    <motion.div
-                      className="absolute top-1/2 -translate-y-1/2 w-2.5 h-2.5 bg-white rounded-full shadow-md"
-                      style={{ left: `${isMuted ? 0 : volume}%`, transform: "translate(-50%, -50%)" }}
-                      animate={{ 
-                        opacity: isVolumeDragging ? 1 : 0,
-                        scale: isVolumeDragging ? 1.3 : 1
-                      }}
-                      transition={{ duration: 0.15 }}
-                    />
-                    <input
-                      type="range"
-                      id="volume-control"
-                      name="volume"
-                      min="0"
-                      max="100"
-                      step="1"
-                      value={isMuted ? 0 : volume}
-                      onChange={handleVolumeInput}
-                      onMouseDown={handleVolumeMouseDown}
-                      onMouseUp={handleVolumeMouseUp}
-                      onTouchStart={handleVolumeMouseDown}
-                      onTouchEnd={handleVolumeMouseUp}
-                      className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
-                      aria-label="Volume control"
-                    />
+                {!isSpotifyTrack && (
+                  <div className="flex items-center gap-2 mb-3">
+                    <motion.button
+                      onClick={toggleMute}
+                      className="text-[#e0e0e0] touch-none"
+                      whileHover={{ scale: 1.1 }}
+                      whileTap={{ scale: 0.9 }}
+                      transition={{ type: "spring", stiffness: 300, damping: 20 }}
+                      aria-label={isMuted ? "Unmute" : "Mute"}
+                    >
+                      {isMuted || volume === 0 ? (
+                        <VolumeX className="w-4 h-4" />
+                      ) : (
+                        <Volume2 className="w-4 h-4" />
+                      )}
+                    </motion.button>
+                    <div className="flex-1 h-1.5 bg-white/20 rounded-full cursor-pointer relative group touch-none">
+                      <motion.div
+                        className="h-full bg-white rounded-full"
+                        style={{ width: `${isMuted ? 0 : volume}%` }}
+                        transition={{
+                          duration: isVolumeDragging ? 0 : 0.15,
+                          ease: "easeOut"
+                        }}
+                      />
+                      <motion.div
+                        className="absolute top-1/2 -translate-y-1/2 w-2.5 h-2.5 bg-white rounded-full shadow-md"
+                        style={{ left: `${isMuted ? 0 : volume}%`, transform: "translate(-50%, -50%)" }}
+                        animate={{
+                          opacity: isVolumeDragging ? 1 : 0,
+                          scale: isVolumeDragging ? 1.3 : 1
+                        }}
+                        transition={{ duration: 0.15 }}
+                      />
+                      <input
+                        type="range"
+                        id="volume-control"
+                        name="volume"
+                        min="0"
+                        max="100"
+                        step="1"
+                        value={isMuted ? 0 : volume}
+                        onChange={handleVolumeInput}
+                        onMouseDown={handleVolumeMouseDown}
+                        onMouseUp={handleVolumeMouseUp}
+                        onTouchStart={handleVolumeMouseDown}
+                        onTouchEnd={handleVolumeMouseUp}
+                        className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                        aria-label="Volume control"
+                      />
+                    </div>
+                    <span className="text-[#e0e0e0] text-xs font-medium w-8 text-right select-none">
+                      {isMuted ? "0" : volume}%
+                    </span>
                   </div>
-                  <span className="text-[#e0e0e0] text-xs font-medium w-8 text-right select-none">
-                    {isMuted ? "0" : volume}%
-                  </span>
-                </div>
+                )}
 
                 {/* Control Buttons */}
-                <div className="flex items-center justify-between">
-                  <motion.button
-                    className="text-[#e0e0e0]"
-                    whileHover={{ scale: 1.1, rotate: 15 }}
-                    whileTap={{ scale: 0.9 }}
-                    transition={{ type: "spring", stiffness: 300, damping: 20 }}
-                  >
-                    <Star className="w-5 h-5" />
-                  </motion.button>
-                  {currentTrack.hasLyrics && (
+                <div className={`flex items-center ${isSpotifyTrack ? "justify-center" : "justify-between"}`}>
+                  {!isSpotifyTrack && (
+                    <motion.button
+                      className="text-[#e0e0e0]"
+                      whileHover={{ scale: 1.1, rotate: 15 }}
+                      whileTap={{ scale: 0.9 }}
+                      transition={{ type: "spring", stiffness: 300, damping: 20 }}
+                      aria-label="Favorite track"
+                    >
+                      <Star className="w-5 h-5" />
+                    </motion.button>
+                  )}
+                  {!isSpotifyTrack && currentTrack.hasLyrics && (
                     <motion.button
                       onClick={toggleLyrics}
                       className={`text-[#e0e0e0] ${showLyrics ? "text-white" : ""}`}
@@ -1057,16 +1116,18 @@ export default function MusicPlayer() {
                       <FileText className="w-5 h-5" />
                     </motion.button>
                   )}
-                  <motion.button
-                    onClick={handlePreviousTrack}
-                    className="text-[#e0e0e0]"
-                    whileHover={{ scale: 1.1, x: -2 }}
-                    whileTap={{ scale: 0.9 }}
-                    transition={{ type: "spring", stiffness: 300, damping: 20 }}
-                    aria-label="Previous track"
-                  >
-                    <SkipBack className="w-5 h-5" />
-                  </motion.button>
+                  {!isSpotifyTrack && (
+                    <motion.button
+                      onClick={handlePreviousTrack}
+                      className="text-[#e0e0e0]"
+                      whileHover={{ scale: 1.1, x: -2 }}
+                      whileTap={{ scale: 0.9 }}
+                      transition={{ type: "spring", stiffness: 300, damping: 20 }}
+                      aria-label="Previous track"
+                    >
+                      <SkipBack className="w-5 h-5" />
+                    </motion.button>
+                  )}
                   <motion.button
                     onClick={handlePlayPause}
                     className="bg-white text-black rounded-full p-2"
@@ -1079,31 +1140,36 @@ export default function MusicPlayer() {
                       {isPlaying ? <Pause className="w-5 h-5" /> : <Play className="w-5 h-5 ml-0.5" />}
                     </motion.div>
                   </motion.button>
-                  <motion.button
-                    onClick={handleNextTrack}
-                    className="text-[#e0e0e0]"
-                    whileHover={{ scale: 1.1, x: 2 }}
-                    whileTap={{ scale: 0.9 }}
-                    transition={{ type: "spring", stiffness: 300, damping: 20 }}
-                    aria-label="Next track"
-                  >
-                    <SkipForward className="w-5 h-5" />
-                  </motion.button>
-                  <motion.button
-                    className="text-[#e0e0e0]"
-                    whileHover={{ scale: 1.1, rotate: -15 }}
-                    whileTap={{ scale: 0.9 }}
-                    transition={{ type: "spring", stiffness: 300, damping: 20 }}
-                  >
-                    <Repeat className="w-5 h-5" />
-                  </motion.button>
+                  {!isSpotifyTrack && (
+                    <>
+                      <motion.button
+                        onClick={handleNextTrack}
+                        className="text-[#e0e0e0]"
+                        whileHover={{ scale: 1.1, x: 2 }}
+                        whileTap={{ scale: 0.9 }}
+                        transition={{ type: "spring", stiffness: 300, damping: 20 }}
+                        aria-label="Next track"
+                      >
+                        <SkipForward className="w-5 h-5" />
+                      </motion.button>
+                      <motion.button
+                        className="text-[#e0e0e0]"
+                        whileHover={{ scale: 1.1, rotate: -15 }}
+                        whileTap={{ scale: 0.9 }}
+                        transition={{ type: "spring", stiffness: 300, damping: 20 }}
+                        aria-label="Repeat"
+                      >
+                        <Repeat className="w-5 h-5" />
+                      </motion.button>
+                    </>
+                  )}
                 </div>
               </motion.div>
             </div>
 
             {/* Right Side - Playlist or Lyrics */}
             <motion.div
-              className="flex-1 overflow-hidden flex flex-col"
+              className="music-panel-column flex-1 min-h-0 overflow-hidden flex flex-col -mt-6 md:-mt-5"
               initial={{ opacity: 0, x: 50 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{
@@ -1168,7 +1234,7 @@ export default function MusicPlayer() {
               {/* Playlist (hidden when lyrics are shown) */}
               {!showLyrics && (
                 <>
-                  <div className="flex-1 overflow-hidden rounded-2xl border border-white/5 bg-black/25 backdrop-blur-md">
+                  <div className="music-list-panel flex h-[34vh] min-h-[220px] flex-col overflow-hidden rounded-2xl border border-white/5 bg-black/25 backdrop-blur-md md:h-auto md:min-h-0 md:flex-1">
                     {/* Sticky header */}
                     <div className="sticky top-0 z-10 border-b border-white/5 bg-black/35 backdrop-blur-md p-3">
                       {/* Search Bar */}
@@ -1203,11 +1269,11 @@ export default function MusicPlayer() {
                               : `Playlist (${useSpotify ? spotifyPlaylist.length : playlist.length})`}
                           </div>
                           <div className="text-[#e0e0e0]/55 text-xs truncate">
-                            {useSpotify ? "Spotify top tracks" : "Local demo playlist"}
+                            {useSpotify ? "Your top tracks from Spotify" : "Local demo playlist"}
                           </div>
                         </div>
 
-                        <div className="flex items-center gap-2">
+                        {!useSpotify && <div className="flex items-center gap-2">
                           <button
                             onClick={() => setShowQueue(!showQueue)}
                             className={`text-xs font-medium px-2.5 py-1.5 rounded-lg border transition-colors ${
@@ -1219,12 +1285,12 @@ export default function MusicPlayer() {
                           >
                             Queue{queue.length > 0 ? ` · ${queue.length}` : ""}
                           </button>
-                        </div>
+                        </div>}
                       </div>
                     </div>
 
                     {/* Queue Display */}
-                    {showQueue && queue.length > 0 && (
+                    {!useSpotify && showQueue && queue.length > 0 && (
                       <motion.div
                         className="mx-3 mt-3 p-3 rounded-xl border border-white/5 bg-black/30"
                         initial={{ opacity: 0, height: 0 }}
@@ -1259,11 +1325,11 @@ export default function MusicPlayer() {
 
                     {/* Track list */}
                     <div
-                      className="flex-1 overflow-y-auto p-3 pr-2 scrollbar-thin scrollbar-thumb-white/20 scrollbar-track-transparent"
+                      className="music-list-scroll min-h-0 flex-1 overflow-y-auto p-3 pr-2 scrollbar-thin scrollbar-thumb-white/20 scrollbar-track-transparent"
                       onWheel={(e) => e.stopPropagation()}
                       onTouchMove={(e) => e.stopPropagation()}
                     >
-                      <div className="space-y-1">
+                      <div className="space-y-1" aria-label={useSpotify ? "Spotify tracks" : "Local demo tracks"}>
                   {filteredPlaylist.length === 0 ? (
                     <div className="text-center py-8 text-[#e0e0e0]/60 text-sm">
                       No tracks found matching "{searchQuery}"
@@ -1279,6 +1345,10 @@ export default function MusicPlayer() {
                       return (
                     <motion.div
                       key={song.id}
+                      role="button"
+                      tabIndex={0}
+                      aria-current={isActive ? "true" : undefined}
+                      aria-label={`${isActive ? "Current track" : "Play"} ${song.title} by ${song.artist}`}
                       className={`relative flex items-center gap-3 p-2.5 rounded-xl transition-colors cursor-pointer group border ${
                         isActive
                           ? "border-white/15 bg-white/6"
@@ -1294,6 +1364,12 @@ export default function MusicPlayer() {
                       }}
                       whileHover={{ scale: 1.02, x: 5 }}
                       whileTap={{ scale: 0.98 }}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter" || e.key === " ") {
+                          e.preventDefault()
+                          e.currentTarget.click()
+                        }
+                      }}
                       onClick={async () => {
                         if (useSpotify && spotifyPlayer.isReady && 'uri' in song) {
                           try {
@@ -1326,7 +1402,7 @@ export default function MusicPlayer() {
                       <motion.img
                         src={(typeof song.id === 'number' && imageErrors.has(song.id)) ? `${BASE_URL}placeholder.svg` : (song.cover || `${BASE_URL}placeholder.svg`)}
                         alt={song.title}
-                        className="w-10 h-10 rounded-lg object-cover flex-shrink-0 ring-1 ring-white/5"
+                        className={`w-10 h-10 rounded-lg bg-black flex-shrink-0 ring-1 ring-white/5 ${useSpotify ? "object-contain" : "object-cover"}`}
                         loading="lazy"
                         decoding="async"
                         whileHover={{ scale: 1.1 }}
@@ -1339,27 +1415,52 @@ export default function MusicPlayer() {
                         }}
                       />
                       <div className="flex-1 min-w-0">
-                        <MarqueeText 
-                          text={song.title} 
-                          className="text-[#e0e0e0] font-medium text-sm mb-0.5 tracking-tight"
-                        />
+                        <div className="mb-0.5 flex min-w-0 items-center gap-1.5">
+                          <MarqueeText
+                            text={song.title}
+                            className="text-[#e0e0e0] font-medium text-sm tracking-tight"
+                          />
+                          {"explicit" in song && song.explicit && (
+                            <span
+                              className="inline-flex h-4 min-w-4 items-center justify-center rounded-[3px] bg-[#e0e0e0]/85 px-1 text-[10px] font-bold leading-none text-black"
+                              aria-label="Explicit"
+                              title="Explicit"
+                            >
+                              E
+                            </span>
+                          )}
+                        </div>
                         <MarqueeText 
                           text={song.artist} 
                           className="text-[#e0e0e0]/70 text-xs"
                         />
                       </div>
                       <div className="flex items-center gap-2">
-                        <motion.button
-                          onClick={(e) => {
-                            e.stopPropagation()
-                            addToQueue(song)
-                          }}
-                          className="opacity-0 group-hover:opacity-100 text-[#e0e0e0]/60 hover:text-[#e0e0e0] transition-all rounded-lg p-1 hover:bg-white/5"
-                          aria-label="Add to queue"
-                          title="Add to queue"
-                        >
-                          <Plus className="w-4 h-4" />
-                        </motion.button>
+                        {useSpotify && "spotifyUrl" in song ? (
+                          <motion.a
+                            href={song.spotifyUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            onClick={(e) => e.stopPropagation()}
+                            className="opacity-0 group-hover:opacity-100 text-green-300 hover:text-green-200 transition-all rounded-lg p-1 hover:bg-white/5"
+                            aria-label={`Listen to ${song.title} on Spotify`}
+                            title="Listen on Spotify"
+                          >
+                            <ExternalLink className="w-4 h-4" />
+                          </motion.a>
+                        ) : (
+                          <motion.button
+                            onClick={(e) => {
+                              e.stopPropagation()
+                              addToQueue(song)
+                            }}
+                            className="opacity-0 group-hover:opacity-100 text-[#e0e0e0]/60 hover:text-[#e0e0e0] transition-all rounded-lg p-1 hover:bg-white/5"
+                            aria-label="Add to queue"
+                            title="Add to queue"
+                          >
+                            <Plus className="w-4 h-4" />
+                          </motion.button>
+                        )}
                         <span className="text-[#e0e0e0]/65 text-sm font-medium tabular-nums">
                           {song.duration}
                         </span>

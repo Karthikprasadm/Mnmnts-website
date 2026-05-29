@@ -25,9 +25,9 @@ function setCORSHeaders(req, res) {
   if (isAllowedOrigin(origin)) {
     res.setHeader("Access-Control-Allow-Origin", origin);
   }
-  // Allow GET, POST, and OPTIONS methods (POST needed for token endpoint)
-  res.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
-  res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+  // Allow Spotify proxy requests with bearer tokens.
+  res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, OPTIONS");
+  res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
   res.setHeader("Access-Control-Max-Age", "86400"); // 24 hours
   res.setHeader("Vary", "Origin");
   
@@ -45,4 +45,3 @@ module.exports = {
   handleOptions,
   isAllowedOrigin,
 };
-

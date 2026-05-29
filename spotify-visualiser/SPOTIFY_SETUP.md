@@ -13,7 +13,7 @@ This guide explains how to set up Spotify Web API integration for the music play
 1. Go to [Spotify Developer Dashboard](https://developer.spotify.com/dashboard)
 2. Click **"Create App"**
 3. Fill in:
-   - **App Name**: `Mnmnts Spotify Visualizer` (or your preferred name)
+   - **App Name**: `Mnmnts Visualiser` (avoid including "Spotify" in the app name)
    - **App Description**: `Music visualizer with Spotify integration`
    - **Redirect URI**: 
      - For local development: `http://localhost:5173/spotify-visualiser/`
@@ -105,7 +105,7 @@ npm run dev
 2. Click **"Connect with Spotify"** button
 3. Authorize the app in the Spotify login page
 4. You should be redirected back and see **"Disconnect Spotify"** button
-5. Toggle to **"Spotify Mode"** to use Spotify tracks
+5. Toggle to **"Streaming Mode"** to use Spotify tracks
 6. Your top tracks should load automatically
 
 ## Features

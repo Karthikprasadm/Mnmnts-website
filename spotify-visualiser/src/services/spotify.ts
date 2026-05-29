@@ -25,8 +25,12 @@ export interface SpotifyTrack {
     images: Array<{ url: string }>;
   };
   duration_ms: number;
+  explicit?: boolean;
   preview_url: string | null;
   uri: string;
+  external_urls?: {
+    spotify?: string;
+  };
 }
 
 export interface SpotifyPlaylist {
@@ -207,7 +211,7 @@ export async function getSavedTracks(limit = 50): Promise<SpotifyTrack[]> {
 }
 
 // Get user's top tracks
-export async function getTopTracks(timeRange: 'short_term' | 'medium_term' | 'long_term' = 'medium_term', limit = 50): Promise<SpotifyTrack[]> {
+export async function getTopTracks(timeRange: 'short_term' | 'medium_term' | 'long_term' = 'medium_term', limit = 20): Promise<SpotifyTrack[]> {
   const data = await spotifyRequest(`/me/top/tracks?time_range=${timeRange}&limit=${limit}`);
   return data.items || [];
 }

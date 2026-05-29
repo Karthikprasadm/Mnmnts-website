@@ -1,7 +1,7 @@
 // Spotify Token Management Endpoint
 // Handles OAuth token exchange and refresh
-const { setCORSHeaders, handleOptions } = require('../../utils/cors');
-const { successResponse, errorResponse } = require('../../utils/response');
+const { setCORSHeaders, handleOptions } = require('../utils/cors');
+const { successResponse, errorResponse } = require('../utils/response');
 
 module.exports = async (req, res) => {
   setCORSHeaders(req, res);

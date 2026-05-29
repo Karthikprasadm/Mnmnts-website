@@ -24,4 +24,4 @@ If you want to keep local audio:
 1. Place files in `spotify-visualiser/public/audio/`
 2. Update the `playlist` array in `spotify-visualiser/src/components/MusicPlayer.tsx`
 
-The visualiser can switch between **Spotify Mode** and **Local Mode**.
+The visualiser can switch between **Streaming Mode** and **Local Mode**.
