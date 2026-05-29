@@ -19,7 +19,7 @@ A minimalist, interactive web experience designed as a digital museum of persona
 - **Resume viewer** with in-page PDF modal
 - **Repository (Archive)** with GitHub project tiles and detail pages
 - **Project edit mode** with password-protected updates stored in Supabase
-- **Spotify visualizer** connected to Spotify API (auth + playback)
+- **Spotify visualizer** with local playback and Spotify-powered Streaming Mode (OAuth, Web API, and Web Playback SDK)
 
 ### Advanced Features
 - **Service Worker (legacy/disabled by default)** - Previously offered offline support, background sync, and caching; not registered now.
@@ -176,6 +176,38 @@ npm run dev
 
 4. **Access locally**
 - Main site: `http://localhost:3000` (or your configured port)
+- Spotify visualizer: `http://localhost:3000/spotify-visualiser/`
+- Repository/Astro app: `http://localhost:4321`
+
+### Spotify Visualizer Setup
+
+1. Create a Spotify app in the [Spotify Developer Dashboard](https://developer.spotify.com/dashboard).
+2. Use an app name such as `Mnmnts Visualiser` (avoid putting "Spotify" in the app name).
+3. Add redirect URIs exactly matching the URLs you use:
+```text
+http://localhost:3000/spotify-visualiser/
+http://127.0.0.1:3000/spotify-visualiser/
+http://localhost:5173/spotify-visualiser/
+http://127.0.0.1:5173/spotify-visualiser/
+https://your-vercel-domain.vercel.app/spotify-visualiser/
+```
+4. Add local environment variables:
+```env
+# .env at project root
+SPOTIFY_CLIENT_ID=your_client_id
+SPOTIFY_CLIENT_SECRET=your_client_secret
+VITE_SPOTIFY_CLIENT_ID=your_client_id
+
+# spotify-visualiser/.env
+VITE_SPOTIFY_CLIENT_ID=your_client_id
+```
+5. Restart the dev server after changing env files.
+
+Notes:
+- `VITE_SPOTIFY_CLIENT_ID` is the same value as `SPOTIFY_CLIENT_ID`; it is exposed to the browser.
+- `SPOTIFY_CLIENT_SECRET` must stay server-side only and must never be committed.
+- Spotify Web Playback SDK playback requires a Spotify Premium account.
+- Spotify development-mode apps only allow users added in the Spotify Dashboard.
 
 ## 📝 Content Management
 
@@ -270,9 +302,9 @@ All icons are centralized in `assets/styles/icons.css` and stored in `Images_for
 - `IMAGEKIT_URL_ENDPOINT` - ImageKit URL endpoint
 
 #### Spotify API (Visualizer)
-- `SPOTIFY_CLIENT_ID`
-- `SPOTIFY_CLIENT_SECRET`
-- `VITE_SPOTIFY_CLIENT_ID` (frontend)
+- `SPOTIFY_CLIENT_ID` - Spotify app Client ID for backend token exchange
+- `SPOTIFY_CLIENT_SECRET` - Spotify app Client Secret for backend token exchange; keep private
+- `VITE_SPOTIFY_CLIENT_ID` - Same Client ID exposed to the Vite frontend
 
 #### Supabase (Project edits)
 - `SUPABASE_URL`
@@ -289,9 +321,37 @@ All icons are centralized in `assets/styles/icons.css` and stored in `Images_for
 ### Vercel
 1. Connect GitHub repository
 2. Vercel auto-deploys on push
-3. ImageKit signature endpoint available at `*.vercel.app/api/signature`
+3. Add required environment variables in Vercel Project Settings
+4. Add the Vercel production URL to Spotify redirect URIs
+5. ImageKit signature endpoint available at `*.vercel.app/api/signature`
+
+Required Spotify variables on Vercel:
+```env
+SPOTIFY_CLIENT_ID
+SPOTIFY_CLIENT_SECRET
+VITE_SPOTIFY_CLIENT_ID
+```
+
+Spotify production redirect URI example:
+```text
+https://your-vercel-domain.vercel.app/spotify-visualiser/
+```
 
 ## 🧪 Testing
+
+### Test Spotify Auth Locally
+1. Confirm `.env` and `spotify-visualiser/.env` contain the Spotify variables.
+2. Confirm the exact local URL is listed as a Spotify redirect URI.
+3. Open `http://localhost:3000/spotify-visualiser/`.
+4. Click "Connect with Spotify".
+5. If Spotify reports `redirect_uri: Not matching configuration`, add the exact URL shown in the browser to Spotify Dashboard.
+
+### Spotify Compliance Notes
+- Use `Mnmnts Visualiser` or another non-Spotify app name.
+- Streaming Mode shows Spotify attribution and links tracks back to Spotify.
+- Spotify metadata is limited to 20 tracks and is not cached by the PWA runtime cache.
+- Spotify artwork is displayed without cropping in Streaming Mode.
+- Local demo audio/artwork must be owned or properly licensed.
 
 ### Test Offline Mode
 1. Open DevTools → Application → Service Workers

@@ -1,5 +1,8 @@
 Place your audio files for the visualiser here.
 
+Audio files are not included in this repository. The local demo player will
+show a missing-audio message until you add your own licensed files here.
+
 The React player in src/components/MusicPlayer.tsx expects the following default filenames:
 
 - die-with-a-smile.mp3
@@ -14,4 +17,3 @@ You can either:
 - Update the `src` field in the `playlist` array in MusicPlayer.tsx to point to your own paths.
 
 Supported formats depend on the browser (MP3/OGG/WEBM are generally safe). 
-

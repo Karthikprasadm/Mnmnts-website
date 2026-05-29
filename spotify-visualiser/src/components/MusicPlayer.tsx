@@ -221,6 +221,20 @@ const playlist = [
   },
 ]
 
+const LOCAL_AUDIO_MISSING_MESSAGE =
+  "Local audio file missing. Add licensed MP3s in public/audio or connect Spotify."
+
+const verifyLocalAudioSource = async (src?: string) => {
+  if (!src) {
+    throw new Error("No local audio source configured")
+  }
+
+  const response = await fetch(src, { method: "HEAD", cache: "no-store" })
+  if (!response.ok) {
+    throw new Error(`Local audio source not found: ${src}`)
+  }
+}
+
 export default function MusicPlayer() {
   // Spotify integration
   const spotifyClientId = import.meta.env.VITE_SPOTIFY_CLIENT_ID || ''
@@ -381,14 +395,18 @@ export default function MusicPlayer() {
     audio.src = src
     audio.load()
     setCurrentTimeSeconds(0)
+    setDurationSeconds(0)
     setProgress(0)
     if (isPlaying) {
-      audio
-        .play()
-        .then(() => setError(null))
+      verifyLocalAudioSource(src)
+        .then(() => audio.play())
+        .then(() => {
+          setError(null)
+        })
         .catch((err) => {
           console.error("Audio play failed", err)
-          setError("Audio playback failed")
+          setIsPlaying(false)
+          setError(LOCAL_AUDIO_MISSING_MESSAGE)
         })
     }
   }, [currentTrackIndex, isPlaying])
@@ -507,18 +525,20 @@ export default function MusicPlayer() {
       audio.pause()
       setIsPlaying(false)
     } else {
-      audio
-        .play()
+      const src = (playlist[currentTrackIndex] as any).src as string | undefined
+      verifyLocalAudioSource(src)
+        .then(() => audio.play())
         .then(() => {
           setIsPlaying(true)
           setError(null)
         })
         .catch((err) => {
           console.error("Audio play failed", err)
-          setError("Unable to play audio")
+          setIsPlaying(false)
+          setError(LOCAL_AUDIO_MISSING_MESSAGE)
         })
     }
-  }, [isPlaying, useSpotify, spotifyPlayer, currentTrack])
+  }, [isPlaying, useSpotify, spotifyPlayer, currentTrack, currentTrackIndex])
 
   const handlePreviousTrack = useCallback(async () => {
     if (useSpotify && spotifyPlayer.isReady) {
