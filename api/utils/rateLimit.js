@@ -6,6 +6,7 @@ const { setSecurityHeaders } = require('./response');
 
 // In-memory store for rate limiting (resets on serverless function restart)
 const rateLimitStore = new Map();
+let limiterId = 0;
 
 /**
  * Simple rate limiter for serverless functions
@@ -13,9 +14,17 @@ const rateLimitStore = new Map();
  * @param {number} options.windowMs - Time window in milliseconds
  * @param {number} options.max - Maximum number of requests per window
  * @param {string} options.message - Error message when limit exceeded
+ * @param {string} options.keyPrefix - Namespace for this limiter
  * @returns {Function} Middleware function
  */
-function createRateLimiter({ windowMs = 60000, max = 10, message = 'Too many requests, please try again later.' }) {
+function createRateLimiter({
+  windowMs = 60000,
+  max = 10,
+  message = 'Too many requests, please try again later.',
+  keyPrefix
+}) {
+  const prefix = keyPrefix || `limiter:${++limiterId}`;
+
   return (req, res, next) => {
     // Get client IP (works for both Express and serverless)
     const forwarded = req.headers['x-forwarded-for'];
@@ -23,7 +32,7 @@ function createRateLimiter({ windowMs = 60000, max = 10, message = 'Too many req
       ? forwarded.split(',')[0].trim() 
       : (req.connection?.remoteAddress || req.socket?.remoteAddress || req.ip || 'unknown');
     
-    const key = ip;
+    const key = `${prefix}:${ip}`;
     const now = Date.now();
     
     // Clean up old entries (older than windowMs) - run cleanup every 100 requests to avoid overhead
@@ -52,6 +61,7 @@ function createRateLimiter({ windowMs = 60000, max = 10, message = 'Too many req
     if (entry.count >= max) {
       setSecurityHeaders(res);
       const retryAfter = Math.ceil((entry.lastReset + windowMs - now) / 1000);
+      res.setHeader('Retry-After', retryAfter);
       res.status(429).json({
         success: false,
         error: message,
@@ -81,7 +91,8 @@ function createRateLimiter({ windowMs = 60000, max = 10, message = 'Too many req
 const signatureRateLimiter = createRateLimiter({
   windowMs: 60000, // 1 minute
   max: 20, // 20 requests per minute
-  message: 'Too many signature requests. Please try again in a minute.'
+  message: 'Too many signature requests. Please try again in a minute.',
+  keyPrefix: 'signature'
 });
 
 /**
@@ -90,7 +101,8 @@ const signatureRateLimiter = createRateLimiter({
 const configRateLimiter = createRateLimiter({
   windowMs: 60000, // 1 minute
   max: 30, // 30 requests per minute
-  message: 'Too many configuration requests. Please try again in a minute.'
+  message: 'Too many configuration requests. Please try again in a minute.',
+  keyPrefix: 'config'
 });
 
 /**
@@ -99,12 +111,69 @@ const configRateLimiter = createRateLimiter({
 const generalRateLimiter = createRateLimiter({
   windowMs: 60000, // 1 minute
   max: 60, // 60 requests per minute
-  message: 'Too many requests. Please try again in a minute.'
+  message: 'Too many requests. Please try again in a minute.',
+  keyPrefix: 'general'
+});
+
+const contactRateLimiter = createRateLimiter({
+  windowMs: 60000,
+  max: 5,
+  message: 'Too many contact requests. Please try again in a minute.',
+  keyPrefix: 'contact'
+});
+
+const uploadRateLimiter = createRateLimiter({
+  windowMs: 60000,
+  max: 10,
+  message: 'Too many upload requests. Please try again in a minute.',
+  keyPrefix: 'upload'
+});
+
+const spotifyTokenRateLimiter = createRateLimiter({
+  windowMs: 60000,
+  max: 12,
+  message: 'Too many Spotify authentication requests. Please try again in a minute.',
+  keyPrefix: 'spotify-token'
+});
+
+const spotifyProxyRateLimiter = createRateLimiter({
+  windowMs: 60000,
+  max: 60,
+  message: 'Too many Spotify API requests. Please try again in a minute.',
+  keyPrefix: 'spotify-proxy'
+});
+
+const projectEditReadRateLimiter = createRateLimiter({
+  windowMs: 60000,
+  max: 60,
+  message: 'Too many project edit requests. Please try again in a minute.',
+  keyPrefix: 'project-edit-read'
+});
+
+const projectEditVerifyRateLimiter = createRateLimiter({
+  windowMs: 5 * 60000,
+  max: 10,
+  message: 'Too many project edit verification attempts. Please try again in five minutes.',
+  keyPrefix: 'project-edit-verify'
+});
+
+const projectEditWriteRateLimiter = createRateLimiter({
+  windowMs: 60000,
+  max: 10,
+  message: 'Too many project edit save attempts. Please try again in a minute.',
+  keyPrefix: 'project-edit-write'
 });
 
 module.exports = {
   createRateLimiter,
   signatureRateLimiter,
   configRateLimiter,
-  generalRateLimiter
+  generalRateLimiter,
+  contactRateLimiter,
+  uploadRateLimiter,
+  spotifyTokenRateLimiter,
+  spotifyProxyRateLimiter,
+  projectEditReadRateLimiter,
+  projectEditVerifyRateLimiter,
+  projectEditWriteRateLimiter
 };

@@ -2,19 +2,12 @@
 const nodemailer = require('nodemailer');
 const { setCORSHeaders, handleOptions } = require('./utils/cors');
 const { successResponse, errorResponse } = require('./utils/response');
-const { createRateLimiter } = require('./utils/rateLimit');
+const { contactRateLimiter } = require('./utils/rateLimit');
 
 function escapeHtml(s) {
   if (typeof s !== 'string') return '';
   return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 }
-
-// Rate limiter for contact endpoint (more restrictive to prevent spam)
-const contactRateLimiter = createRateLimiter({
-  windowMs: 60000, // 1 minute
-  max: 5, // 5 contact requests per minute
-  message: 'Too many contact requests. Please try again in a minute.'
-});
 
 module.exports = async (req, res) => {
   setCORSHeaders(req, res);

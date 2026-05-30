@@ -2,12 +2,18 @@
 // Handles OAuth token exchange and refresh
 const { setCORSHeaders, handleOptions } = require('../utils/cors');
 const { successResponse, errorResponse } = require('../utils/response');
+const { spotifyTokenRateLimiter } = require('../utils/rateLimit');
 
 module.exports = async (req, res) => {
   setCORSHeaders(req, res);
 
   if (req.method === 'OPTIONS') {
     handleOptions(req, res);
+    return;
+  }
+
+  spotifyTokenRateLimiter(req, res, () => {});
+  if (res.statusCode === 429) {
     return;
   }
 

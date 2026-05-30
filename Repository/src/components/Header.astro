@@ -10,19 +10,19 @@
   </div>
   <div class="social-icons" aria-label="Social links">
         <a href="https://www.instagram.com/kkarthhikk" target="_blank" aria-label="Instagram">
-      <span class="icon icon-instagram" aria-hidden="true"></span>
+      <span class="icon icon-instagram" style="--icon-url: url('/Menu-new/icons/instagram.png')" aria-hidden="true"></span>
     </a>
         <a href="https://www.linkedin.com/in/karthik-prasad-m-7673b5356/" target="_blank" aria-label="LinkedIn">
-      <span class="icon icon-linkedin" aria-hidden="true"></span>
+      <span class="icon icon-linkedin" style="--icon-url: url('/Menu-new/icons/linkedin.png')" aria-hidden="true"></span>
     </a>
         <a href="https://pin.it/70AOzYsfW" target="_blank" aria-label="Pinterest">
-      <span class="icon icon-pinterest" aria-hidden="true"></span>
+      <span class="icon icon-pinterest" style="--icon-url: url('/Menu-new/icons/pinterest.png')" aria-hidden="true"></span>
     </a>
         <a href="https://open.spotify.com/user/31g54rthdkjwc7tk2yzwlkptbbqi" target="_blank" aria-label="Spotify">
-      <span class="icon icon-spotify" aria-hidden="true"></span>
+      <span class="icon icon-spotify" style="--icon-url: url('/Menu-new/icons/spotify.png')" aria-hidden="true"></span>
     </a>
         <a href="https://github.com/Karthikprasadm" target="_blank" aria-label="GitHub">
-      <span class="icon icon-github" aria-hidden="true"></span>
+      <span class="icon icon-github" style="--icon-url: url('/Menu-new/icons/github.png')" aria-hidden="true"></span>
     </a>
       </div>
     </div>
@@ -220,16 +220,11 @@
     display: inline-block;
     width: 1.3rem;
     height: 1.3rem;
+    background-image: var(--icon-url);
     background-position: center;
     background-repeat: no-repeat;
     background-size: contain;
   }
-
-  .icon-instagram { background-image: url('/repo/images/icons/instagram.png'); }
-  .icon-linkedin { background-image: url('/repo/images/icons/linkedin.png'); }
-  .icon-pinterest { background-image: url('/repo/images/icons/pinterest.png'); }
-  .icon-spotify { background-image: url('/repo/images/icons/spotify.png'); }
-  .icon-github { background-image: url('/repo/images/icons/github.png'); }
 
   @media (max-width: 768px) {
     .dropdown {

@@ -157,7 +157,7 @@ const baseUrl = import.meta.env.BASE_URL.endsWith('/') ? import.meta.env.BASE_UR
     />
     <ClientRouter />
     <!-- JSON-LD Structured Data -->
-    <script type="application/ld+json" src="/repo/structured-data/repository.json"></script>
+    <script type="application/ld+json" src="/repo/structured-data/repository.json" is:inline></script>
   </head>
   <body>
     <div class="stars"></div>
@@ -165,7 +165,7 @@ const baseUrl = import.meta.env.BASE_URL.endsWith('/') ? import.meta.env.BASE_UR
     <Header />
     <slot />
     <Footer />
-    <script src="/repo/scripts/navbar.js" is:inline></script>
+    <script src="/Menu-new/script.js" is:inline></script>
     <script src="/repo/scripts/imageFade.js" is:inline></script>
     <script src="/repo/scripts/projectImageOverrides.js" is:inline></script>
   </body>

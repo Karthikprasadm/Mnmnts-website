@@ -6,19 +6,40 @@
  * @param {Object} res - Express response object
  */
 function setSecurityHeaders(res) {
+  const csp = [
+    "default-src 'self'",
+    "base-uri 'self'",
+    "object-src 'none'",
+    "script-src 'self'",
+    "script-src-attr 'none'",
+    "style-src 'self'",
+    "img-src 'self' data: https:",
+    "font-src 'self' data:",
+    "connect-src 'self' https://ik.imagekit.io https://api.imagekit.io https://upload.imagekit.io https://sdk.scdn.co https://accounts.spotify.com https://api.spotify.com https://*.spotify.com https://*.scdn.co",
+    "media-src 'self' https://ik.imagekit.io https://ik.imagekit.io/ijv7nmfqx https://*.scdn.co https://*.spotify.com",
+    "manifest-src 'self'",
+    "worker-src 'self' blob:",
+    "form-action 'self'",
+    "frame-ancestors 'none'"
+  ].join('; ');
+
   // Security headers
   res.setHeader('X-Content-Type-Options', 'nosniff');
   res.setHeader('X-Frame-Options', 'DENY');
   res.setHeader('X-XSS-Protection', '1; mode=block');
-  res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
+  res.setHeader('Referrer-Policy', 'no-referrer-when-downgrade');
+  res.setHeader('Permissions-Policy', 'accelerometer=(), autoplay=(self), camera=(), display-capture=(), encrypted-media=(self), fullscreen=(self), geolocation=(), gyroscope=(), magnetometer=(), microphone=(), midi=(), payment=(), picture-in-picture=(self), publickey-credentials-get=(), usb=()');
+  res.setHeader('Cross-Origin-Resource-Policy', 'same-origin');
+  res.setHeader('X-Permitted-Cross-Domain-Policies', 'none');
+
+  if (process.env.NODE_ENV === 'production') {
+    res.setHeader('Strict-Transport-Security', 'max-age=63072000; includeSubDomains; preload');
+  }
   
   // Content Security Policy - strict (no unsafe-inline or unsafe-eval)
   // API endpoints return JSON only, so no inline scripts/styles needed
   // For static HTML pages, CSP is configured in vercel.json
-  res.setHeader(
-    'Content-Security-Policy',
-    "default-src 'self'; base-uri 'self'; object-src 'none'; script-src 'self'; script-src-attr 'none'; style-src 'self'; img-src 'self' data: https:; font-src 'self' data:; connect-src 'self' https://ik.imagekit.io https://api.imagekit.io https://sdk.scdn.co https://accounts.spotify.com https://api.spotify.com; form-action 'self'; frame-ancestors 'none';"
-  );
+  res.setHeader('Content-Security-Policy', csp);
 }
 
 /**
@@ -88,4 +109,3 @@ module.exports = {
   successResponse,
   errorResponse,
 };
-

@@ -2,12 +2,18 @@
 // Proxies requests to Spotify Web API with user's access token
 const { setCORSHeaders, handleOptions } = require('../utils/cors');
 const { successResponse, errorResponse } = require('../utils/response');
+const { spotifyProxyRateLimiter } = require('../utils/rateLimit');
 
 module.exports = async (req, res) => {
   setCORSHeaders(req, res);
 
   if (req.method === 'OPTIONS') {
     handleOptions(req, res);
+    return;
+  }
+
+  spotifyProxyRateLimiter(req, res, () => {});
+  if (res.statusCode === 429) {
     return;
   }
 

@@ -13,6 +13,17 @@ const { createProxyMiddleware } = require('http-proxy-middleware');
 const { createClient } = require('@supabase/supabase-js');
 const nodemailer = require('nodemailer');
 
+const isProduction = process.env.NODE_ENV === 'production';
+const logInfo = (...args) => {
+  if (!isProduction) console.log(...args);
+};
+const logWarn = (...args) => {
+  if (!isProduction) console.warn(...args);
+};
+const logDebug = (...args) => {
+  if (process.env.DEBUG_SERVER === 'true') console.log(...args);
+};
+
 // Configure ImageKit (only if env vars are present)
 let imagekit = null;
 if (process.env.IMAGEKIT_PUBLIC_KEY && process.env.IMAGEKIT_PRIVATE_KEY && process.env.IMAGEKIT_URL_ENDPOINT) {
@@ -21,9 +32,9 @@ if (process.env.IMAGEKIT_PUBLIC_KEY && process.env.IMAGEKIT_PRIVATE_KEY && proce
     privateKey: process.env.IMAGEKIT_PRIVATE_KEY,
     urlEndpoint: process.env.IMAGEKIT_URL_ENDPOINT
   });
-  console.log('✅ ImageKit configured');
+  logInfo('ImageKit configured');
 } else {
-  console.log('⚠️  ImageKit not configured (missing .env file). Upload features will not work.');
+  logWarn('ImageKit not configured. Upload features will not work.');
 }
 
 const app = express();
@@ -41,9 +52,9 @@ const supabase = (supabaseUrl && supabaseServiceKey)
   : null;
 
 if (supabase) {
-  console.log('✅ Supabase configured for project edits');
+  logInfo('Supabase configured for project edits');
 } else {
-  console.log('⚠️  Supabase not configured (missing SUPABASE_URL or SUPABASE_SERVICE_ROLE_KEY).');
+  logWarn('Supabase not configured for project edits.');
 }
 
 // Contact form email: create transporter when SMTP env vars are set
@@ -61,9 +72,9 @@ if (smtpHost && smtpPort && smtpUser && smtpPass) {
     secure: smtpPort === '465',
     auth: { user: smtpUser, pass: smtpPass }
   });
-  console.log('✅ Contact form email configured (SMTP)');
+  logInfo('Contact form email configured');
 } else {
-  console.log('⚠️  Contact form email not configured (set SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASS in .env to receive contact form emails).');
+  logWarn('Contact form email not configured.');
 }
 
 function escapeHtml(s) {
@@ -221,7 +232,7 @@ const validateFileContent = (filePath, declaredMimeType) => {
         const expectedSignatures = FILE_SIGNATURES[declaredMimeType.toLowerCase()];
         if (!expectedSignatures) {
             // If we don't have a signature for this type, allow it but log
-            console.warn(`No signature validation for MIME type: ${declaredMimeType}`);
+            logWarn(`No signature validation for MIME type: ${declaredMimeType}`);
             return { valid: true };
         }
         
@@ -297,15 +308,39 @@ const upload = multer({
 
 // Security headers middleware for all responses
 const setSecurityHeaders = (req, res, next) => {
+  const isProduction = process.env.NODE_ENV === 'production';
+  const csp = [
+    "default-src 'self'",
+    "base-uri 'self'",
+    "object-src 'none'",
+    "script-src 'self' https://sdk.scdn.co https://unpkg.com 'sha256-D/44MCKZunkyCl1B6hG7QCUIspIrd0Sr8VbHFPveH/A=' 'sha256-QYOD+yS6q3rymhXIubiL7Gvp/quUFfNBzT+h+sZqpso=' 'sha256-0g/ciPBj3/L9qG0cvi/Pqq0FLLtfAnyUZGdtjU6oQd0='",
+    "script-src-attr 'none'",
+    "style-src 'self' 'unsafe-inline' https://use.typekit.net https://fonts.googleapis.com https://cdnjs.cloudflare.com",
+    "img-src 'self' data: https:",
+    "media-src 'self' https://ik.imagekit.io https://ik.imagekit.io/ijv7nmfqx https://*.scdn.co https://*.spotify.com",
+    "font-src 'self' data: https://use.typekit.net https://p.typekit.net https://fonts.gstatic.com https://cdnjs.cloudflare.com",
+    "connect-src 'self' https://ik.imagekit.io https://api.imagekit.io https://upload.imagekit.io https://sdk.scdn.co https://accounts.spotify.com https://api.spotify.com https://*.spotify.com https://*.scdn.co",
+    "manifest-src 'self'",
+    "worker-src 'self' blob:",
+    "frame-src 'self' https://open.spotify.com",
+    "form-action 'self'",
+    "frame-ancestors 'none'",
+    isProduction ? 'upgrade-insecure-requests' : ''
+  ].filter(Boolean).join('; ');
+
   res.setHeader('X-Content-Type-Options', 'nosniff');
-  res.setHeader('X-Frame-Options', 'SAMEORIGIN');
+  res.setHeader('X-Frame-Options', 'DENY');
   res.setHeader('X-XSS-Protection', '1; mode=block');
-  res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
-  res.setHeader('Permissions-Policy', 'geolocation=(), microphone=(), camera=()');
-  res.setHeader(
-    'Content-Security-Policy',
-    "default-src 'self'; base-uri 'self'; object-src 'none'; script-src 'self' https://sdk.scdn.co https://unpkg.com 'sha256-D/44MCKZunkyCl1B6hG7QCUIspIrd0Sr8VbHFPveH/A=' 'sha256-QYOD+yS6q3rymhXIubiL7Gvp/quUFfNBzT+h+sZqpso=' 'sha256-0g/ciPBj3/L9qG0cvi/Pqq0FLLtfAnyUZGdtjU6oQd0='; script-src-attr 'none'; style-src 'self' 'unsafe-inline' https://use.typekit.net https://fonts.googleapis.com https://cdnjs.cloudflare.com; img-src 'self' data: https:; media-src 'self' https://ik.imagekit.io https://ik.imagekit.io/ijv7nmfqx; font-src 'self' data: https://use.typekit.net https://p.typekit.net https://fonts.gstatic.com https://cdnjs.cloudflare.com; connect-src 'self' https://ik.imagekit.io https://api.imagekit.io https://upload.imagekit.io https://sdk.scdn.co https://accounts.spotify.com https://api.spotify.com; form-action 'self'; frame-ancestors 'none';"
-  );
+  res.setHeader('Referrer-Policy', 'no-referrer-when-downgrade');
+  res.setHeader('Permissions-Policy', 'accelerometer=(), autoplay=(self), camera=(), display-capture=(), encrypted-media=(self), fullscreen=(self), geolocation=(), gyroscope=(), magnetometer=(), microphone=(), midi=(), payment=(), picture-in-picture=(self), publickey-credentials-get=(), usb=()');
+  res.setHeader('Cross-Origin-Resource-Policy', 'same-origin');
+  res.setHeader('X-Permitted-Cross-Domain-Policies', 'none');
+  res.setHeader('Content-Security-Policy', csp);
+
+  if (isProduction) {
+    res.setHeader('Strict-Transport-Security', 'max-age=63072000; includeSubDomains; preload');
+  }
+
   next();
 };
 
@@ -346,31 +381,31 @@ if (fs.existsSync(repositoryDist)) {
       res.sendFile(builtIndex);
     });
     app.use(express.static(repositoryDist));
-    console.log('✅ Serving built Repository from / (production)');
+    logInfo('Serving built Repository from /');
   }
 
   // Explicitly handle index.html routes FIRST (these MUST come before express.static)
   app.get('/repo', (req, res) => {
     const builtIndex = path.join(repositoryDist, 'index.html');
-    console.log('✅ Serving Repository index.html from:', builtIndex);
+    logDebug('Serving Repository index.html from:', builtIndex);
     res.sendFile(builtIndex);
   });
   app.get('/repo/', (req, res) => {
     const builtIndex = path.join(repositoryDist, 'index.html');
-    console.log('✅ Serving Repository index.html from:', builtIndex);
+    logDebug('Serving Repository index.html from:', builtIndex);
     res.sendFile(builtIndex);
   });
   app.get('/repo/index.html', (req, res) => {
     const builtIndex = path.join(repositoryDist, 'index.html');
-    console.log('✅ Serving Repository index.html from:', builtIndex);
+    logDebug('Serving Repository index.html from:', builtIndex);
     res.sendFile(builtIndex);
   });
   
   // Then serve all other built files from dist folder
   app.use('/repo', express.static(repositoryDist));
-  console.log('✅ Serving built Repository from dist/');
+  logInfo('Serving built Repository from dist/');
 } else {
-  console.warn('⚠️  Repository dist/ not found. Run: cd Repository && npm run build');
+  logWarn('Repository dist/ not found. Run: cd Repository && npm run build');
 }
 
 // Serve built Spotify Visualizer files FIRST (before general static files)
@@ -380,12 +415,12 @@ if (fs.existsSync(spotifyVisualizerDist)) {
   // Explicitly handle index.html routes FIRST (these MUST come before express.static)
   app.get('/spotify-visualiser/', (req, res) => {
     const builtIndex = path.join(spotifyVisualizerDist, 'index.html');
-    console.log('✅ Serving built index.html from:', builtIndex);
+    logDebug('Serving built Spotify Visualizer index.html from:', builtIndex);
     res.sendFile(builtIndex);
   });
   app.get('/spotify-visualiser/index.html', (req, res) => {
     const builtIndex = path.join(spotifyVisualizerDist, 'index.html');
-    console.log('✅ Serving built index.html from:', builtIndex);
+    logDebug('Serving built Spotify Visualizer index.html from:', builtIndex);
     res.sendFile(builtIndex);
   });
   
@@ -398,9 +433,9 @@ if (fs.existsSync(spotifyVisualizerDist)) {
     res.sendFile(builtIndex);
   });
 
-  console.log('✅ Serving built Spotify Visualizer from dist/');
+  logInfo('Serving built Spotify Visualizer from dist/');
 } else {
-  console.warn('⚠️  Spotify Visualizer dist/ not found. Run: cd spotify-visualiser && npm run build');
+  logWarn('Spotify Visualizer dist/ not found. Run: cd spotify-visualiser && npm run build');
 }
 
 // Serve static files (e.g., HTML, CSS, JS) from the project root
@@ -416,7 +451,7 @@ app.use((req, res, next) => {
   }
   // Block access to source files in spotify-visualiser
   if (req.path.startsWith('/spotify-visualiser/src')) {
-    console.log('🚫 Blocked source file request:', req.path);
+    logDebug('Blocked source file request:', req.path);
     return res.status(404).send('Source files not available. Please use the built version.');
   }
   
@@ -442,49 +477,24 @@ app.get('/', (req, res) => {
 });
 
 // Rate limiting for Express server
-const { createRateLimiter } = require('./api/utils/rateLimit');
-
-// Rate limiters for different endpoints
-const signatureLimiter = createRateLimiter({
-  windowMs: 60000, // 1 minute
-  max: 20, // 20 requests per minute
-  message: 'Too many signature requests. Please try again in a minute.'
-});
-
-const configLimiter = createRateLimiter({
-  windowMs: 60000, // 1 minute
-  max: 30, // 30 requests per minute
-  message: 'Too many configuration requests. Please try again in a minute.'
-});
-
-const spotifyLimiter = createRateLimiter({
-  windowMs: 60000, // 1 minute
-  max: 30, // 30 requests per minute
-  message: 'Too many Spotify API requests. Please try again in a minute.'
-});
-
-const uploadLimiter = createRateLimiter({
-  windowMs: 60000, // 1 minute
-  max: 10, // 10 upload requests per minute (more restrictive due to file processing)
-  message: 'Too many upload requests. Please try again in a minute.'
-});
-
-const projectEditsLimiter = createRateLimiter({
-  windowMs: 60000,
-  max: 60,
-  message: 'Too many edit requests. Please try again in a minute.'
-});
-
-const contactLimiter = createRateLimiter({
-  windowMs: 60000, // 1 minute
-  max: 5, // 5 contact requests per minute (more restrictive to prevent spam)
-  message: 'Too many contact requests. Please try again in a minute.'
-});
+const {
+  createRateLimiter,
+  signatureRateLimiter,
+  configRateLimiter,
+  contactRateLimiter,
+  uploadRateLimiter,
+  spotifyTokenRateLimiter,
+  spotifyProxyRateLimiter,
+  projectEditReadRateLimiter,
+  projectEditVerifyRateLimiter,
+  projectEditWriteRateLimiter
+} = require('./api/utils/rateLimit');
 
 const galleryDataLimiter = createRateLimiter({
   windowMs: 60000,
   max: 120,
-  message: 'Too many gallery data requests. Please try again in a minute.'
+  message: 'Too many gallery data requests. Please try again in a minute.',
+  keyPrefix: 'gallery-data'
 });
 
 const readJsonFile = (filePath) => {
@@ -515,7 +525,7 @@ app.get('/api/videos-data', galleryDataLimiter, (req, res) => {
   return res.status(200).json(data);
 });
 
-app.get('/api/project-edits/:projectId', projectEditsLimiter, async (req, res) => {
+app.get('/api/project-edits/:projectId', projectEditReadRateLimiter, async (req, res) => {
   const projectId = sanitizeProjectId(req.params.projectId);
   if (!projectId) {
     return res.status(400).json({ success: false, error: 'Invalid project id.' });
@@ -535,7 +545,7 @@ app.get('/api/project-edits/:projectId', projectEditsLimiter, async (req, res) =
   return res.status(200).json({ success: true, data: data || null });
 });
 
-app.post('/api/project-edits/:projectId/verify', projectEditsLimiter, (req, res) => {
+app.post('/api/project-edits/:projectId/verify', projectEditVerifyRateLimiter, (req, res) => {
   const projectId = sanitizeProjectId(req.params.projectId);
   if (!projectId) {
     return res.status(400).json({ success: false, error: 'Invalid project id.' });
@@ -549,7 +559,7 @@ app.post('/api/project-edits/:projectId/verify', projectEditsLimiter, (req, res)
   return res.status(200).json({ success: true });
 });
 
-app.put('/api/project-edits/:projectId', projectEditsLimiter, async (req, res) => {
+app.put('/api/project-edits/:projectId', projectEditWriteRateLimiter, async (req, res) => {
   const projectId = sanitizeProjectId(req.params.projectId);
   if (!projectId) {
     return res.status(400).json({ success: false, error: 'Invalid project id.' });
@@ -586,7 +596,7 @@ app.put('/api/project-edits/:projectId', projectEditsLimiter, async (req, res) =
 });
 
 // Contact form endpoint
-app.post('/api/contact', contactLimiter, async (req, res) => {
+app.post('/api/contact', contactRateLimiter, async (req, res) => {
   try {
     const { name, email, subject, message } = req.body;
 
@@ -686,7 +696,7 @@ app.post('/api/contact', contactLimiter, async (req, res) => {
 
 // Local signature endpoint for ImageKit direct upload
 // ImageKit public configuration endpoint (public key and URL endpoint only)
-app.get('/api/imagekit-config', configLimiter, (req, res) => {
+app.get('/api/imagekit-config', configRateLimiter, (req, res) => {
   try {
     const publicKey = process.env.IMAGEKIT_PUBLIC_KEY;
     const urlEndpoint = process.env.IMAGEKIT_URL_ENDPOINT;
@@ -713,7 +723,7 @@ app.get('/api/imagekit-config', configLimiter, (req, res) => {
   }
 });
 
-app.get('/api/signature', signatureLimiter, (req, res) => {
+app.get('/api/signature', signatureRateLimiter, (req, res) => {
   const { errorResponse } = require('./api/utils/response');
   if (!imagekit) {
     return errorResponse(res, 
@@ -727,9 +737,7 @@ app.get('/api/signature', signatureLimiter, (req, res) => {
   const expire = Math.floor(Date.now() / 1000) + 60 * 5; // 5 minutes from now
   const signature = imagekit.getAuthenticationParameters(token, expire);
   // Security: Don't log sensitive authentication data in production
-  if (process.env.NODE_ENV !== 'production') {
-    console.log('ImageKit signature generated (debug mode only)');
-  }
+  logDebug('ImageKit signature generated');
   res.status(200).json({
     signature: signature.signature,
     expire: signature.expire,
@@ -739,7 +747,7 @@ app.get('/api/signature', signatureLimiter, (req, res) => {
 
 // Spotify API endpoints (for local development)
 // In production, these are handled by Vercel serverless functions in /api/spotify/
-app.post('/api/spotify/token', spotifyLimiter, async (req, res) => {
+app.post('/api/spotify/token', spotifyTokenRateLimiter, async (req, res) => {
   const { setCORSHeaders, handleOptions } = require('./api/utils/cors');
   const { successResponse, errorResponse } = require('./api/utils/response');
   
@@ -856,7 +864,7 @@ app.post('/api/spotify/token', spotifyLimiter, async (req, res) => {
   }
 });
 
-app.get('/api/spotify', spotifyLimiter, async (req, res) => {
+app.get('/api/spotify', spotifyProxyRateLimiter, async (req, res) => {
   const { setCORSHeaders, handleOptions } = require('./api/utils/cors');
   const { successResponse, errorResponse } = require('./api/utils/response');
   
@@ -919,7 +927,7 @@ app.get('/api/spotify', spotifyLimiter, async (req, res) => {
 });
 
 // ImageKit upload handler for /upload endpoint with enhanced validation
-app.post('/upload', uploadLimiter, upload.array('media', 10), async (req, res) => {
+app.post('/upload', uploadRateLimiter, upload.array('media', 10), async (req, res) => {
   try {
     if (!imagekit) {
       return res.status(503).json({
@@ -984,7 +992,7 @@ app.post('/upload', uploadLimiter, upload.array('media', 10), async (req, res) =
         const finalFilename = `${timestamp}-${sanitizedFilename}${ext}`;
         
         // Log file info (sanitized)
-        console.log('Uploading file:', finalFilename, 'Type:', file.mimetype, 'Size:', file.size);
+        logDebug('Uploading file:', finalFilename, 'Type:', file.mimetype, 'Size:', file.size);
         
         // Read file and verify it exists
         if (!fs.existsSync(file.path)) {
@@ -1016,7 +1024,7 @@ app.post('/upload', uploadLimiter, upload.array('media', 10), async (req, res) =
           folder: '/Upload_M-O-M'
         });
         
-        console.log('ImageKit upload result:', result.fileId);
+        logDebug('ImageKit upload result:', result.fileId);
         
         if (!result.url || !result.fileId) {
           throw new Error('ImageKit did not return a valid URL or fileId');
@@ -1118,6 +1126,6 @@ app.use((req, res, next) => {
 
 // Start the server
 app.listen(port, '0.0.0.0', () => {
-    console.log(`Server running on http://localhost:${port}`);
-    console.log(`Server accessible on http://127.0.0.1:${port}`);
+    logInfo(`Server running on http://localhost:${port}`);
+    logInfo(`Server accessible on http://127.0.0.1:${port}`);
 });
